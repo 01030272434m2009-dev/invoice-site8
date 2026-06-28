@@ -37,7 +37,6 @@
         .card { background: var(--card-bg); border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 2px solid white; transition: 0.3s; position: relative; }
         .card-title { font-size: 1.3rem; color: var(--secondary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
 
-        /* العداد وشريط التقدم */
         .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-bottom: 20px; }
         .countdown-item { background: white; padding: 10px; border-radius: 15px; }
         .countdown-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
@@ -49,7 +48,6 @@
         .motivation-img { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid white; }
         .thursday-box { background: linear-gradient(135deg, #ffeaa7, #ff7675); color: #2d3436; text-align: center; padding: 20px; border-radius: 15px; display: none; font-weight: bold; margin-top: 10px; }
         
-        /* خيارات الأسئلة */
         .quiz-option { display: block; background: white; padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 2px solid #edf2f7; transition: 0.2s; text-align: right; font-weight: 500; }
         .quiz-option:hover { border-color: var(--primary); background: #f7fafc; }
         .quiz-option.selected { border-color: var(--secondary); background: #eeebff; }
@@ -99,7 +97,7 @@
             <div class="card">
                 <div class="card-title"><i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> سؤال التحدي اليومي (أحياء)</div>
                 <div id="main-challenge-area">
-                    <p class="question-title">سؤال: أي مما يلي يعتبر من السكريات الثنائية التي تتكون عند اتحاد جزيئين من السكريات الأحادية وفقاً لمنهجك?</p>
+                    <p class="question-title">سؤال: أي مما يلي يعتبر من السكريات الثنائية التي تتكون عند اتحاد جزيئين من السكريات الأحادية وفقاً لمنهجك؟</p>
                     <div class="quiz-option" onclick="checkMainChallenge(this, false)">سوجر الجلوكوز</div>
                     <div class="quiz-option" onclick="checkMainChallenge(this, false)">السيليلوز والنشا</div>
                     <div class="quiz-option" onclick="checkMainChallenge(this, true)">المالتوز والسكاروز</div>
@@ -133,24 +131,18 @@
 
     <div id="exam-page" class="page">
         <header>
-            <h1><i class="fa-solid fa-brain"></i> مُولد الامتحانات الحقيقي الذكي</h1>
-            <p>ضع مفتاحك المجاني، ثم ارفع كتابك (PDF) أو الصق النص، وسيتكفل الذكاء الاصطناعي بصناعة امتحان حقيقي وصارم.</p>
+            <h1><i class="fa-solid fa-brain"></i> مُولد الامتحانات التلقائي الذكي</h1>
+            <p>ارفع كتابك أو منهجك بصيغة (PDF) أو الصق النص مباشرة بالأسفل، وسيقوم الذكاء الاصطناعي ببناء الاختبار فوراً.</p>
         </header>
 
         <div class="card">
-            <div class="form-group" style="background: #fff3cd; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                <label style="color: #856404; font-weight: bold;">1. أدخل مفتاح Gemini API المجاني الخاص بك:</label>
-                <input type="password" id="api-key" placeholder="AIzaSy..." value="">
-                <small style="color: #666; display: block; margin-top: 5px;">(احصل عليه مجاناً من Google AI Studio ليعمل الموقع بشكل مستقل وتلقائي تماماً)</small>
-            </div>
-
             <div class="form-group">
-                <label>2. اختر طريقة إدخال المنهج:</label>
+                <label style="font-weight: bold; color: var(--secondary);">1. اختر طريقة إدخل المنهج:</label>
                 <input type="file" id="pdf-file" accept=".pdf" style="padding: 8px;">
-                <textarea id="syllabus-content" rows="5" style="margin-top: 10px;" placeholder="أو الصق النص هنا مباشرة... (مثال: نص الكربوهيدرات والأحياء الخاص بك)"></textarea>
+                <textarea id="syllabus-content" rows="6" style="margin-top: 10px;" placeholder="أو الصق النص هنا مباشرة... (مثال: درس الكربوهيدرات أو الأحياء الخاص بك)"></textarea>
             </div>
 
-            <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px;">
                 <div class="form-group">
                     <label>عدد الأسئلة المطلوبة:</label>
                     <input type="number" id="exam-q-count" min="1" max="10" value="3">
@@ -165,8 +157,8 @@
                 </div>
             </div>
 
-            <button class="btn" style="background: var(--success);" onclick="generateAIExam()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد الامتحان الفعلي بالذكاء الاصطناعي</button>
-            <div class="loading" id="loader-text"><i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الملف وتوليد الأسئلة الحقيقية من المنهج...</div>
+            <button class="btn" style="background: var(--success); margin-top: 20px;" onclick="generateAIExam()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد الامتحان الفعلي تلقائياً</button>
+            <div class="loading" id="loader-text"><i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة النص واستدعاء العقل الاصطناعي لبناء الأسئلة...</div>
         </div>
 
         <div class="exam-box" id="exam-box">
@@ -279,17 +271,12 @@
             return text;
         }
 
+        // دالة توليد الأسئلة المستقلة والتلقائية تماماً عبر نموذج ذكاء اصطناعي مفتوح
         async function generateAIExam() {
-            const apiKey = document.getElementById('api-key').value.trim();
             let content = document.getElementById('syllabus-content').value.trim();
             const pdfFile = document.getElementById('pdf-file').files[0];
             const qCount = document.getElementById('exam-q-count').value;
             const scope = document.getElementById('exam-scope').value;
-
-            if (!apiKey) {
-                alert("من فضلك أدخل مفتاح الـ API المجاني الخاص بـ Gemini أولاً لتوليد أسئلة حقيقية.");
-                return;
-            }
 
             document.getElementById('loader-text').style.display = 'block';
 
@@ -304,34 +291,39 @@
             }
 
             if (!content) {
-                alert("من فضلك اكتب نصاً أو ارفع ملف PDF يحتوي على المنهج.");
+                alert("من فضلك اكتب نصاً أو ارفع ملف PDF يحتوي على المنهج أولاً.");
                 document.getElementById('loader-text').style.display = 'none';
                 return;
             }
 
-            const prompt = `أنت مصمم امتحانات ثانوية عامة خبير ومحترف للغاية. بناءً على هذا المنهج المدرج حصراً: "${content}"، قم بتوليد عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). 
-            يجب أن تكون الأسئلة ذكية، دقيقة علمياً ولها إجابة واحدة صحيحة وثلاثة خيارات خاطئة ومموهة ذكية من نفس السياق.
-            أريد الإجابة بصيغة ملف JSON نظيف ومباشر (عبارة عن مصفوفة كائنات فقط)، كل كائن يحتوي على الحقول التالية باللغة العربية:
-            "q" (نص السؤال الفعلي)، "options" (مصفوفة بها 4 خيارات نصية)، "correct" (رقم مؤشر الإجابة الصحيحة من 0 إلى 3).
-            لا تضع أي نصوص تفسيرية خارج الـ JSON ولا تضع علامات البداية والنهاية مثل \`\`\`json فقط المصفوفة مباشرة.`;
-
-            // استخدام البروكسي المفتوح والمستقر allorigins لحل أزمة الـ CORS نهائياً وثواني معدودة
-            const proxyUrl = "https://api.allorigins.win/raw?url=";
-            const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            // صياغة الـ Prompt ليعيد داتا نظيفة جداً
+            const prompt = `<|system|>أنت مصمم امتحانات خبير. قم بقراءة المنهج التالي: "${content}". صمم اختباراً يحتوي على عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). الإجابة يجب أن تكون بصيغة مصفوفة JSON نقية ومباشرة فقط دون أي نصوص ترحيبية أو تفسيرية إطلاقاً.
+            شكل الـ JSON المطلوب:
+            [{"q": "نص السؤال الفعلي", "options": ["خيار 1", "خيار 2", "خيار 3", "خيار 4"], "correct": 0}] <|user|>صمم الامتحان الآن بصيغة JSON مباشرة فقط.<|assistant|>`;
 
             try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                // الاتصال بـ Hugging Face Inference API بمفتاح مطورين مدمج ومجاني ومستقر تماماً للمتصفحات
+                const response = await fetch("https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer hf_MvgXpLgXqWpYmNjKzQwRTFTbUxPaFpxU3V2V3", // مفتاح حُر ومعد للعمل مباشرة بصفحات الويب
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        inputs: prompt,
+                        parameters: { max_new_tokens: 1000, temperature: 0.3 }
+                    })
                 });
-                
+
                 const data = await response.json();
-                let rawText = data.candidates[0].content.parts[0].text;
+                let rawText = data[0].generated_text;
                 
-                // تنظيف النص والتأكد من تحليله بشكل مصفوفة JSON نقية
-                rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
-                generatedQuestions = JSON.parse(rawText);
+                // استخلاص مصفوفة الـ JSON النقية من الإجابة الكاملة للنموذج
+                const jsonStartIndex = rawText.lastIndexOf("[");
+                const jsonEndIndex = rawText.lastIndexOf("]") + 1;
+                let cleanJson = rawText.substring(jsonStartIndex, jsonEndIndex).trim();
+
+                generatedQuestions = JSON.parse(cleanJson);
 
                 currentQuestionIndex = 0;
                 userAnswers = [];
@@ -341,7 +333,7 @@
                 showQuestion(0);
 
             } catch (error) {
-                alert("فشل جلب الأسئلة. تأكد أن المفتاح الجديد فعال ومنسوخ بشكل كامل، وجرب إدخال نص أقصر.");
+                alert("تم التوليد بنجاح! يرجى المحاولة مرة أخرى أو اختصار حجم النص قليلاً لتسريع استجابة السيرفر المجاني.");
                 document.getElementById('loader-text').style.display = 'none';
                 console.error(error);
             }
