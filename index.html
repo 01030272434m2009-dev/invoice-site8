@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة المتفوقين - ثانوية عامة 2027</title>
+    <title>منصة المتفوقين الذكية - ثانوية عامة 2027</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
     <style>
         :root {
             --primary: #4A90E2;
@@ -16,94 +17,53 @@
             --accent: #FF7675;
             --success: #00B894;
             --bg-gradient: linear-gradient(135deg, #FFEAA7 0%, #A8E6CF 100%);
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.95);
             --text-color: #2D3436;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
         body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-color); min-height: 100vh; padding: 20px; }
         
-        /* شريط التنقل العلوي بين الصفحات */
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .nav-btn {
-            background: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; max-width: 1000px; margin: 0 auto 25px auto; }
+        .nav-btn { background: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; color: var(--text-color); display: flex; align-items: center; gap: 10px; }
         .nav-btn.active { background: var(--secondary); color: white; transform: scale(1.05); }
 
         .page { display: none; width: 100%; max-width: 1000px; margin: 0 auto; animation: fadeIn 0.5s ease; }
         .page.active { display: block; }
 
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            backdrop-filter: blur(10px);
-            border: 2px solid white;
-        }
-
+        header { text-align: center; margin-bottom: 20px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 2px solid white; }
         h1 { color: var(--secondary); font-weight: 900; margin-bottom: 10px; }
         .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card {
-            background: var(--card-bg); border-radius: 25px; padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(10px);
-            border: 2px solid white; transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .card { background: var(--card-bg); border-radius: 25px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 2px solid white; transition: 0.3s; position: relative; }
         .card-title { font-size: 1.3rem; color: var(--secondary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
 
         /* العداد وشريط التقدم */
         .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-bottom: 20px; }
-        .countdown-item { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .countdown-item { background: white; padding: 10px; border-radius: 15px; }
         .countdown-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
         .progress-container { background: #dfe6e9; border-radius: 20px; height: 25px; position: relative; overflow: hidden; }
-        .progress-bar { background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 1s; border-radius: 20px; }
+        .progress-bar { background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 1s; }
         .progress-text { position: absolute; width: 100%; text-align: center; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: bold; }
 
-        /* مواقيت الصلاة */
         .prayer-time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 500; }
-
-        /* معرض الصور التحفيزية */
         .motivation-img { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid white; }
-
-        /* مفاجأة الخميس والتحدي */
         .thursday-box { background: linear-gradient(135deg, #ffeaa7, #ff7675); color: #2d3436; text-align: center; padding: 20px; border-radius: 15px; display: none; font-weight: bold; margin-top: 10px; }
-        .quiz-option { display: block; background: white; padding: 12px; margin: 8px 0; border-radius: 10px; cursor: pointer; border: 2px solid #edf2f7; transition: 0.2s; text-align: right; }
-        .quiz-option:hover { border-color: var(--primary); background: #f7fafc; }
-        .btn { background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 10px; }
-        .btn:hover { opacity: 0.9; }
-
-        /* صفحة الاختبارات والمولد */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--secondary); }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edf2f7; font-size: 1rem; outline: none; }
-        input:focus, select:focus { border-color: var(--primary); }
-        .file-upload-wrapper { position: relative; background: white; border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; }
         
+        /* خيارات الأسئلة */
+        .quiz-option { display: block; background: white; padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 2px solid #edf2f7; transition: 0.2s; text-align: right; font-weight: 500; }
+        .quiz-option:hover { border-color: var(--primary); background: #f7fafc; }
+        .quiz-option.selected { border-color: var(--secondary); background: #eeebff; }
+        .quiz-option.correct-flash { background: #e6fffa; border-color: var(--success); color: #006b54; }
+        .quiz-option.wrong-flash { background: #ffebeb; border-color: var(--accent); color: #b33939; }
+
+        .btn { background: var(--secondary); color: white; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 10px; font-size: 1rem; }
+        .btn:hover { opacity: 0.9; }
+        textarea, input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edf2f7; font-size: 1rem; outline: none; margin-top: 5px; }
+
         .exam-box { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: 20px; }
-        .question-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: var(--text-color); }
-        .result-box { display: none; text-align: center; padding: 20px; background: #e6fffa; border: 2px solid var(--success); border-radius: 15px; margin-top: 20px; }
+        .question-title { font-size: 1.25rem; font-weight: bold; margin-bottom: 15px; color: #2d3436; line-height: 1.5; }
+        .result-box { display: none; text-align: center; padding: 30px; background: #e6fffa; border: 2px solid var(--success); border-radius: 15px; margin-top: 20px; }
+        .loading { display: none; text-align: center; margin: 15px 0; font-weight: bold; color: var(--secondary); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -112,7 +72,7 @@
 
     <nav>
         <button class="nav-btn active" onclick="switchPage('main-page')"><i class="fa-solid fa-gauge"></i> لوحة التحكم الرئيسية</button>
-        <button class="nav-btn" onclick="switchPage('exam-page')"><i class="fa-solid fa-book-open"></i> مولد الامتحانات الذكي</button>
+        <button class="nav-btn" onclick="switchPage('exam-page')"><i class="fa-solid fa-book-open"></i> مولد الاختبارات بالذكاء الاصطناعي</button>
     </nav>
 
     <div id="main-page" class="page active">
@@ -123,7 +83,7 @@
 
         <div class="container">
             <div class="card">
-                <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> الوقت المتبقي للامتحانات 2027</div>
+                <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> تنازلي امتحانات 2027</div>
                 <div class="countdown-grid">
                     <div class="countdown-item"><div class="countdown-num" id="days">0</div>يوم</div>
                     <div class="countdown-item"><div class="countdown-num" id="hours">0</div>ساعة</div>
@@ -132,20 +92,22 @@
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar" id="myBar"></div>
-                    <div class="progress-text" id="progress-text">جاري الحساب...</div>
+                    <div class="progress-text" id="progress-text">جاري حساب الأيام...</div>
                 </div>
-                <button class="btn" style="background: var(--primary);" onclick="requestNotificationPermission()"><i class="fa-solid fa-bell"></i> تفعيل الإشعارات التلقائية</button>
             </div>
 
-            <div class="card" id="reward-card">
-                <div class="card-title"><i class="fa-solid fa-gift" style="color: var(--accent);"></i> سؤال المكافأة اليومية ومفاجأة الخميس</div>
-                <div id="quiz-area">
-                    <p id="challenge-question" style="font-weight: bold; margin-bottom: 10px;">جاري تجهيز سؤال التحدي اليومي...</p>
-                    <div id="quiz-options-container"></div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> سؤال التحدي اليومي (أحياء)</div>
+                <div id="main-challenge-area">
+                    <p class="question-title">سؤال: أي مما يلي يعتبر من السكريات الثنائية التي تتكون عند اتحاد جزيئين من السكريات الأحادية وفقاً لمنهجك؟</p>
+                    <div class="quiz-option" onclick="checkMainChallenge(this, false)">سوجر الجلوكوز</div>
+                    <div class="quiz-option" onclick="checkMainChallenge(this, false)">السيليلوز والنشا</div>
+                    <div class="quiz-option" onclick="checkMainChallenge(this, true)">المالتوز والسكاروز</div>
+                    <div class="quiz-option" onclick="checkMainChallenge(this, false)">الجيليكوجين</div>
                 </div>
                 <div class="thursday-box" id="thursday-surprise">
                     🎉 مفاجأة يوم الخميس البطل! 🎉<br>
-                    لقد أنجزت أسبوعاً رائعاً. مكافأتك اليوم: فيديو تحفيزي خاص وإذن استراحة لمدة ساعتين لتهيئة ذهنك للأسبوع القادم!
+                    مكافأتك اليوم: أنت بطل حقيقي! خذ استراحة لمدة ساعة الآن واشرب مشروبك المفضل، فالعقل يثبت معلوماته أثناء الراحة.
                 </div>
             </div>
 
@@ -153,35 +115,39 @@
                 <div class="card-title"><i class="fa-solid fa-mosque"></i> مواقيت الصلاة والإمساكية (الشرقية)</div>
                 <div id="prayer-times">
                     <div class="prayer-time-row"><span>الفجر</span><span id="p-Fajr">-:--</span></div>
-                    <div class="prayer-time-row"><span>الإمساك (قبل الفجر بـ 15 د)</span><span id="imsak-time" style="color: var(--accent);">-:--</span></div>
-                    <div class="prayer-time-row"><span>الشروق</span><span id="shuruq-time">-:--</span></div>
+                    <div class="prayer-time-row"><span>الإمساك</span><span id="imsak-time" style="color: var(--accent);">-:--</span></div>
                     <div class="prayer-time-row"><span>الظهر</span><span id="p-Dhuhr">-:--</span></div>
                     <div class="prayer-time-row"><span>العصر</span><span id="p-Asr">-:--</span></div>
-                    <div class="prayer-time-row"><span>المغرب (الإفطار)</span><span id="p-Maghrib" style="color: green;">-:--</span></div>
+                    <div class="prayer-time-row"><span>المغرب (الإفطار)</span><span id="p-Maghrib" style="color: green; font-weight: bold;">-:--</span></div>
                     <div class="prayer-time-row"><span>العشاء</span><span id="p-Isha">-:--</span></div>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-title"><i class="fa-solid fa-image"></i> شعلة التحفيز البصرية اليومية</div>
-                <p id="daily-tip" style="font-weight: bold; margin-bottom: 10px; text-align: center; color: #555;"></p>
-                <img id="motivation-display-img" class="motivation-img" src="" alt="تحفيز اليوم">
+                <div class="card-title"><i class="fa-solid fa-lightbulb"></i> طاقة إيجابية اليوم</div>
+                <p id="daily-tip" style="font-weight: bold; text-align: center; margin-bottom: 10px;"></p>
+                <img id="motivation-display-img" class="motivation-img" src="" alt="تحفيز">
             </div>
         </div>
     </div>
 
     <div id="exam-page" class="page">
         <header>
-            <h1><i class="fa-solid fa-robot"></i> مُولد الاختبارات الذكي من منهجك الخاص</h1>
-            <p>قم بلصق محتوى منهجك أو كتابة الفصل، وحدد الخيارات ليقوم الذكاء الاصطناعي ببناء الامتحان فوراً.</p>
+            <h1><i class="fa-solid fa-brain"></i> مُولد الامتحانات الحقيقي الذكي</h1>
+            <p>ضع مفتاحك المجاني، ثم ارفع كتابك (PDF) أو الصق النص، وسيتكفل الذكاء الاصطناعي بصناعة امتحان حقيقي وصارم.</p>
         </header>
 
         <div class="card">
-            <div class="card-title"><i class="fa-solid fa-sliders"></i> إعدادات الامتحان التلقائي</div>
-            
+            <div class="form-group" style="background: #fff3cd; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <label style="color: #856404; font-weight: bold;">1. أدخل مفتاح Gemini API المجاني الخاص بك:</label>
+                <input type="password" id="api-key" placeholder="AIzaSy..." value="">
+                <small style="color: #666; display: block; margin-top: 5px;">(احصل عليه مجاناً من Google AI Studio ليعمل الموقع بشكل مستقل وتلقائي تماماً)</small>
+            </div>
+
             <div class="form-group">
-                <label>أدخل محتوى المنهج هنا (انسخ النص من مذكرتك أو كتابك وضعها هنا):</label>
-                <textarea id="syllabus-content" rows="6" placeholder="مثال: يتكون العقل البشري من عدة فصوص، الفص الجبهي مسؤول عن التخطيط والمنطق، والفص القفوي مسؤول عن الرؤية ومعالجة الصور..."></textarea>
+                <label>2. اختر طريقة إدخال المنهج:</label>
+                <input type="file" id="pdf-file" accept=".pdf" style="padding: 8px;">
+                <textarea id="syllabus-content" rows="5" style="margin-top: 10px;" placeholder="أو الصق النص هنا مباشرة... (مثال: نص الكربوهيدرات والأحياء الخاص بك)"></textarea>
             </div>
 
             <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -190,38 +156,37 @@
                     <input type="number" id="exam-q-count" min="1" max="10" value="3">
                 </div>
                 <div class="form-group">
-                    <label>تحديد النطاق (المحتوى المستهدف):</label>
+                    <label>النطاق المستهدف من النص:</label>
                     <select id="exam-scope">
-                        <option value="all">المحتوى بالكامل</option>
-                        <option value="part1">من الصفحة الأولى إلى المنتصف</option>
-                        <option value="part2">من منتصف المحتوى للنهاية</option>
+                        <option value="كامل المحتوى المدرج">كامل المحتوى المدرج</option>
+                        <option value="الربع الأول فقط">الربع الأول فقط</option>
+                        <option value="النصف الثاني فقط">النصف الثاني فقط</option>
                     </select>
                 </div>
             </div>
 
-            <button class="btn" style="background: var(--success);" onclick="generateCustomExam()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد الامتحان تلقائياً الآن</button>
+            <button class="btn" style="background: var(--success);" onclick="generateAIExam()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد الامتحان الفعلي بالذكاء الاصطناعي</button>
+            <div class="loading" id="loader-text"><i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة الملف وتوليد الأسئلة الحقيقية من المنهج...</div>
         </div>
 
         <div class="exam-box" id="exam-box">
-            <div id="question-container">
-                </div>
+            <div id="question-container"></div>
             <button class="btn" id="next-q-btn" onclick="goToNextQuestion()" style="display: none;">السؤال التالي <i class="fa-solid fa-arrow-left"></i></button>
             <button class="btn" id="submit-exam-btn" onclick="finishExam()" style="display: none; background: var(--accent);">تسليم الاختبار ورؤية النتيجة</button>
         </div>
 
         <div class="result-box" id="result-box">
-            <h2>🎉 نتيجتك هي: <span id="score-text">0/0</span></h2>
-            <p id="result-feedback" style="margin-top: 10px; font-weight: bold;"></p>
-            <button class="btn" onclick="resetExamBuilder()" style="max-width: 200px; margin: 15px auto 0 auto;">إنشاء اختبار جديد</button>
+            <h2>🎉 نتيجتك الفعلية هي: <span id="score-text">0/0</span></h2>
+            <p id="result-feedback" style="margin-top: 10px; font-weight: bold; font-size: 1.2rem;"></p>
+            <button class="btn" onclick="resetExamBuilder()" style="max-width: 250px; margin: 15px auto 0 auto;">إنشاء اختبار جديد</button>
         </div>
     </div>
 
     <script>
-        // التواريخ المحدثة للمشروع بناءً على طلبك الإضافي
+        // ضبط التواريخ المطلوبة بدقة
         const startDate = new Date("August 1, 2026 00:00:00").getTime();
         const targetDate = new Date("July 20, 2027 00:00:00").getTime();
 
-        // التبديل بين الصفحات
         function switchPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -229,11 +194,9 @@
             event.currentTarget.classList.add('active');
         }
 
-        // تحديث العداد التنازلي وشريط التقدم
         function updateCountdown() {
             const now = new Date().getTime();
             const difference = targetDate - now;
-
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
@@ -251,110 +214,139 @@
 
             document.getElementById("myBar").style.width = progressPercent + "%";
             const passedDays = Math.floor(elapsed / (1000 * 60 * 60 * 24));
-            document.getElementById("progress-text").innerText = `مرّ ${passedDays >= 0 ? passedDays : 0} يوم وباقي ${days} يوم على حلمك`;
+            document.getElementById("progress-text").innerText = `مرّ ${passedDays >= 0 ? passedDays : 0} يوم وباقي ${days} يوم للامتحانات`;
         }
         setInterval(updateCountdown, 1000);
 
-        // مصفوفة الصور التحفيزية والكلمات المرافقة لها المصممة تلقائياً لكل يوم
-        const visualMotivations = [
-            { text: "💪 اصنع مستقبلك بنفسك، لا تنتظر الظروف لتصنعك!", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80" },
-            { text: "📚 كل ساعة مذكر اليوم هي حجر أساس في قصر نجاحك غداً.", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&q=80" },
-            { text: "🎯 ركز على الهدف ولا تنظر للمصاعب، القمة تستحق.", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&q=80" },
-            { text: "✨ تنظيم الوقت هو السلاح السري للعباقرة.", img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80" }
-        ];
-
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-        const currentMotivation = visualMotivations[dayOfYear % visualMotivations.length];
-        document.getElementById('daily-tip').innerText = currentMotivation.text;
-        document.getElementById('motivation-display-img').src = currentMotivation.img;
-
-        // التحقق تلقائياً من يوم الخميس ونظام المكافأة
-        const currentDayOfWeek = new Date().getDay(); // 4 تعني يوم الخميس
-        if (currentDayOfWeek === 4) {
+        // تشغيل مفاجأة الخميس تلقائياً
+        if (new Date().getDay() === 4) {
             document.getElementById('thursday-surprise').style.display = 'block';
         }
 
-        // بنك أسئلة التحدي اليومي للحصول على المكافآت
-        const dailyChallenges = [
-            { q: "أي مما يلي يُعد وظيفة أساسية للفص الجبهي في الدماغ؟", options: ["الرؤية والألوان", "التخطيط واتخاذ القرار", "التوازن الحركي", "السمع واللغة"], correct: 1 },
-            { q: "ما هي وحدة قياس شدة التيار الكهربائي في النظام الدولي؟", options: ["الفولت", "الأوم", "الأمبير", "الوات"], correct: 2 }
-        ];
-        
-        const activeChallenge = dailyChallenges[dayOfYear % dailyChallenges.length];
-        document.getElementById('challenge-question').innerText = activeChallenge.q;
-        const optionsContainer = document.getElementById('quiz-options-container');
-        activeChallenge.options.forEach((opt, idx) => {
-            const btn = document.createElement('div');
-            btn.className = 'quiz-option';
-            btn.innerText = opt;
-            btn.onclick = () => {
-                if(idx === activeChallenge.correct) {
-                    alert("🎉 إجابة صحيحة وممتازة! تم فتح مفاجأة الخميس والتحفيز الإضافي لك بنجاح!");
-                    document.getElementById('thursday-surprise').style.display = 'block';
-                } else {
-                    alert("❌ إجابة خاطئة، حاول مجدداً وركز في مذكرتك!");
-                }
-            };
-            optionsContainer.appendChild(btn);
-        });
-
-        // مواقيت الصلاة لمحافظة الشرقية
-        async function fetchPrayerTimes() {
-            try {
-                const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=30.5877&longitude=31.5020&method=5`);
-                const data = await response.json();
-                if(data.code === 200) {
-                    const timings = data.data.timings;
-                    const dateInfo = data.data.date;
-                    document.getElementById('hijri-date').innerHTML = `<i class="fa-solid fa-moon"></i> ${dateInfo.hijri.day} ${dateInfo.hijri.month.ar} ${dateInfo.hijri.year} هـ`;
-                    document.getElementById('gregorian-date').innerText = `الموافق: ${dateInfo.gregorian.date} م`;
-                    document.getElementById('p-Fajr').innerText = timings.Fajr;
-                    document.getElementById('p-Dhuhr').innerText = timings.Dhuhr;
-                    document.getElementById('p-Asr').innerText = timings.Asr;
-                    document.getElementById('p-Maghrib').innerText = timings.Maghrib;
-                    document.getElementById('p-Isha').innerText = timings.Isha;
-                    document.getElementById('shuruq-time').innerText = timings.Sunrise;
-                    
-                    const fajrTime = timings.Fajr.split(':');
-                    let imsakMin = parseInt(fajrTime[0]) * 60 + parseInt(fajrTime[1]) - 15;
-                    document.getElementById('imsak-time').innerText = `${Math.floor(imsakMin / 60)}:${imsakMin % 60}`;
-                }
-            } catch (e) { console.log(e); }
+        function checkMainChallenge(element, isCorrect) {
+            if(isCorrect) {
+                element.className = "quiz-option correct-flash";
+                alert("🎉 ممتاز! إجابة صحيحة وفقاً لمنهج الأحياء (المالتوز سكر شعير ثنائي، والسكاروز سكر قصب ثنائي). تم تفعيل مكافأة الخميس!");
+                document.getElementById('thursday-surprise').style.display = 'block';
+            } else {
+                element.className = "quiz-option wrong-flash";
+                alert("❌ إجابة خاطئة! ركز جيداً: الجلوكوز أحادي، والنشا والسيليلوز والجيليكوجين معقدة.");
+            }
         }
-        fetchPrayerTimes();
 
-        // محرك توليد الاختبارات الذكي من المنهج المدرج
+        // جلب الصلوات والتاريخ الهجري للشرقية
+        async function fetchData() {
+            try {
+                const res = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now()/1000)}?latitude=30.5877&longitude=31.5020&method=5`);
+                const data = await res.json();
+                if(data.code === 200) {
+                    const t = data.data.timings;
+                    const d = data.data.date;
+                    document.getElementById('hijri-date').innerHTML = `<i class="fa-solid fa-moon"></i> ${d.hijri.day} ${d.hijri.month.ar} ${d.hijri.year} هـ`;
+                    document.getElementById('gregorian-date').innerText = `الموافق: ${d.gregorian.date} م`;
+                    document.getElementById('p-Fajr').innerText = t.Fajr;
+                    document.getElementById('p-Dhuhr').innerText = t.Dhuhr;
+                    document.getElementById('p-Asr').innerText = t.Asr;
+                    document.getElementById('p-Maghrib').innerText = t.Maghrib;
+                    document.getElementById('p-Isha').innerText = t.Isha;
+                    
+                    let fajrM = t.Fajr.split(':');
+                    let imsakMin = parseInt(fajrM[0])*60 + parseInt(fajrM[1]) - 15;
+                    document.getElementById('imsak-time').innerText = `${Math.floor(imsakMin/60)}:${imsakMin%60 < 10 ? '0'+imsakMin%60 : imsakMin%60}`;
+                }
+            } catch(e) {}
+        }
+        fetchData();
+
+        const visualMotivations = [
+            { text: "💪 لا شيء مستحيل عندما يكون الهدف واضحاً والإرادة قوية!", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80" },
+            { text: "📚 المذاكرة اليوم هي استثمار الغد.. ثق بنفسك وبقدراتك.", img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80" }
+        ];
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+        document.getElementById('daily-tip').innerText = visualMotivations[dayOfYear % visualMotivations.length].text;
+        document.getElementById('motivation-display-img').src = visualMotivations[dayOfYear % visualMotivations.length].img;
+
+        // ================= محرك الـ PDF والذكاء الاصطناعي الفعلي =================
         let generatedQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = [];
 
-        function generateCustomExam() {
-            const content = document.getElementById('syllabus-content').value.trim();
-            const qCount = parseInt(document.getElementById('exam-q-count').value);
+        // دالة قراءة ملف الـ PDF وتحويله لنص
+        async function extractTextFromPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let text = "";
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(" ") + "\n";
+            }
+            return text;
+        }
+
+        async function generateAIExam() {
+            const apiKey = document.getElementById('api-key').value.trim();
+            let content = document.getElementById('syllabus-content').value.trim();
+            const pdfFile = document.getElementById('pdf-file').files[0];
+            const qCount = document.getElementById('exam-q-count').value;
             const scope = document.getElementById('exam-scope').value;
 
-            if(!content) {
-                alert("برجاء أدخل أو الصق جزءاً من منهجك الدراسي أولاً في الصندوق المخصص لكي نقوم ببناء الأسئلة منه!");
+            if (!apiKey) {
+                alert("من فضلك أدخل مفتاح الـ API المجاني الخاص بـ Gemini أولاً لتوليد أسئلة حقيقية.");
                 return;
             }
 
-            // محاكاة محرك ذكاء اصطناعي محلي يقوم بتحليل الكلمات المفتاحية وإنتاج الأسئلة فوراً بناءً على نطاق المنهج
-            generatedQuestions = [];
-            userAnswers = [];
-            currentQuestionIndex = 0;
+            document.getElementById('loader-text').style.display = 'block';
 
-            // توليد أسئلة ديناميكية ذكية تفاعلية بناءً على النص المُدرج
-            for(let i=1; i<=qCount; i++) {
-                generatedQuestions.push({
-                    q: `سؤال ${i} بناءً على المحتوى المدرج لـ (${scope == 'all' ? 'كامل المنهج' : 'النطاق المختار'}): أي من العناصر المستخلصة تفيد الفهم الأعمق للنص؟`,
-                    options: [`الخيار الاستنباطي الأول لـ فكرة ${i}`, `الخيار الهيكلي الثاني للنص`, `جميع ما سبق يمثل تطبيقاً صحيحاً`, `لا توجد إجابة صحيحة`],
-                    correct: 2 // جعل الإيار الثالث هو الصحيح للمحاكاة التلقائية الفورية
-                });
+            if (pdfFile) {
+                try {
+                    content = await extractTextFromPDF(pdfFile);
+                } catch (e) {
+                    alert("حدث خطأ أثناء قراءة ملف الـ PDF، يرجى نسخ النص يدوياً.");
+                    document.getElementById('loader-text').style.display = 'none';
+                    return;
+                }
             }
 
-            document.getElementById('exam-box').style.display = 'block';
-            document.getElementById('result-box').style.display = 'none';
-            showQuestion(0);
+            if (!content) {
+                alert("من فضلك اكتب نصاً أو ارفع ملف PDF يحتوي على المنهج.");
+                document.getElementById('loader-text').style.display = 'none';
+                return;
+            }
+
+            // صياغة الـ Prompt الموجه للذكاء الاصطناعي للحصول على أسئلة علمية دقيقة بصيغة JSON
+            const prompt = `أنت مصمم امتحانات ثانوية عامة خبير. بناءً على هذا المنهج المدرج: "${content}"، قم بتوليد عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). 
+            يجب أن تكون الأسئلة دقيقة علمياً وواقعية ولها إجابة واحدة صحيحة تماماً وثلاثة خيارات خاطئة ومموهة ذكية من نفس السياق.
+            أريد الإجابة بصيغة ملف JSON نظيف تماماً، عبارة عن مصفوفة كائنات، كل كائن يحتوي على الحقول التالية باللغة العربية:
+            "q" (نص السؤال الفعلي)، "options" (مصفوفة بها 4 خيارات نصية)، "correct" (رقم مؤشر الإجابة الصحيحة من 0 إلى 3).
+            لا تضع أي كلام خارجي أو علامات تخفيض غير الـ JSON.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                
+                const data = await response.json();
+                let rawText = data.candidates[0].content.parts[0].text;
+                
+                // تنظيف رد الـ JSON
+                rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
+                generatedQuestions = JSON.parse(rawText);
+
+                currentQuestionIndex = 0;
+                userAnswers = [];
+                document.getElementById('loader-text').style.display = 'none';
+                document.getElementById('exam-box').style.display = 'block';
+                document.getElementById('result-box').style.display = 'none';
+                showQuestion(0);
+
+            } catch (error) {
+                alert("حدث خطأ في الاتصال بالذكاء الاصطناعي، تأكد من صحة الـ API Key أو حاول مجدداً.");
+                document.getElementById('loader-text').style.display = 'none';
+                console.error(error);
+            }
         }
 
         function showQuestion(index) {
@@ -364,17 +356,17 @@
 
             const title = document.createElement('div');
             title.className = 'question-title';
-            title.innerText = qData.q;
+            title.innerText = `سؤال ${index + 1}: ${qData.q}`;
             container.appendChild(title);
 
             qData.options.forEach((opt, idx) => {
                 const optBtn = document.createElement('div');
                 optBtn.className = 'quiz-option';
-                optBtn.id = `opt-${idx}`;
+                if(userAnswers[index] === idx) optBtn.classList.add('selected');
                 optBtn.innerText = opt;
                 optBtn.onclick = () => {
-                    document.querySelectorAll('.quiz-option').forEach(o => o.style.borderColor = '#edf2f7');
-                    optBtn.style.borderColor = 'var(--secondary)';
+                    document.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+                    optBtn.classList.add('selected');
                     userAnswers[index] = idx;
                 };
                 container.appendChild(optBtn);
@@ -391,7 +383,7 @@
 
         function goToNextQuestion() {
             if(userAnswers[currentQuestionIndex] === undefined) {
-                alert("برجاء اختيار إجابة أولاً للانتقال للسؤال التالي!");
+                alert("برجاء اختيار إجابة أولاً قبل الانتقال!");
                 return;
             }
             currentQuestionIndex++;
@@ -400,7 +392,7 @@
 
         function finishExam() {
             if(userAnswers[currentQuestionIndex] === undefined) {
-                alert("برجاء اختيار إجابة للسؤال الأخير قبل تسليم الاختبار!");
+                alert("برجاء اختيار إجابة للسؤال الأخير!");
                 return;
             }
 
@@ -416,21 +408,17 @@
             
             const feedback = document.getElementById('result-feedback');
             if(correctCount === generatedQuestions.length) {
-                feedback.innerText = "🏆 مذهل! إجابة كاملة وصحيحة، أنت تمشي بخطى ثابتة نحو كلية القمة!";
-                feedback.style.color = "green";
+                feedback.innerText = "🏆 مذهل! إجابة كاملة وصحيحة، أنت عبقري ومستعد تماماً للامتحان النهائي!";
+                feedback.style.color = "var(--success)";
             } else {
-                feedback.innerText = "👍 أداء جيد، ولكن يمكنك مراجعة المحتوى المدرج مرة أخرى لتفادي هذه الأخطاء في الامتحانات الرسمية.";
-                feedback.style.color = "orange";
+                feedback.innerText = "📚 جيد، لكن تذكر أن الأخطاء هي طريق التعلم الفعلي. راجع النقاط الخاطئة فوراً لتثبيتها.";
+                feedback.style.color = "var(--accent)";
             }
         }
 
         function resetExamBuilder() {
             document.getElementById('result-box').style.display = 'none';
-            document.getElementById('syllabus-content').value = "";
-        }
-
-        function requestNotificationPermission() {
-            Notification.requestPermission().then(p => { if(p === 'granted') alert("تم تشغيل نظام الإشعارات الذكي للمنصة!"); });
+            document.getElementById('exam-box').style.display = 'none';
         }
     </script>
 </body>
