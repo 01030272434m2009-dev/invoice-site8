@@ -284,7 +284,7 @@
             return text;
         }
 
-        async function generateAIExam() {
+   async function generateAIExam() {
             const apiKey = document.getElementById('api-key').value.trim();
             let content = document.getElementById('syllabus-content').value.trim();
             const pdfFile = document.getElementById('pdf-file').files[0];
@@ -314,15 +314,18 @@
                 return;
             }
 
-            // صياغة الـ Prompt الموجه للذكاء الاصطناعي للحصول على أسئلة علمية دقيقة بصيغة JSON
             const prompt = `أنت مصمم امتحانات ثانوية عامة خبير. بناءً على هذا المنهج المدرج: "${content}"، قم بتوليد عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). 
             يجب أن تكون الأسئلة دقيقة علمياً وواقعية ولها إجابة واحدة صحيحة تماماً وثلاثة خيارات خاطئة ومموهة ذكية من نفس السياق.
             أريد الإجابة بصيغة ملف JSON نظيف تماماً، عبارة عن مصفوفة كائنات، كل كائن يحتوي على الحقول التالية باللغة العربية:
             "q" (نص السؤال الفعلي)، "options" (مصفوفة بها 4 خيارات نصية)، "correct" (رقم مؤشر الإجابة الصحيحة من 0 إلى 3).
             لا تضع أي كلام خارجي أو علامات تخفيض غير الـ JSON.`;
 
+            // استخدام البروكسي لحل مشكلة قيود CORS في المتصفح وتأمين الاتصال
+            const proxyUrl = "https://corsproxy.io/?";
+            const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -331,7 +334,6 @@
                 const data = await response.json();
                 let rawText = data.candidates[0].content.parts[0].text;
                 
-                // تنظيف رد الـ JSON
                 rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 generatedQuestions = JSON.parse(rawText);
 
@@ -343,7 +345,7 @@
                 showQuestion(0);
 
             } catch (error) {
-                alert("حدث خطأ في الاتصال بالذكاء الاصطناعي، تأكد من صحة الـ API Key أو حاول مجدداً.");
+                alert("حدث خطأ في الاتصال بالذكاء الاصطناعي. تأكد أن المفتاح نشط ومفعّل، أو جرب لصق نص المنهج مباشرة بدلاً من الـ PDF في حال كان حجم الملف ضخماً جداً على المتصفح.");
                 document.getElementById('loader-text').style.display = 'none';
                 console.error(error);
             }
