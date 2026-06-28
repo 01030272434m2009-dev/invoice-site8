@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد طالب الثانوية العامة 2027</title>
+    <!-- خطوط جوجل ومكتبة أيقونات -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #6C5CE7;
+            --accent: #FF7675;
+            --bg-gradient: linear-gradient(135deg, #FFEAA7 0%, #A8E6CF 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #2D3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 1000px;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 { color: var(--secondary); margin-bottom: 10px; font-weight: 900; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        /* العداد التنازلي وشريط التقدم */
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .countdown-item {
+            background: white;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .countdown-num {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .progress-container {
+            background: #dfe6e9;
+            border-radius: 20px;
+            height: 25px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            width: 0%;
+            transition: width 1s ease-in-out;
+            border-radius: 20px;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #2d3436;
+        }
+
+        /* مواقيت الصلاة */
+        .prayer-time-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 500;
+        }
+        .prayer-time-row.active {
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 10px;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        /* نصيحة وتحفيز */
+        .quote-box {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            font-style: italic;
+            text-align: center;
+            margin-top: 15px;
+            color: #555;
+        }
+
+        .motivation-card {
+            background: linear-gradient(135deg, #ff7675 0%, #ffb8b8 100%);
+            color: white;
+        }
+        .motivation-card .card-title, .motivation-card .quote-box {
+            color: white !important;
+        }
+
+        .btn-notif {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-notif:hover { opacity: 0.9; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* الجسيمات الخلفية (مؤثرات بصرية مبهجة) */
+        .bubbly {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.5);
+            bottom: -20px;
+            border-radius: 50%;
+            animation: float Up 10s infinite linear;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="hijri-date"><i class="fa-solid fa-calendar-islamic"></i> جاري تحميل التاريخ الهجري...</h1>
+        <p id="gregorian-date" style="font-weight: 500; color: #666;"></p>
+    </header>
+
+    <div class="container">
+        
+        <!-- كارت العداد التنازلي -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> الوقت المتبقي لحلم 2027</div>
+            <div class="countdown-grid">
+                <div class="countdown-item"><div class="countdown-num" id="days">0</div>ثاني/يوم</div>
+                <div class="countdown-item"><div class="countdown-num" id="hours">0</div>ساعة</div>
+                <div class="countdown-item"><div class="countdown-num" id="minutes">0</div>دقيقة</div>
+                <div class="countdown-item"><div class="countdown-num" id="seconds">0</div>ثانية</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="myBar"></div>
+                <div class="progress-text" id="progress-text">جاري الحساب...</div>
+            </div>
+            <button class="btn-notif" onclick="requestNotificationPermission()"><i class="fa-solid fa-bell"></i> تفعيل الإشعارات التلقائية خارج الموقع</button>
+        </div>
+
+        <!-- مواقيت الصلاة (الشرقية) -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-mosque"></i> مواقيت الصلاة بمحافظة الشرقية</div>
+            <div id="prayer-times">
+                <div class="prayer-time-row" id="p-Fajr"><span>الفجر</span><span class="time">-:--</span></div>
+                <div class="prayer-time-row" id="p-Dhuhr"><span>الظهر</span><span class="time">-:--</span></div>
+                <div class="prayer-time-row" id="p-Asr"><span>العصر</span><span class="time">-:--</span></div>
+                <div class="prayer-time-row" id="p-Maghrib"><span>المغرب</span><span class="time">-:--</span></div>
+                <div class="prayer-time-row" id="p-Isha"><span>العشاء</span><span class="time">-:--</span></div>
+            </div>
+        </div>
+
+        <!-- إمساكية اليوم -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-cloud-moon"></i> إمساكية اليوم وحالة التعبد</div>
+            <div class="prayer-time-row"><span>الإمساك (قبل الفجر بـ 15 د)</span><span id="imsak-time" style="color: var(--accent); font-weight: bold;">-:--</span></div>
+            <div class="prayer-time-row"><span>الشروق</span><span id="shuruq-time">-:--</span></div>
+            <div class="prayer-time-row"><span>الإفطار (المغرب)</span><span id="iftar-time" style="color: green; font-weight: bold;">-:--</span></div>
+        </div>
+
+        <!-- نصيحة اليوم لطالب الثانوية -->
+        <div class="card">
+            <div class="card-title"><i class="fa-solid fa-lightbulb" style="color: #f1c40f;"></i> نصيحة اليوم الحياتية</div>
+            <div class="quote-box" id="daily-tip">اختر لِنفسك مَكانًا في القِمّة، فالقاعُ مُزدَحِمٌ جِداً. ابدأ اليوم بتركيز كامل!</div>
+        </div>
+
+        <!-- كارت التحفيز اليومي المتغير -->
+        <div class="card motivation-card">
+            <div class="card-title"><i class="fa-solid fa-fire-flame-curved"></i> شعلة التحفيز اليومية</div>
+            <div class="quote-box" id="daily-motivation">"إن الله لا يضيع أجر من أحسن عملاً" .. تعبك اليوم هو فخرك غداً.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // دالة تحديد التواريخ
+        const targetDate = new Date("July 20, 2027 00:00:00").getTime();
+        const startDate = new Date("Jun 01, 2024 00:00:00").getTime(); // نقطة البداية الافتراضية لحساب الأيام المارة
+
+        // النصائح اليومية (تتغير حسب اليوم تلقائياً)
+        const tips = [
+            "قسّم وقتك لـ 50 دقيقة مذكر و 10 دقائق راحة، هذا يمنع إجهاد العقل.",
+            "النوم الكافي (6-8 ساعات) قبل الفجر يزيد من قدرة الاستيعاب لأضعاف.",
+            "ابدأ بالمواد الصعبة دائماً في الصباح الباكر؛ ذهنك يكون في أعلى مستويات نشاطه.",
+            "التسويف هو سارق الوقت، تغلّب عليه ببدء المذاكرة لمدة 5 دقائق فقط وسينتهي العجز.",
+            "راجع ما ذاكرته الأسبوع الماضي لمدة ساعة واحدة اليوم لضمان ثبات المعلومة.",
+            "اجعل هاتفك خارج الغرفة تماماً أثناء وقت المذاكرة؛ التركيز يتطلب الانعزال.",
+            "لا تقارن نفسك بزميلك، فكل شخص له وتيرة استيعاب مختلفة، ركّز على نسختك السابقة فقط."
+        ];
+
+        const motivations = [
+            "تخيّل فرحة والديك يوم النتيجة، كل تعب الآن سيهون من أجل تلك اللحظة!",
+            "القمة تتسع للجميع، ولكنها لا تستقبل إلا من دفع ثمن التميز جهداً وعرقاً.",
+            "ستمر الأيام والشهور، وسيبقى فقط فخر الإنجاز. قاتل من أجل حلمك.",
+            "أنت لست مجرد طالب، أنت مشروع نجاح للمستقبل، اصنع قصتك بنفسك.",
+            "كل فكرة صعبة تفهمها اليوم هي خطوة إضافية تقربك من الكلية التي تتمناها."
+        ];
+
+        // اختيار نصيحة وتحفيز بناءً على اليوم
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+        document.getElementById('daily-tip').innerText = tips[dayOfYear % tips.length];
+        document.getElementById('daily-motivation').innerText = motivations[dayOfYear % motivations.length];
+
+        // العداد التنازلي وشريط التقدم
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours;
+            document.getElementById("minutes").innerText = minutes;
+            document.getElementById("seconds").innerText = seconds;
+
+            // حساب شريط التقدم (كم يوم مر وكم باقي)
+            const totalDuration = targetDate - startDate;
+            const elapsed = now - startDate;
+            let progressPercent = (elapsed / totalDuration) * 100;
+            progressPercent = Math.max(0, Math.min(progressPercent, 100)); // محصورة بين 0 و 100
+
+            document.getElementById("myBar").style.width = progressPercent + "%";
+            
+            const totalDays = Math.floor(totalDuration / (1000 * 60 * 60 * 24));
+            const passedDays = Math.floor(elapsed / (1000 * 60 * 60 * 24));
+            document.getElementById("progress-text").innerText = `مرّ ${passedDays} يوم وباقي ${days} يوم للامتحانات`;
+        }
+        setInterval(updateCountdown, 1000);
+
+        // جلب التاريخ الهجري والميلادي والصلوات من الـ API (محافظة الشرقية - الزقازيق)
+        async function fetchPrayerTimesAndDates() {
+            try {
+                // إحداثيات محافظة الشرقية (الزقازيق تقريباً)
+                const lat = 30.5877;
+                const lng = 31.5020;
+                
+                const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=${lat}&longitude=${lng}&method=5`);
+                const data = await response.json();
+                
+                if(data.code === 200) {
+                    const timings = data.data.timings;
+                    const dateInfo = data.data.date;
+
+                    // عرض التواريخ
+                    document.getElementById('hijri-date').innerHTML = `<i class="fa-solid fa-moon"></i> ${dateInfo.hijri.day} ${dateInfo.hijri.month.ar} ${dateInfo.hijri.year} هـ`;
+                    document.getElementById('gregorian-date').innerText = `الموافق: ${dateInfo.gregorian.date} م`;
+
+                    // عرض مواقيت الصلاة
+                    document.getElementById('p-Fajr').querySelector('.time').innerText = timings.Fajr;
+                    document.getElementById('p-Dhuhr').querySelector('.time').innerText = timings.Dhuhr;
+                    document.getElementById('p-Asr').querySelector('.time').innerText = timings.Asr;
+                    document.getElementById('p-Maghrib').querySelector('.time').innerText = timings.Maghrib;
+                    document.getElementById('p-Isha').querySelector('.time').innerText = timings.Isha;
+
+                    // الإمساكية
+                    document.getElementById('shuruq-time').innerText = timings.Sunrise;
+                    document.getElementById('iftar-time').innerText = timings.Maghrib;
+                    
+                    // حساب وقت الإمساك قبل الفجر بـ 15 دقيقة
+                    const fajrTime = timings.Fajr.split(':');
+                    let fajrMinutes = parseInt(fajrTime[0]) * 60 + parseInt(fajrTime[1]) - 15;
+                    let imsakH = Math.floor(fajrMinutes / 60);
+                    let imsakM = fajrMinutes % 60;
+                    document.getElementById('imsak-time').innerText = `${imsakH}:${imsakM < 10 ? '0'+imsakM : imsakM}`;
+
+                    setupServiceWorkerAndNotifications(timings);
+                }
+            } catch (error) {
+                console.log("خطأ في جلب البيانات: ", error);
+            }
+        }
+        fetchPrayerTimesAndDates();
+
+        // تفعيل الإشعارات خارج الموقع (Push Notifications) عبر نظام المتصفح
+        function requestNotificationPermission() {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("تم تفعيل الإشعارات بنجاح! ستصلك رسائل تحفيزية وتنبيهات الصلوات.");
+                    showInstantNotification("أهلاً بك!", "تم ربط الإشعارات بنجاح، بالتوفيق في رحلتك للثانوية العامة.");
+                }
+            });
+        }
+
+        function showInstantNotification(title, body) {
+            if (Notification.permission === "granted") {
+                new Notification(title, { body: body, icon: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4da.png" });
+            }
+        }
+
+        // إشعارات دورية ذكية حتى لو الموقع مفتوح بالخلفية
+        function setupServiceWorkerAndNotifications(timings) {
+            if (!("Notification" in window)) return;
+
+            // إرسال إشعار تحفيزي عشوائي كل ساعة بالخلفية
+            setInterval(() => {
+                if (Notification.permission === "granted") {
+                    const randomMotivation = motivations[Math.floor(Math.random() * motivations.length)];
+                    new Notification("تذكير ثانوية عامة 2027 🎯", {
+                        body: randomMotivation,
+                        tag: 'motivation'
+                    });
+                }
+            }, 3600000); // كل ساعة
+        }
+
+    </script>
+</body>
+</html>
