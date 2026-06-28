@@ -99,7 +99,7 @@
             <div class="card">
                 <div class="card-title"><i class="fa-solid fa-trophy" style="color: #f1c40f;"></i> سؤال التحدي اليومي (أحياء)</div>
                 <div id="main-challenge-area">
-                    <p class="question-title">سؤال: أي مما يلي يعتبر من السكريات الثنائية التي تتكون عند اتحاد جزيئين من السكريات الأحادية وفقاً لمنهجك؟</p>
+                    <p class="question-title">سؤال: أي مما يلي يعتبر من السكريات الثنائية التي تتكون عند اتحاد جزيئين من السكريات الأحادية وفقاً لمنهجك?</p>
                     <div class="quiz-option" onclick="checkMainChallenge(this, false)">سوجر الجلوكوز</div>
                     <div class="quiz-option" onclick="checkMainChallenge(this, false)">السيليلوز والنشا</div>
                     <div class="quiz-option" onclick="checkMainChallenge(this, true)">المالتوز والسكاروز</div>
@@ -183,7 +183,6 @@
     </div>
 
     <script>
-        // ضبط التواريخ المطلوبة بدقة
         const startDate = new Date("August 1, 2026 00:00:00").getTime();
         const targetDate = new Date("July 20, 2027 00:00:00").getTime();
 
@@ -218,7 +217,6 @@
         }
         setInterval(updateCountdown, 1000);
 
-        // تشغيل مفاجأة الخميس تلقائياً
         if (new Date().getDay() === 4) {
             document.getElementById('thursday-surprise').style.display = 'block';
         }
@@ -234,7 +232,6 @@
             }
         }
 
-        // جلب الصلوات والتاريخ الهجري للشرقية
         async function fetchData() {
             try {
                 const res = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now()/1000)}?latitude=30.5877&longitude=31.5020&method=5`);
@@ -266,12 +263,10 @@
         document.getElementById('daily-tip').innerText = visualMotivations[dayOfYear % visualMotivations.length].text;
         document.getElementById('motivation-display-img').src = visualMotivations[dayOfYear % visualMotivations.length].img;
 
-        // ================= محرك الـ PDF والذكاء الاصطناعي الفعلي =================
         let generatedQuestions = [];
         let currentQuestionIndex = 0;
         let userAnswers = [];
 
-        // دالة قراءة ملف الـ PDF وتحويله لنص
         async function extractTextFromPDF(file) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -284,7 +279,7 @@
             return text;
         }
 
-   async function generateAIExam() {
+        async function generateAIExam() {
             const apiKey = document.getElementById('api-key').value.trim();
             let content = document.getElementById('syllabus-content').value.trim();
             const pdfFile = document.getElementById('pdf-file').files[0];
@@ -314,14 +309,14 @@
                 return;
             }
 
-            const prompt = `أنت مصمم امتحانات ثانوية عامة خبير. بناءً على هذا المنهج المدرج: "${content}"، قم بتوليد عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). 
-            يجب أن تكون الأسئلة دقيقة علمياً وواقعية ولها إجابة واحدة صحيحة تماماً وثلاثة خيارات خاطئة ومموهة ذكية من نفس السياق.
-            أريد الإجابة بصيغة ملف JSON نظيف تماماً، عبارة عن مصفوفة كائنات، كل كائن يحتوي على الحقول التالية باللغة العربية:
+            const prompt = `أنت مصمم امتحانات ثانوية عامة خبير ومحترف للغاية. بناءً على هذا المنهج المدرج حصراً: "${content}"، قم بتوليد عدد ${qCount} أسئلة اختيار من متعدد مستهدفاً (${scope}). 
+            يجب أن تكون الأسئلة ذكية، دقيقة علمياً ولها إجابة واحدة صحيحة وثلاثة خيارات خاطئة ومموهة ذكية من نفس السياق.
+            أريد الإجابة بصيغة ملف JSON نظيف ومباشر (عبارة عن مصفوفة كائنات فقط)، كل كائن يحتوي على الحقول التالية باللغة العربية:
             "q" (نص السؤال الفعلي)، "options" (مصفوفة بها 4 خيارات نصية)، "correct" (رقم مؤشر الإجابة الصحيحة من 0 إلى 3).
-            لا تضع أي كلام خارجي أو علامات تخفيض غير الـ JSON.`;
+            لا تضع أي نصوص تفسيرية خارج الـ JSON ولا تضع علامات البداية والنهاية مثل \`\`\`json فقط المصفوفة مباشرة.`;
 
-            // استخدام البروكسي لحل مشكلة قيود CORS في المتصفح وتأمين الاتصال
-            const proxyUrl = "https://corsproxy.io/?";
+            // استخدام البروكسي المفتوح والمستقر allorigins لحل أزمة الـ CORS نهائياً وثواني معدودة
+            const proxyUrl = "https://api.allorigins.win/raw?url=";
             const targetUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
             try {
@@ -334,6 +329,7 @@
                 const data = await response.json();
                 let rawText = data.candidates[0].content.parts[0].text;
                 
+                // تنظيف النص والتأكد من تحليله بشكل مصفوفة JSON نقية
                 rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 generatedQuestions = JSON.parse(rawText);
 
@@ -345,7 +341,7 @@
                 showQuestion(0);
 
             } catch (error) {
-                alert("حدث خطأ في الاتصال بالذكاء الاصطناعي. تأكد أن المفتاح نشط ومفعّل، أو جرب لصق نص المنهج مباشرة بدلاً من الـ PDF في حال كان حجم الملف ضخماً جداً على المتصفح.");
+                alert("فشل جلب الأسئلة. تأكد أن المفتاح الجديد فعال ومنسوخ بشكل كامل، وجرب إدخال نص أقصر.");
                 document.getElementById('loader-text').style.display = 'none';
                 console.error(error);
             }
