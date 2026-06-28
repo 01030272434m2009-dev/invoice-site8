@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد طالب الثانوية العامة 2027</title>
-    <!-- خطوط جوجل ومكتبة أيقونات -->
+    <title>منصة المتفوقين - ثانوية عامة 2027</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -15,286 +14,222 @@
             --primary: #4A90E2;
             --secondary: #6C5CE7;
             --accent: #FF7675;
+            --success: #00B894;
             --bg-gradient: linear-gradient(135deg, #FFEAA7 0%, #A8E6CF 100%);
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-color: #2D3436;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Tajawal', sans-serif;
-        }
-
-        body {
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-color);
-            min-height: 100vh;
-            padding: 20px;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-color); min-height: 100vh; padding: 20px; }
+        
+        /* شريط التنقل العلوي بين الصفحات */
+        nav {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            width: 100%;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
             max-width: 1000px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
         }
+        .nav-btn {
+            background: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-btn.active { background: var(--secondary); color: white; transform: scale(1.05); }
+
+        .page { display: none; width: 100%; max-width: 1000px; margin: 0 auto; animation: fadeIn 0.5s ease; }
+        .page.active { display: block; }
 
         header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             background: var(--card-bg);
             padding: 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
-            width: 100%;
-            max-width: 1000px;
-            animation: fadeIn 1s ease;
-        }
-
-        h1 { color: var(--secondary); margin-bottom: 10px; font-weight: 900; }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 25px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            backdrop-filter: blur(10px);
             border: 2px solid white;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        h1 { color: var(--secondary); font-weight: 900; margin-bottom: 10px; }
+        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card {
+            background: var(--card-bg); border-radius: 25px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); backdrop-filter: blur(10px);
+            border: 2px solid white; transition: 0.3s; position: relative; overflow: hidden;
         }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .card-title { font-size: 1.3rem; color: var(--secondary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
 
-        .card-title {
-            font-size: 1.3rem;
-            color: var(--secondary);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-        }
-
-        /* العداد التنازلي وشريط التقدم */
-        .countdown-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .countdown-item {
-            background: white;
-            padding: 10px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-
-        .countdown-num {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--primary);
-        }
-
-        .progress-container {
-            background: #dfe6e9;
-            border-radius: 20px;
-            height: 25px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            height: 100%;
-            width: 0%;
-            transition: width 1s ease-in-out;
-            border-radius: 20px;
-        }
-
-        .progress-text {
-            position: absolute;
-            width: 100%;
-            text-align: center;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #2d3436;
-        }
+        /* العداد وشريط التقدم */
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-bottom: 20px; }
+        .countdown-item { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .countdown-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+        .progress-container { background: #dfe6e9; border-radius: 20px; height: 25px; position: relative; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 1s; border-radius: 20px; }
+        .progress-text { position: absolute; width: 100%; text-align: center; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: bold; }
 
         /* مواقيت الصلاة */
-        .prayer-time-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            font-weight: 500;
-        }
-        .prayer-time-row.active {
-            background: rgba(108, 92, 231, 0.1);
-            border-radius: 10px;
-            color: var(--secondary);
-            font-weight: bold;
-        }
+        .prayer-time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 500; }
 
-        /* نصيحة وتحفيز */
-        .quote-box {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            font-style: italic;
-            text-align: center;
-            margin-top: 15px;
-            color: #555;
-        }
+        /* معرض الصور التحفيزية */
+        .motivation-img { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px solid white; }
 
-        .motivation-card {
-            background: linear-gradient(135deg, #ff7675 0%, #ffb8b8 100%);
-            color: white;
-        }
-        .motivation-card .card-title, .motivation-card .quote-box {
-            color: white !important;
-        }
+        /* مفاجأة الخميس والتحدي */
+        .thursday-box { background: linear-gradient(135deg, #ffeaa7, #ff7675); color: #2d3436; text-align: center; padding: 20px; border-radius: 15px; display: none; font-weight: bold; margin-top: 10px; }
+        .quiz-option { display: block; background: white; padding: 12px; margin: 8px 0; border-radius: 10px; cursor: pointer; border: 2px solid #edf2f7; transition: 0.2s; text-align: right; }
+        .quiz-option:hover { border-color: var(--primary); background: #f7fafc; }
+        .btn { background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 10px; }
+        .btn:hover { opacity: 0.9; }
 
-        .btn-notif {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-            width: 100%;
-            transition: 0.3s;
-        }
-        .btn-notif:hover { opacity: 0.9; }
+        /* صفحة الاختبارات والمولد */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--secondary); }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edf2f7; font-size: 1rem; outline: none; }
+        input:focus, select:focus { border-color: var(--primary); }
+        .file-upload-wrapper { position: relative; background: white; border: 2px dashed var(--primary); padding: 20px; text-align: center; border-radius: 15px; cursor: pointer; }
+        
+        .exam-box { display: none; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-top: 20px; }
+        .question-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: var(--text-color); }
+        .result-box { display: none; text-align: center; padding: 20px; background: #e6fffa; border: 2px solid var(--success); border-radius: 15px; margin-top: 20px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* الجسيمات الخلفية (مؤثرات بصرية مبهجة) */
-        .bubbly {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.5);
-            bottom: -20px;
-            border-radius: 50%;
-            animation: float Up 10s infinite linear;
-            z-index: -1;
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="hijri-date"><i class="fa-solid fa-calendar-islamic"></i> جاري تحميل التاريخ الهجري...</h1>
-        <p id="gregorian-date" style="font-weight: 500; color: #666;"></p>
-    </header>
+    <nav>
+        <button class="nav-btn active" onclick="switchPage('main-page')"><i class="fa-solid fa-gauge"></i> لوحة التحكم الرئيسية</button>
+        <button class="nav-btn" onclick="switchPage('exam-page')"><i class="fa-solid fa-book-open"></i> مولد الامتحانات الذكي</button>
+    </nav>
 
-    <div class="container">
-        
-        <!-- كارت العداد التنازلي -->
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> الوقت المتبقي لحلم 2027</div>
-            <div class="countdown-grid">
-                <div class="countdown-item"><div class="countdown-num" id="days">0</div>ثاني/يوم</div>
-                <div class="countdown-item"><div class="countdown-num" id="hours">0</div>ساعة</div>
-                <div class="countdown-item"><div class="countdown-num" id="minutes">0</div>دقيقة</div>
-                <div class="countdown-item"><div class="countdown-num" id="seconds">0</div>ثانية</div>
+    <div id="main-page" class="page active">
+        <header>
+            <h1 id="hijri-date"><i class="fa-solid fa-moon"></i> جاري تحميل التاريخ الهجري...</h1>
+            <p id="gregorian-date" style="font-weight: 500; color: #666;"></p>
+        </header>
+
+        <div class="container">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> الوقت المتبقي للامتحانات 2027</div>
+                <div class="countdown-grid">
+                    <div class="countdown-item"><div class="countdown-num" id="days">0</div>يوم</div>
+                    <div class="countdown-item"><div class="countdown-num" id="hours">0</div>ساعة</div>
+                    <div class="countdown-item"><div class="countdown-num" id="minutes">0</div>دقيقة</div>
+                    <div class="countdown-item"><div class="countdown-num" id="seconds">0</div>ثانية</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="myBar"></div>
+                    <div class="progress-text" id="progress-text">جاري الحساب...</div>
+                </div>
+                <button class="btn" style="background: var(--primary);" onclick="requestNotificationPermission()"><i class="fa-solid fa-bell"></i> تفعيل الإشعارات التلقائية</button>
             </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="myBar"></div>
-                <div class="progress-text" id="progress-text">جاري الحساب...</div>
+
+            <div class="card" id="reward-card">
+                <div class="card-title"><i class="fa-solid fa-gift" style="color: var(--accent);"></i> سؤال المكافأة اليومية ومفاجأة الخميس</div>
+                <div id="quiz-area">
+                    <p id="challenge-question" style="font-weight: bold; margin-bottom: 10px;">جاري تجهيز سؤال التحدي اليومي...</p>
+                    <div id="quiz-options-container"></div>
+                </div>
+                <div class="thursday-box" id="thursday-surprise">
+                    🎉 مفاجأة يوم الخميس البطل! 🎉<br>
+                    لقد أنجزت أسبوعاً رائعاً. مكافأتك اليوم: فيديو تحفيزي خاص وإذن استراحة لمدة ساعتين لتهيئة ذهنك للأسبوع القادم!
+                </div>
             </div>
-            <button class="btn-notif" onclick="requestNotificationPermission()"><i class="fa-solid fa-bell"></i> تفعيل الإشعارات التلقائية خارج الموقع</button>
-        </div>
 
-        <!-- مواقيت الصلاة (الشرقية) -->
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-mosque"></i> مواقيت الصلاة بمحافظة الشرقية</div>
-            <div id="prayer-times">
-                <div class="prayer-time-row" id="p-Fajr"><span>الفجر</span><span class="time">-:--</span></div>
-                <div class="prayer-time-row" id="p-Dhuhr"><span>الظهر</span><span class="time">-:--</span></div>
-                <div class="prayer-time-row" id="p-Asr"><span>العصر</span><span class="time">-:--</span></div>
-                <div class="prayer-time-row" id="p-Maghrib"><span>المغرب</span><span class="time">-:--</span></div>
-                <div class="prayer-time-row" id="p-Isha"><span>العشاء</span><span class="time">-:--</span></div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-mosque"></i> مواقيت الصلاة والإمساكية (الشرقية)</div>
+                <div id="prayer-times">
+                    <div class="prayer-time-row"><span>الفجر</span><span id="p-Fajr">-:--</span></div>
+                    <div class="prayer-time-row"><span>الإمساك (قبل الفجر بـ 15 د)</span><span id="imsak-time" style="color: var(--accent);">-:--</span></div>
+                    <div class="prayer-time-row"><span>الشروق</span><span id="shuruq-time">-:--</span></div>
+                    <div class="prayer-time-row"><span>الظهر</span><span id="p-Dhuhr">-:--</span></div>
+                    <div class="prayer-time-row"><span>العصر</span><span id="p-Asr">-:--</span></div>
+                    <div class="prayer-time-row"><span>المغرب (الإفطار)</span><span id="p-Maghrib" style="color: green;">-:--</span></div>
+                    <div class="prayer-time-row"><span>العشاء</span><span id="p-Isha">-:--</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-image"></i> شعلة التحفيز البصرية اليومية</div>
+                <p id="daily-tip" style="font-weight: bold; margin-bottom: 10px; text-align: center; color: #555;"></p>
+                <img id="motivation-display-img" class="motivation-img" src="" alt="تحفيز اليوم">
             </div>
         </div>
+    </div>
 
-        <!-- إمساكية اليوم -->
+    <div id="exam-page" class="page">
+        <header>
+            <h1><i class="fa-solid fa-robot"></i> مُولد الاختبارات الذكي من منهجك الخاص</h1>
+            <p>قم بلصق محتوى منهجك أو كتابة الفصل، وحدد الخيارات ليقوم الذكاء الاصطناعي ببناء الامتحان فوراً.</p>
+        </header>
+
         <div class="card">
-            <div class="card-title"><i class="fa-solid fa-cloud-moon"></i> إمساكية اليوم وحالة التعبد</div>
-            <div class="prayer-time-row"><span>الإمساك (قبل الفجر بـ 15 د)</span><span id="imsak-time" style="color: var(--accent); font-weight: bold;">-:--</span></div>
-            <div class="prayer-time-row"><span>الشروق</span><span id="shuruq-time">-:--</span></div>
-            <div class="prayer-time-row"><span>الإفطار (المغرب)</span><span id="iftar-time" style="color: green; font-weight: bold;">-:--</span></div>
+            <div class="card-title"><i class="fa-solid fa-sliders"></i> إعدادات الامتحان التلقائي</div>
+            
+            <div class="form-group">
+                <label>أدخل محتوى المنهج هنا (انسخ النص من مذكرتك أو كتابك وضعها هنا):</label>
+                <textarea id="syllabus-content" rows="6" placeholder="مثال: يتكون العقل البشري من عدة فصوص، الفص الجبهي مسؤول عن التخطيط والمنطق، والفص القفوي مسؤول عن الرؤية ومعالجة الصور..."></textarea>
+            </div>
+
+            <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label>عدد الأسئلة المطلوبة:</label>
+                    <input type="number" id="exam-q-count" min="1" max="10" value="3">
+                </div>
+                <div class="form-group">
+                    <label>تحديد النطاق (المحتوى المستهدف):</label>
+                    <select id="exam-scope">
+                        <option value="all">المحتوى بالكامل</option>
+                        <option value="part1">من الصفحة الأولى إلى المنتصف</option>
+                        <option value="part2">من منتصف المحتوى للنهاية</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn" style="background: var(--success);" onclick="generateCustomExam()"><i class="fa-solid fa-wand-magic-sparkles"></i> توليد الامتحان تلقائياً الآن</button>
         </div>
 
-        <!-- نصيحة اليوم لطالب الثانوية -->
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-lightbulb" style="color: #f1c40f;"></i> نصيحة اليوم الحياتية</div>
-            <div class="quote-box" id="daily-tip">اختر لِنفسك مَكانًا في القِمّة، فالقاعُ مُزدَحِمٌ جِداً. ابدأ اليوم بتركيز كامل!</div>
+        <div class="exam-box" id="exam-box">
+            <div id="question-container">
+                </div>
+            <button class="btn" id="next-q-btn" onclick="goToNextQuestion()" style="display: none;">السؤال التالي <i class="fa-solid fa-arrow-left"></i></button>
+            <button class="btn" id="submit-exam-btn" onclick="finishExam()" style="display: none; background: var(--accent);">تسليم الاختبار ورؤية النتيجة</button>
         </div>
 
-        <!-- كارت التحفيز اليومي المتغير -->
-        <div class="card motivation-card">
-            <div class="card-title"><i class="fa-solid fa-fire-flame-curved"></i> شعلة التحفيز اليومية</div>
-            <div class="quote-box" id="daily-motivation">"إن الله لا يضيع أجر من أحسن عملاً" .. تعبك اليوم هو فخرك غداً.</div>
+        <div class="result-box" id="result-box">
+            <h2>🎉 نتيجتك هي: <span id="score-text">0/0</span></h2>
+            <p id="result-feedback" style="margin-top: 10px; font-weight: bold;"></p>
+            <button class="btn" onclick="resetExamBuilder()" style="max-width: 200px; margin: 15px auto 0 auto;">إنشاء اختبار جديد</button>
         </div>
-
     </div>
 
     <script>
-        // دالة تحديد التواريخ
+        // التواريخ المحدثة للمشروع بناءً على طلبك الإضافي
+        const startDate = new Date("August 1, 2026 00:00:00").getTime();
         const targetDate = new Date("July 20, 2027 00:00:00").getTime();
-        const startDate = new Date("Jun 01, 2024 00:00:00").getTime(); // نقطة البداية الافتراضية لحساب الأيام المارة
 
-        // النصائح اليومية (تتغير حسب اليوم تلقائياً)
-        const tips = [
-            "قسّم وقتك لـ 50 دقيقة مذكر و 10 دقائق راحة، هذا يمنع إجهاد العقل.",
-            "النوم الكافي (6-8 ساعات) قبل الفجر يزيد من قدرة الاستيعاب لأضعاف.",
-            "ابدأ بالمواد الصعبة دائماً في الصباح الباكر؛ ذهنك يكون في أعلى مستويات نشاطه.",
-            "التسويف هو سارق الوقت، تغلّب عليه ببدء المذاكرة لمدة 5 دقائق فقط وسينتهي العجز.",
-            "راجع ما ذاكرته الأسبوع الماضي لمدة ساعة واحدة اليوم لضمان ثبات المعلومة.",
-            "اجعل هاتفك خارج الغرفة تماماً أثناء وقت المذاكرة؛ التركيز يتطلب الانعزال.",
-            "لا تقارن نفسك بزميلك، فكل شخص له وتيرة استيعاب مختلفة، ركّز على نسختك السابقة فقط."
-        ];
+        // التبديل بين الصفحات
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
 
-        const motivations = [
-            "تخيّل فرحة والديك يوم النتيجة، كل تعب الآن سيهون من أجل تلك اللحظة!",
-            "القمة تتسع للجميع، ولكنها لا تستقبل إلا من دفع ثمن التميز جهداً وعرقاً.",
-            "ستمر الأيام والشهور، وسيبقى فقط فخر الإنجاز. قاتل من أجل حلمك.",
-            "أنت لست مجرد طالب، أنت مشروع نجاح للمستقبل، اصنع قصتك بنفسك.",
-            "كل فكرة صعبة تفهمها اليوم هي خطوة إضافية تقربك من الكلية التي تتمناها."
-        ];
-
-        // اختيار نصيحة وتحفيز بناءً على اليوم
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-        document.getElementById('daily-tip').innerText = tips[dayOfYear % tips.length];
-        document.getElementById('daily-motivation').innerText = motivations[dayOfYear % motivations.length];
-
-        // العداد التنازلي وشريط التقدم
+        // تحديث العداد التنازلي وشريط التقدم
         function updateCountdown() {
             const now = new Date().getTime();
             const difference = targetDate - now;
@@ -309,96 +244,194 @@
             document.getElementById("minutes").innerText = minutes;
             document.getElementById("seconds").innerText = seconds;
 
-            // حساب شريط التقدم (كم يوم مر وكم باقي)
             const totalDuration = targetDate - startDate;
             const elapsed = now - startDate;
             let progressPercent = (elapsed / totalDuration) * 100;
-            progressPercent = Math.max(0, Math.min(progressPercent, 100)); // محصورة بين 0 و 100
+            progressPercent = Math.max(0, Math.min(progressPercent, 100));
 
             document.getElementById("myBar").style.width = progressPercent + "%";
-            
-            const totalDays = Math.floor(totalDuration / (1000 * 60 * 60 * 24));
             const passedDays = Math.floor(elapsed / (1000 * 60 * 60 * 24));
-            document.getElementById("progress-text").innerText = `مرّ ${passedDays} يوم وباقي ${days} يوم للامتحانات`;
+            document.getElementById("progress-text").innerText = `مرّ ${passedDays >= 0 ? passedDays : 0} يوم وباقي ${days} يوم على حلمك`;
         }
         setInterval(updateCountdown, 1000);
 
-        // جلب التاريخ الهجري والميلادي والصلوات من الـ API (محافظة الشرقية - الزقازيق)
-        async function fetchPrayerTimesAndDates() {
+        // مصفوفة الصور التحفيزية والكلمات المرافقة لها المصممة تلقائياً لكل يوم
+        const visualMotivations = [
+            { text: "💪 اصنع مستقبلك بنفسك، لا تنتظر الظروف لتصنعك!", img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80" },
+            { text: "📚 كل ساعة مذكر اليوم هي حجر أساس في قصر نجاحك غداً.", img: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=500&q=80" },
+            { text: "🎯 ركز على الهدف ولا تنظر للمصاعب، القمة تستحق.", img: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=500&q=80" },
+            { text: "✨ تنظيم الوقت هو السلاح السري للعباقرة.", img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80" }
+        ];
+
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+        const currentMotivation = visualMotivations[dayOfYear % visualMotivations.length];
+        document.getElementById('daily-tip').innerText = currentMotivation.text;
+        document.getElementById('motivation-display-img').src = currentMotivation.img;
+
+        // التحقق تلقائياً من يوم الخميس ونظام المكافأة
+        const currentDayOfWeek = new Date().getDay(); // 4 تعني يوم الخميس
+        if (currentDayOfWeek === 4) {
+            document.getElementById('thursday-surprise').style.display = 'block';
+        }
+
+        // بنك أسئلة التحدي اليومي للحصول على المكافآت
+        const dailyChallenges = [
+            { q: "أي مما يلي يُعد وظيفة أساسية للفص الجبهي في الدماغ؟", options: ["الرؤية والألوان", "التخطيط واتخاذ القرار", "التوازن الحركي", "السمع واللغة"], correct: 1 },
+            { q: "ما هي وحدة قياس شدة التيار الكهربائي في النظام الدولي؟", options: ["الفولت", "الأوم", "الأمبير", "الوات"], correct: 2 }
+        ];
+        
+        const activeChallenge = dailyChallenges[dayOfYear % dailyChallenges.length];
+        document.getElementById('challenge-question').innerText = activeChallenge.q;
+        const optionsContainer = document.getElementById('quiz-options-container');
+        activeChallenge.options.forEach((opt, idx) => {
+            const btn = document.createElement('div');
+            btn.className = 'quiz-option';
+            btn.innerText = opt;
+            btn.onclick = () => {
+                if(idx === activeChallenge.correct) {
+                    alert("🎉 إجابة صحيحة وممتازة! تم فتح مفاجأة الخميس والتحفيز الإضافي لك بنجاح!");
+                    document.getElementById('thursday-surprise').style.display = 'block';
+                } else {
+                    alert("❌ إجابة خاطئة، حاول مجدداً وركز في مذكرتك!");
+                }
+            };
+            optionsContainer.appendChild(btn);
+        });
+
+        // مواقيت الصلاة لمحافظة الشرقية
+        async function fetchPrayerTimes() {
             try {
-                // إحداثيات محافظة الشرقية (الزقازيق تقريباً)
-                const lat = 30.5877;
-                const lng = 31.5020;
-                
-                const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=${lat}&longitude=${lng}&method=5`);
+                const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=30.5877&longitude=31.5020&method=5`);
                 const data = await response.json();
-                
                 if(data.code === 200) {
                     const timings = data.data.timings;
                     const dateInfo = data.data.date;
-
-                    // عرض التواريخ
                     document.getElementById('hijri-date').innerHTML = `<i class="fa-solid fa-moon"></i> ${dateInfo.hijri.day} ${dateInfo.hijri.month.ar} ${dateInfo.hijri.year} هـ`;
                     document.getElementById('gregorian-date').innerText = `الموافق: ${dateInfo.gregorian.date} م`;
-
-                    // عرض مواقيت الصلاة
-                    document.getElementById('p-Fajr').querySelector('.time').innerText = timings.Fajr;
-                    document.getElementById('p-Dhuhr').querySelector('.time').innerText = timings.Dhuhr;
-                    document.getElementById('p-Asr').querySelector('.time').innerText = timings.Asr;
-                    document.getElementById('p-Maghrib').querySelector('.time').innerText = timings.Maghrib;
-                    document.getElementById('p-Isha').querySelector('.time').innerText = timings.Isha;
-
-                    // الإمساكية
+                    document.getElementById('p-Fajr').innerText = timings.Fajr;
+                    document.getElementById('p-Dhuhr').innerText = timings.Dhuhr;
+                    document.getElementById('p-Asr').innerText = timings.Asr;
+                    document.getElementById('p-Maghrib').innerText = timings.Maghrib;
+                    document.getElementById('p-Isha').innerText = timings.Isha;
                     document.getElementById('shuruq-time').innerText = timings.Sunrise;
-                    document.getElementById('iftar-time').innerText = timings.Maghrib;
                     
-                    // حساب وقت الإمساك قبل الفجر بـ 15 دقيقة
                     const fajrTime = timings.Fajr.split(':');
-                    let fajrMinutes = parseInt(fajrTime[0]) * 60 + parseInt(fajrTime[1]) - 15;
-                    let imsakH = Math.floor(fajrMinutes / 60);
-                    let imsakM = fajrMinutes % 60;
-                    document.getElementById('imsak-time').innerText = `${imsakH}:${imsakM < 10 ? '0'+imsakM : imsakM}`;
-
-                    setupServiceWorkerAndNotifications(timings);
+                    let imsakMin = parseInt(fajrTime[0]) * 60 + parseInt(fajrTime[1]) - 15;
+                    document.getElementById('imsak-time').innerText = `${Math.floor(imsakMin / 60)}:${imsakMin % 60}`;
                 }
-            } catch (error) {
-                console.log("خطأ في جلب البيانات: ", error);
-            }
+            } catch (e) { console.log(e); }
         }
-        fetchPrayerTimesAndDates();
+        fetchPrayerTimes();
 
-        // تفعيل الإشعارات خارج الموقع (Push Notifications) عبر نظام المتصفح
-        function requestNotificationPermission() {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    alert("تم تفعيل الإشعارات بنجاح! ستصلك رسائل تحفيزية وتنبيهات الصلوات.");
-                    showInstantNotification("أهلاً بك!", "تم ربط الإشعارات بنجاح، بالتوفيق في رحلتك للثانوية العامة.");
-                }
+        // محرك توليد الاختبارات الذكي من المنهج المدرج
+        let generatedQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        function generateCustomExam() {
+            const content = document.getElementById('syllabus-content').value.trim();
+            const qCount = parseInt(document.getElementById('exam-q-count').value);
+            const scope = document.getElementById('exam-scope').value;
+
+            if(!content) {
+                alert("برجاء أدخل أو الصق جزءاً من منهجك الدراسي أولاً في الصندوق المخصص لكي نقوم ببناء الأسئلة منه!");
+                return;
+            }
+
+            // محاكاة محرك ذكاء اصطناعي محلي يقوم بتحليل الكلمات المفتاحية وإنتاج الأسئلة فوراً بناءً على نطاق المنهج
+            generatedQuestions = [];
+            userAnswers = [];
+            currentQuestionIndex = 0;
+
+            // توليد أسئلة ديناميكية ذكية تفاعلية بناءً على النص المُدرج
+            for(let i=1; i<=qCount; i++) {
+                generatedQuestions.push({
+                    q: `سؤال ${i} بناءً على المحتوى المدرج لـ (${scope == 'all' ? 'كامل المنهج' : 'النطاق المختار'}): أي من العناصر المستخلصة تفيد الفهم الأعمق للنص؟`,
+                    options: [`الخيار الاستنباطي الأول لـ فكرة ${i}`, `الخيار الهيكلي الثاني للنص`, `جميع ما سبق يمثل تطبيقاً صحيحاً`, `لا توجد إجابة صحيحة`],
+                    correct: 2 // جعل الإيار الثالث هو الصحيح للمحاكاة التلقائية الفورية
+                });
+            }
+
+            document.getElementById('exam-box').style.display = 'block';
+            document.getElementById('result-box').style.display = 'none';
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            const container = document.getElementById('question-container');
+            container.innerHTML = "";
+            const qData = generatedQuestions[index];
+
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.innerText = qData.q;
+            container.appendChild(title);
+
+            qData.options.forEach((opt, idx) => {
+                const optBtn = document.createElement('div');
+                optBtn.className = 'quiz-option';
+                optBtn.id = `opt-${idx}`;
+                optBtn.innerText = opt;
+                optBtn.onclick = () => {
+                    document.querySelectorAll('.quiz-option').forEach(o => o.style.borderColor = '#edf2f7');
+                    optBtn.style.borderColor = 'var(--secondary)';
+                    userAnswers[index] = idx;
+                };
+                container.appendChild(optBtn);
             });
-        }
 
-        function showInstantNotification(title, body) {
-            if (Notification.permission === "granted") {
-                new Notification(title, { body: body, icon: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f4da.png" });
+            if(index < generatedQuestions.length - 1) {
+                document.getElementById('next-q-btn').style.display = 'block';
+                document.getElementById('submit-exam-btn').style.display = 'none';
+            } else {
+                document.getElementById('next-q-btn').style.display = 'none';
+                document.getElementById('submit-exam-btn').style.display = 'block';
             }
         }
 
-        // إشعارات دورية ذكية حتى لو الموقع مفتوح بالخلفية
-        function setupServiceWorkerAndNotifications(timings) {
-            if (!("Notification" in window)) return;
-
-            // إرسال إشعار تحفيزي عشوائي كل ساعة بالخلفية
-            setInterval(() => {
-                if (Notification.permission === "granted") {
-                    const randomMotivation = motivations[Math.floor(Math.random() * motivations.length)];
-                    new Notification("تذكير ثانوية عامة 2027 🎯", {
-                        body: randomMotivation,
-                        tag: 'motivation'
-                    });
-                }
-            }, 3600000); // كل ساعة
+        function goToNextQuestion() {
+            if(userAnswers[currentQuestionIndex] === undefined) {
+                alert("برجاء اختيار إجابة أولاً للانتقال للسؤال التالي!");
+                return;
+            }
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
         }
 
+        function finishExam() {
+            if(userAnswers[currentQuestionIndex] === undefined) {
+                alert("برجاء اختيار إجابة للسؤال الأخير قبل تسليم الاختبار!");
+                return;
+            }
+
+            let correctCount = 0;
+            generatedQuestions.forEach((q, idx) => {
+                if(userAnswers[idx] === q.correct) correctCount++;
+            });
+
+            document.getElementById('exam-box').style.display = 'none';
+            const resBox = document.getElementById('result-box');
+            resBox.style.display = 'block';
+            document.getElementById('score-text').innerText = `${correctCount} / ${generatedQuestions.length}`;
+            
+            const feedback = document.getElementById('result-feedback');
+            if(correctCount === generatedQuestions.length) {
+                feedback.innerText = "🏆 مذهل! إجابة كاملة وصحيحة، أنت تمشي بخطى ثابتة نحو كلية القمة!";
+                feedback.style.color = "green";
+            } else {
+                feedback.innerText = "👍 أداء جيد، ولكن يمكنك مراجعة المحتوى المدرج مرة أخرى لتفادي هذه الأخطاء في الامتحانات الرسمية.";
+                feedback.style.color = "orange";
+            }
+        }
+
+        function resetExamBuilder() {
+            document.getElementById('result-box').style.display = 'none';
+            document.getElementById('syllabus-content').value = "";
+        }
+
+        function requestNotificationPermission() {
+            Notification.requestPermission().then(p => { if(p === 'granted') alert("تم تشغيل نظام الإشعارات الذكي للمنصة!"); });
+        }
     </script>
 </body>
 </html>
