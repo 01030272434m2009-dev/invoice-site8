@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سلة المشتريات والإنهاء - الصيدلية البيطرية</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --card-bg: #1a1a1a;
+            --accent-gold: #d4af37;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #2a2a2a;
+            --danger-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 50px; }
+        
+        /* شريط علوي */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a { color: var(--text-color); text-decoration: none; margin-right: 15px; }
+        .navbar a:hover { color: var(--accent-gold); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 1.8rem; margin-bottom: 20px; border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; display: inline-block; }
+
+        .main-wrapper { display: flex; flex-direction: column; gap: 30px; }
+        @media (min-width: 992px) { .main-wrapper { flex-direction: row; align-items: flex-start; } }
+
+        /* يمين: السلة وبيانات الشحن */
+        .left-side { flex: 2; display: flex; flex-direction: column; gap: 25px; }
+        /* يسار: الفاتورة وإجمالي الدفع */
+        .right-side { flex: 1; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; position: sticky; top: 20px; }
+
+        .section-box { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; }
+        .box-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+
+        /* المنتجات داخل السلة */
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); }
+        .cart-item:last-child { border-bottom: none; }
+        .item-info { flex: 2; }
+        .item-price { color: var(--accent-gold); font-weight: bold; margin-top: 5px; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; background: #0d0d0d; border: 1px solid var(--border-color); padding: 5px; }
+        .qty-btn { background: none; border: none; color: var(--accent-gold); font-size: 1.2rem; cursor: pointer; width: 25px; }
+        .delete-btn { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 0.85rem; border: 1px solid var(--danger-color); padding: 3px 8px; margin-right: 15px; }
+
+        /* النماذج والاستمارات الـ Flat */
+        .form-grid { display: grid; grid-template-columns: 1 stroke 1fr; gap: 20px; }
+        @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+        .full-width { grid-column: span 2; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.9rem; font-weight: 600; }
+        .form-group input, .form-group select { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; outline: none; font-size: 0.95rem; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-gold); }
+
+        /* الفاتورة */
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1rem; }
+        .summary-row.total { border-top: 1px solid var(--accent-gold); padding-top: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-gold); }
+        
+        /* كوبون الخصم */
+        .coupon-box { display: flex; gap: 10px; margin-top: 15px; margin-bottom: 20px; }
+        .coupon-box input { flex: 2; }
+        .btn-coupon { flex: 1; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); cursor: pointer; }
+        .btn-coupon:hover { background: var(--accent-gold); color: #0d0d0d; }
+
+        .btn-submit { width: 100%; background: transparent; border: 2px solid var(--accent-gold); color: var(--accent-gold); padding: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+        .btn-submit:hover { background: var(--accent-gold); color: #0d0d0d; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        
+        .shipping-info-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div style="font-weight:700; color:var(--accent-gold)">الصيدلية البيطرية الفاخرة 🐾</div>
+        <div>
+            <a href="store.html">المتجر</a>
+            <a href="cart.html">السلة</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>مراجعة وإنهاء الطلب</h1>
+
+        <div class="main-wrapper">
+            
+            <div class="left-side">
+                
+                <div class="section-box">
+                    <div class="box-title">الأدوية المحددة بالسلة</div>
+                    <div id="cartItemsList">
+                        </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="box-title">بيانات العميل والاتصال</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>الاسم الكامل للطبيب/المربي *</label>
+                            <input type="text" id="custName" required placeholder="اكتب الاسم ثلاثي">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف الأساسي (عليه واتساب) *</label>
+                            <input type="tel" id="custPhone1" required placeholder="01xxxxxxxxx">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم هاتف احتياطي (للطوارئ) *</label>
+                            <input type="tel" id="custPhone2" required placeholder="01xxxxxxxxx">
+                        </div>
+                        <div class="form-group">
+                            <label>تاريخ وموعد الاستلام المفضل *</label>
+                            <select id="deliveryTime" onchange="calculateFinalTotal()">
+                                <option value="morning">صباحاً (10 ص - 3 ظهراً) - شحن عادي</option>
+                                <option value="evening">مساءً (6 مساءً - 11 مساءً) - شحن سريع (+15 ج.م)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-box">
+                    <div class="box-title">عنوان الشحن والتوصيل</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>المحافظة *</label>
+                            <select id="govSelect" onchange="updateCities()">
+                                <option value="">اختر المحافظة...</option>
+                                <option value="القاهرة">القاهرة</option>
+                                <option value="الجيزة">الجيزة</option>
+                                <option value="الإسكندرية">الإسكندرية</option>
+                                <option value="الدقهلية">الدقهلية</option>
+                                <option value="الغربية">الغربية</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>المدينة / المركز *</label>
+                            <select id="citySelect" onchange="handleCityChange()">
+                                <option value="">اختر المدينة بعد المحافظة...</option>
+                            </select>
+                            <input type="text" id="customCityInput" placeholder="اكتب اسم المدينة إذا لم تجدها" style="display:none; margin-top:10px;">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>اسم الحي / الشارع / القرية وتفاصيل مكان الصيدلية أو المزرعة *</label>
+                            <input type="text" id="addressDetails" required placeholder="مثال: شارع المحطة، بجوار مسجد التقوى، مزرعة الأمل">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-side section-box">
+                <div class="box-title">ملخص الحساب والفاتورة</div>
+                
+                <div class="summary-row">
+                    <span>إجمالي الأدوية:</span>
+                    <span id="subTotal">0 ج.م</span>
+                </div>
+                <div class="summary-row">
+                    <span>شركة الشحن المعتمدة:</span>
+                    <span id="shippingCompany" style="color:var(--accent-gold); font-weight:600;">البريد السريع البيطري</span>
+                </div>
+                <div class="summary-row">
+                    <span>تكلفة التوصيل الشحن:</span>
+                    <span id="shippingCost">0 ج.م</span>
+                </div>
+                <div class="summary-row" id="discountRow" style="display:none; color:var(--success-color);">
+                    <span>خصم الكوبون:</span>
+                    <span id="discountValue">-0 ج.م</span>
+                </div>
+
+                <label style="font-size:0.85rem; display:block; margin-bottom:5px;">هل لديك كود خصم؟</label>
+                <div class="coupon-box">
+                    <input type="text" id="couponInput" placeholder="اكتب كود الخصم هنا">
+                    <button class="btn-coupon" onclick="applyCoupon()">تطبيق</button>
+                </div>
+
+                <div class="summary-row total">
+                    <span>الإجمالي الكلي:</span>
+                    <span id="finalTotal">0 ج.م</span>
+                </div>
+
+                <button class="btn-submit" onclick="submitOrder()">تأكيد وإرسال الطلب</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // قاعدة بيانات المحافظات والمدن وأسعار شحنها المتغيرة
+        const shippingRates = {
+            "القاهرة": { cost: 40, cities: ["مصر الجديدة", "مدينة نصر", "شبرا", "حلوان", "التجمع الخامس"] },
+            "الجيزة": { cost: 45, cities: ["الدقي", "المهندسين", "الهرم", "6 أكتوبر", "الشيخ زايد"] },
+            "الإسكندرية": { cost: 60, cities: ["سموحة", "المنتزه", "محرم بك", "العجمي", "برج العرب"] },
+            "الدقهلية": { cost: 70, cities: ["المنصورة", "ميت غمر", "السنبلاوين", "طلخا", "دكرنس"] },
+            "الغربية": { cost: 65, cities: ["طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى"] }
+        };
+
+        let cart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
+        let couponDiscount = 0;
+
+        // دالة عرض منتجات السلة
+        function renderCartItems() {
+            const container = document.getElementById('cartItemsList');
+            container.innerHTML = '';
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);">السلة فارغة حالياً.</p>';
+                return;
+            }
+            cart.forEach(item => {
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <div>${item.name}</div>
+                            <div class="item-price">${item.price} ج.م</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                        </div>
+                        <button class="delete-btn" onclick="removeItem(${item.id})">حذف</button>
+                    </div>
+                `;
+            });
+            calculateFinalTotal();
+        }
+
+        function updateQty(id, change) {
+            let item = cart.find(p => p.id === id);
+            if(item) {
+                item.quantity += change;
+                if(item.quantity <= 0) cart = cart.filter(p => p.id !== id);
+                localStorage.setItem('pharmacy_cart', JSON.stringify(cart));
+                renderCartItems();
+            }
+        }
+
+        function removeItem(id) {
+            cart = cart.filter(p => p.id !== id);
+            localStorage.setItem('pharmacy_cart', JSON.stringify(cart));
+            renderCartItems();
+        }
+
+        // تحديث المدن والأسعار أوتوماتيكياً بناءً على اختيار المحافظة المختار
+        function updateCities() {
+            const gov = document.getElementById('govSelect').value;
+            const citySelect = document.getElementById('citySelect');
+            const customInput = document.getElementById('customCityInput');
+            
+            citySelect.innerHTML = '<option value="">اختر المدينة...</option>';
+            customInput.style.display = 'none';
+
+            if(gov && shippingRates[gov]) {
+                shippingRates[gov].cities.forEach(city => {
+                    citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+                });
+                citySelect.innerHTML += `<option value="other">أخرى (كتابة اسم المدينة)...</option>`;
+            }
+            calculateFinalTotal();
+        }
+
+        function handleCityChange() {
+            const citySelect = document.getElementById('citySelect').value;
+            const customInput = document.getElementById('customCityInput');
+            if(citySelect === 'other') {
+                customInput.style.display = 'block';
+            } else {
+                customInput.style.display = 'none';
+            }
+            calculateFinalTotal();
+        }
+
+        // تطبيق أكواد كوبونات الخصم والتحقق منها
+        function applyCoupon() {
+            const code = document.getElementById('couponInput').value.trim();
+            if(code === "VET20") { // كوبون خصم بيطري تجريبي بنسبة 20%
+                couponDiscount = 0.20;
+                alert("تم تطبيق خصم 20% بنجاح على الأدوية!");
+            } else {
+                alert("كوبون الخصم غير صحيح أو منتهي الصلاحية.");
+                couponDiscount = 0;
+            }
+            calculateFinalTotal();
+        }
+
+        // الحساب الديناميكي الشامل (أدوية + شحن متغير حسب المحافظة + موعد التسليم - الخصم)
+        function calculateFinalTotal() {
+            let itemsSubtotal = 0;
+            cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
+            
+            // حساب الشحن حسب المحافظة
+            const gov = document.getElementById('govSelect').value;
+            let shipping = 0;
+            if(gov && shippingRates[gov]) {
+                shipping = shippingRates[gov].cost;
+            }
+
+            // إضافة تكلفة إضافية إذا اختار الشحن المسائي السريع
+            const timeSlot = document.getElementById('deliveryTime').value;
+            if(timeSlot === 'evening' && gov !== "") {
+                shipping += 15; 
+            }
+
+            // حساب الخصم
+            let discountAmount = itemsSubtotal * couponDiscount;
+            
+            let final = (itemsSubtotal - discountAmount) + shipping;
+
+            // تحديث الشاشة
+            document.getElementById('subTotal').innerText = itemsSubtotal + " ج.م";
+            document.getElementById('shippingCost').innerText = shipping + " ج.م";
+            
+            if(discountAmount > 0) {
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discountValue').innerText = `-${discountAmount} ج.م`;
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+            }
+            
+            document.getElementById('finalTotal').innerText = final + " ج.م";
+        }
+
+        // تأكيد وإرسال الطلب وحفظ البيانات للاستعلام اللاحق
+        function submitOrder() {
+            if(cart.length === 0) { alert("السلة فارغة!"); return; }
+            
+            const name = document.getElementById('custName').value;
+            const p1 = document.getElementById('custPhone1').value;
+            const p2 = document.getElementById('custPhone2').value;
+            const gov = document.getElementById('govSelect').value;
+            let city = document.getElementById('citySelect').value;
+            const address = document.getElementById('addressDetails').value;
+
+            if(city === 'other') { city = document.getElementById('customCityInput').value; }
+
+            if(!name || !p1 || !p2 || !gov || !city || !address) {
+                alert("من فضلك أكمل كافة الحقول الإلزامية المطلوبة لتوصيل شحنتك البيطرية بدقة!");
+                return;
+            }
+
+            // توليد رقم طلب عشوائي فريد للاستعلام عنه لاحقاً
+            const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
+
+            const orderDetails = {
+                orderId: orderId,
+                customerName: name,
+                phones: [p1, p2],
+                fullAddress: `محافظة ${gov} - مدينة ${city} - ${address}`,
+                status: "قيد المراجعة والتحضير بالصيدلية",
+                totalPrice: document.getElementById('finalTotal').innerText,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            // حفظ الطلب في ذاكرة المتصفح لمحاكاة سيرفر الاستعلام
+            localStorage.setItem(orderId, JSON.stringify(orderDetails));
+            
+            // تفريغ السلة بعد نجاح العملية
+            localStorage.removeItem('pharmacy_cart');
+            
+            alert(`تم تأكيد طلبك بنجاح! \nرقم الطلب الخاص بك هو: ${orderId} \nاحتفظ بهذا الرقم للاستعلام عن حالة التوصيل في أي وقت.`);
+            
+            // في الخطوة القادمة نربط هذه البيانات لتذهب أوتوماتيكياً لـ Google Sheets.
+            window.location.href = 'store.html';
+        }
+
+        // التشغيل المبدئي للجريد
+        renderCartItems();
+    </script>
+</body>
+</html>
