@@ -84,13 +84,12 @@
         
         .slider-container {
             display: flex;
-            width: 300%; /* يعتمد على عدد السلايدات المتاحة (هنا 3 سلايدات) */
+            width: 100%; /* سيتم تعديله ديناميكياً عبر الجافا سكريبت بناءً على عدد السلايدات */
             height: 100%;
             transition: transform 0.6s ease-in-out;
         }
 
         .slide {
-            width: 33.333%;
             height: 100%;
             position: relative;
             background-size: cover;
@@ -349,7 +348,8 @@
             border: 1px solid var(--accent-gold);
             color: var(--accent-gold);
             width: 24px; height: 24px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center;
+            justify-content: center;
             font-size: 0.8rem; cursor: pointer; font-weight: bold;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -419,7 +419,8 @@
         }
         .amazon-gallery img { width: 100%; height: 100%; object-fit: contain; }
         .amazon-gallery .badge-huge {
-            position: absolute; top: 15px; right: 15px;
+            position: absolute;
+            top: 15px; right: 15px;
             background: var(--accent-gold); color: #fff; padding: 4px 12px; font-weight: bold; font-size: 0.85rem; z-index: 5;
         }
 
@@ -435,6 +436,31 @@
             padding: 20px;
             background-color: #f8f9fa;
             margin-top: 20px;
+        }
+
+        /* شاشة التحميل الذكية لحين جلب البيانات من السيرفر */
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .loading-spinner {
+            width: 50px; height: 50px;
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* ==================== الفوتر الشامل (Footer) الفاتح ==================== */
@@ -492,7 +518,11 @@
 </head>
 <body>
 
-    <!-- شريط التنقل العلوي -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p style="font-weight: 600; color: var(--text-color);">جاري الاتصال بالسيرفر وتحديث البيانات...</p>
+    </div>
+
     <nav class="navbar">
         <div class="nav-logo">الصيدلية البيطرية الفاخرة 🐾</div>
         <div class="nav-links">
@@ -503,43 +533,15 @@
         </div>
     </nav>
 
-    <!-- محتوى الصفحة الرئيسي -->
     <div class="container">
         
-        <!-- ==================== البنر الإعلاني المتحرك الجديد ==================== -->
         <div class="slider-wrapper">
             <button class="slider-btn prev" onclick="moveSlide(-1)">&#10095;</button>
             <div class="slider-container" id="sliderContainer">
-                
-                <!-- البنر الأول -->
-                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=1200&auto=format&fit=crop');">
-                    <div class="slide-overlay">
-                        <h2>خصومات الموسم البيطري المميز</h2>
-                        <p>تخفيضات تصل إلى 20% على جميع تحصينات ومكملات الدواجن والمواشي لفترة محدودة.</p>
-                    </div>
                 </div>
-                
-                <!-- البنر الثاني -->
-                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1607619056574-7b8d304f3c6f?q=80&w=1200&auto=format&fit=crop');">
-                    <div class="slide-overlay">
-                        <h2>رعاية الحيوانات الأليفة الفاخرة</h2>
-                        <p>منتجات ومستحضرات وقائية مستوردة مخصصة بالكامل للحفاظ على صحة ونظافة أليفك.</p>
-                    </div>
-                </div>
-                
-                <!-- البنر الثالث -->
-                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=1200&auto=format&fit=crop');">
-                    <div class="slide-overlay">
-                        <h2>مكملات وفيتامينات عالية الكفاءة</h2>
-                        <p>ارفع الكفاءة المناعية الإنتاجية لقطعانك ومزارعك فوراً بالتعاون مع كبرى الشركات الدولية.</p>
-                    </div>
-                </div>
-
-            </div>
             <button class="slider-btn next" onclick="moveSlide(1)">&#10094;</button>
         </div>
 
-        <!-- فئات الأقسام -->
         <div class="section-title">أقسام الصيدلية</div>
         <div class="categories-grid">
             <div class="category-card active" onclick="filterCategory('الكل')">كل الأدوية</div>
@@ -549,38 +551,33 @@
             <div class="category-card" onclick="filterCategory('أليفة')">حيوانات أليفة</div>
         </div>
 
-        <!-- شبكة المنتجات -->
         <div class="section-title">الأدوية المتاحة (اضغط على الصنف لعرض تفاصيل أمازون)</div>
         <div class="products-grid" id="productsContainer"></div>
 
     </div>
 
-    <!-- ==================== الإعلان الذكي الجانبي المتحرك ==================== -->
     <div class="smart-adv-banner" id="promoFloatingBanner">
         <button class="adv-close-btn" onclick="dismissBanner()">X</button>
         <div class="adv-image-box">
-            <img src="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&auto=format&fit=crop" alt="عرض خاص">
+            <img src="" alt="عرض خاص">
         </div>
         <div class="adv-content">
-            <span class="adv-badge">عرض محدود لليوم ⚡</span>
-            <div class="adv-title">خصم 25% على دواء أوكسي سوبر</div>
-            <div class="adv-desc">متاح الشحن الفوري الآن لجميع مراكز المحافظة بموعد استلام صباحي فوري.</div>
-            <a href="#" onclick="openProductDetails(101); return false;" class="adv-link">تسوق العرض الآن ←</a>
+            <span class="adv-badge">عرض خاص</span>
+            <div class="adv-title">عنوان العرض</div>
+            <div class="adv-desc">تفاصيل العرض</div>
+            <a href="#" class="adv-link">تسوق العرض الآن ←</a>
         </div>
     </div>
 
-    <!-- ==================== نافذة تفاصيل المنتج بنمط أمازون ==================== -->
     <div class="amazon-modal" id="amazonProductModal">
         <div class="amazon-container">
             <button class="modal-close" onclick="closeProductDetails()">إغلاق التصفح X</button>
             
-            <!-- القسم الأيمن: معرض الصور والمؤشرات المعززة -->
             <div class="amazon-gallery">
                 <span class="badge-huge" id="modalProductBadge">مميز</span>
                 <img id="modalProductImage" src="" alt="صورة الصنف">
             </div>
             
-            <!-- القسم الأيسر: تفاصيل الشراء والمواصفات الكاملة -->
             <div class="amazon-details">
                 <div>
                     <h1 class="amz-title" id="modalProductName">اسم الصنف البيطري</h1>
@@ -602,7 +599,6 @@
                     <p class="amz-text" id="modalProductSafety">اللحم: ٧ أيام | اللبن: ٤٨ ساعة من آخر جرعة.</p>
                 </div>
 
-                <!-- صندوق الشراء السريع السفلي -->
                 <div class="amazon-buy-box">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                         <span style="color: #2ecc71; font-weight:600;">✔️ متوفر في المخزن الرئيسي جاهز للشحن</span>
@@ -613,7 +609,6 @@
         </div>
     </div>
 
-    <!-- ==================== الفوتر الشامل السفلي الفاتح ==================== -->
     <footer class="site-footer">
         <div class="footer-grid">
             <div class="footer-col">
@@ -655,25 +650,79 @@
             window.location.href = 'index.html';
         }
 
-        // قاعدة بيانات المنتجات والأدوية - مضاف إليها روابط صور حقيقية عالية الجودة لكل صنف
-        const productsDatabase = [
-            { id: 101, name: "مضاد حيوي أوكسي تتراسيكلين", category: "مواشي", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop", desc: "مضاد حيوي واسع الطيف عالي التركيز لعلاج الالتهابات التنفسية والمعوية الإنتانية في الماشية والأغنام.", price: 180, badge: "الأكثر مبيعاً", usage: "يُعطى بحقن عضلي عميق بمعدل 1 مل لكل 10 كجم من وزن الحيوان الحي لمدة 3-5 أيام متتالية.", safety: "اللحوم: 21 يوماً | الحليب: 7 أيام من تاريخ آخر معاملة علاجية." },
-            { id: 102, name: "مكمل فيتامين هـ + سيلينيوم", category: "فيتامينات", image: "https://images.unsplash.com/photo-1611926653458-09294b3142bf?w=400&auto=format&fit=crop", desc: "رافع كفاءة مناعية بيولوجي ومخصب ممتاز لزيادة معدلات إخصاب الدواجن والمواشي وتحسين جودة القشرة.", price: 95, badge: "جديد", usage: "يضاف إلى ماء الشرب بمعدل 1 سم لكل لتر ماء لمدة 3 إلى 5 أيام متواصلة أثناء فترات الإجهاد والإنتاج المكثف.", safety: "فترة الأمان: 0 أيام (آمن تماماً للاستهلاك البشري المباشر)." },
-            { id: 103, name: "مضاد سموم فطرية سائل", category: "دواجن", image: "https://images.unsplash.com/photo-1607619056574-7b8d304f3c6f?w=400&auto=format&fit=crop", desc: "مركب مركز فائق الفعالية لغسيل وتنشيط خلايا الكلى والكبد وحماية الأمعاء لطيور الدواجن من أعلاف التخزين الخاطئ.", price: 140, badge: "عرض خاص", usage: "نصف سم لكل لتر ماء شرب، يقلب جيداً ويقدم للقطعان لمدد وقائية دورية كل أسبوعين.", safety: "فترة الانسحاب من اللحم: لا يوجد، مركب حيوي طبيعي وطارد متكامل." },
-            { id: 104, name: "مضاد طفيليات إيفرمكتين سوبر", category: "مواشي", image: "https://images.unsplash.com/photo-1550572017-edd951b55104?w=400&auto=format&fit=crop", desc: "حقن ممتد المفعول للقضاء التام على الجرب، القراد، القمل، والديدان الكبدية والمعوية الداخلية في الأبقار والجاموس.", price: 220, badge: "طبي", usage: "حقن تحت الجلد فقط في منطقة الرقبة الخلفية بمعدل 1 مل لكل 50 كجم وزن حي، ولا يُحقن باللحم نهائياً.", safety: "اللحوم: 28 يوماً من تاريخ الحقن | لا يُستخدم في الأبقار المدرة للبن المعد للاستهلاك الأدمي." },
-            { id: 105, name: "شامبو علاجي للبراغيث والقراد", category: "أليفة", image: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=400&auto=format&fit=crop", desc: "مستحضر وقائي علاجي مخصص للكلاب والقطط، آمن تماماً على الفراء والجلد ويقضي على الحشرات والبيوض من أول غسلة.", price: 75, badge: "متاح", usage: "يُبلل الفراء بالماء الدافئ ثم يوضع الشامبو مع التدليك لمدة 5 دقائق لتغلغل المادة الفعالة ثم يشطف جيداً.", safety: "تجنب ملامسة العينين والأنف للحيوان، ويُكرر كل أسبوعين في مواسم انتشار الطفيليات." }
-        ];
+        // رابط خادم Google Apps Script الخاص بك [cite: 176, 350]
+        const SERVER_API_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec";
 
-        // ==================== منطق تشغيل البنرات المتحركة التلقائية واليدوية ====================
+        // قاعدة بيانات المنتجات (تصبح فارغة وسيتم ملؤها من السيرفر)
+        let productsDatabase = [];
+        
+        // متغيرات البنرات المتحركة
         let currentSlideIndex = 0;
-        const totalSlides = 3;
+        let totalSlides = 0;
         const sliderContainer = document.getElementById('sliderContainer');
 
+        // دالة جلب البيانات الشاملة من السيرفر
+        async function loadStoreData() {
+            try {
+                const response = await fetch(SERVER_API_URL);
+                const data = await response.json();
+                
+                // 1. تحديث المنتجات وعرضها
+                productsDatabase = data.products || [];
+                displayProducts();
+                
+                // 2. بناء البنرات المتحركة ديناميكياً
+                updateSlidersDynamic(data.sliders || []);
+                
+                // 3. تحديث الإعلان الطائر الذكي
+                updatePromoBannerDynamic(data.promo);
+                
+                // إخفاء شاشة التحميل بعد اكتمال جلب البيانات بنجاح
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                if(loadingOverlay) {
+                    loadingOverlay.style.opacity = '0';
+                    setTimeout(() => loadingOverlay.remove(), 500);
+                }
+                
+            } catch (error) {
+                console.error("خطأ أثناء الاتصال بالسيرفر وجلب البيانات:", error);
+                alert("فشل الاتصال بالسيرفر، جاري المحاولة مرة أخرى أو الاعتماد على الذاكرة المحلية.");
+            }
+        }
+
+        // ==================== منطق تشغيل البنرات المتحركة التلقائية واليدوية ====================
+        function updateSlidersDynamic(sliders) {
+            if(!sliders || sliders.length === 0) return;
+            
+            totalSlides = sliders.length;
+            sliderContainer.innerHTML = '';
+            
+            // تعديل العرض الكلي للحاوية بناء على عدد البنرات القادمة من جوجل شيت
+            sliderContainer.style.width = `${totalSlides * 100}%`;
+            
+            sliders.forEach(slide => {
+                sliderContainer.innerHTML += `
+                    <div class="slide" style="width: ${100 / totalSlides}%; background-image: url('${slide.image}');">
+                        <div class="slide-overlay">
+                            <h2>${slide.title}</h2>
+                            <p>${slide.description}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            currentSlideIndex = 0;
+            updateSliderPosition();
+        }
+
         function updateSliderPosition() {
-            sliderContainer.style.transform = `translateX(${currentSlideIndex * 33.333}%)`;
+            if(totalSlides === 0) return;
+            // حساب نسبة الإزاحة بناءً على العدد الفعلي للبنرات
+            const percentage = currentSlideIndex * (100 / totalSlides);
+            sliderContainer.style.transform = `translateX(${percentage}%)`;
         }
 
         function moveSlide(direction) {
+            if(totalSlides === 0) return;
             currentSlideIndex += direction;
             if (currentSlideIndex >= totalSlides) {
                 currentSlideIndex = 0;
@@ -687,7 +736,6 @@
         setInterval(() => {
             moveSlide(1);
         }, 4000);
-
 
         // ==================== منطق معالجة المنتجات والأصناف بالصور ====================
         function displayProducts(categoryFilter = 'الكل') {
@@ -734,9 +782,32 @@
             displayProducts(categoryName);
         }
 
+        // تحديث وإظهار الإعلان الجانبي الطائر من السيرفر
+        function updatePromoBannerDynamic(promo) {
+            const banner = document.getElementById('promoFloatingBanner');
+            
+            // إخفاء وحذف العنصر نهائياً لو تم قفله من الشيت أو كان الحقل false
+            if (!promo || promo.show === false || promo.show === "false") {
+                if(banner) banner.remove();
+                return;
+            }
+            
+            // إسناد البيانات من السيرفر للبنر الإعلاني
+            banner.querySelector('.adv-image-box img').src = promo.image;
+            banner.querySelector('.adv-badge').innerText = promo.badge;
+            banner.querySelector('.adv-title').innerText = promo.title;
+            banner.querySelector('.adv-desc').innerText = promo.description;
+            banner.querySelector('.adv-link').setAttribute('onclick', `openProductDetails(${promo.productId}); return false;`);
+            
+            // مؤقت إظهار البنر بعد تحميل البيانات بثانية ونصف
+            setTimeout(() => {
+                banner.classList.add('show');
+            }, 1500);
+        }
+
         // ==================== فتح تفاصيل المنتج وعرض صورة الصنف الكبيرة ====================
         function openProductDetails(productId) {
-            const product = productsDatabase.find(p => p.id === productId);
+            const product = productsDatabase.find(p => p.id == productId);
             if(!product) return;
 
             document.getElementById('modalProductName').innerText = product.name;
@@ -745,7 +816,7 @@
             document.getElementById('modalProductDesc').innerText = product.desc;
             document.getElementById('modalProductUsage').innerText = product.usage;
             document.getElementById('modalProductSafety').innerText = product.safety;
-            document.getElementById('modalProductImage').src = product.image; // إسناد الصورة المخصصة للصنف
+            document.getElementById('modalProductImage').src = product.image;
             
             // تعيين وظيفة زر السلة الداخلي
             document.getElementById('modalAddToCartBtn').onclick = function() {
@@ -762,10 +833,10 @@
         // إدارة السلة الاستضافية محلياً
         function addToCart(productId) {
             let currentCart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
-            const product = productsDatabase.find(p => p.id === productId);
+            const product = productsDatabase.find(p => p.id == productId);
 
             if(product) {
-                const existingItem = currentCart.find(item => item.id === productId);
+                const existingItem = currentCart.find(item => item.id == productId);
                 if(existingItem) {
                     existingItem.quantity += 1;
                 } else {
@@ -781,14 +852,6 @@
             }
         }
 
-        // الإعلان الجانبي الطائر
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const banner = document.getElementById('promoFloatingBanner');
-                if (banner) banner.classList.add('show');
-            }, 1500);
-        });
-
         function dismissBanner() {
             const banner = document.getElementById('promoFloatingBanner');
             if (banner) {
@@ -803,8 +866,10 @@
             window.location.href = 'index.html';
         }
 
-        // التشغيل الأولي للمتجر
-        displayProducts();
+        // التشغيل الأولي: الاتصال بالسيرفر فور جاهزية الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            loadStoreData();
+        });
     </script>
 </body>
 </html>
