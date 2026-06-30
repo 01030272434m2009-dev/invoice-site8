@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>المتجر الرئيسي - الصيدلية البيطرية الفاخرة</title>
+    <title>المتجر الرئيسي - الصيدلية البيطرية</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* نظام الألوان الفاتحة المطور (Light Mode) */
         :root {
-            --bg-color: #f8f9fa;       /* خلفية عامة فاتحة مريحة */
-            --card-bg: #ffffff;        /* خلفية بيضاء نقية للبطاقات والنوافذ */
-            --accent-gold: #c5a028;     /* درجة ذهبية متناسقة للتحديدات والخطوط */
-            --text-color: #1a1a1a;     /* نصوص داكنة وواضحة جداً */
-            --text-muted: #6c757d;     /* نصوص فرعية رمادية */
-            --border-color: #e9ecef;   /* حدود ناعمة وخفيفة */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --accent-gold: #c5a028;
+            --text-color: #1a1a1a;
+            --text-muted: #6c757d;
+            --border-color: #e9ecef;
+            --danger-color: #dc3545;
+            --warning-color: #fd7e14;
+            --success-color: #28a745;
         }
 
         * {
@@ -31,7 +33,6 @@
             color: var(--text-color);
         }
 
-        /* شريط التنقل العلوي Navbar */
         .navbar {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
@@ -71,7 +72,6 @@
             min-height: 60vh;
         }
 
-        /* ==================== البنر الإعلاني المتحرك (Slider/Carousel) ==================== */
         .slider-wrapper {
             position: relative;
             width: 100%;
@@ -84,7 +84,7 @@
         
         .slider-container {
             display: flex;
-            width: 100%; /* سيتم تعديله ديناميكياً عبر الجافا سكريبت بناءً على عدد السلايدات */
+            width: 100%;
             height: 100%;
             transition: transform 0.6s ease-in-out;
         }
@@ -96,7 +96,6 @@
             background-position: center;
         }
 
-        /* غطاء ناعم فوق صور البنر لجعل النص مقروءاً بوضوح */
         .slide-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -123,7 +122,6 @@
             font-weight: 600;
         }
 
-        /* أزرار التنقل اليدوي للبنر */
         .slider-btn {
             position: absolute;
             top: 50%;
@@ -150,7 +148,6 @@
         .slider-btn.next { left: 20px; }
         .slider-btn.prev { right: 20px; }
 
-        /* قـسم الأقسام والفئات البيطرية */
         .section-title {
             font-size: 1.5rem;
             margin-bottom: 25px;
@@ -178,11 +175,10 @@
 
         .category-card:hover, .category-card.active {
             border-color: var(--accent-gold);
-            background-color: #fffbeb; /* لمسة ذهبية خفيفة جداً للخلفية النشطة */
+            background-color: #fffbeb;
             color: var(--accent-gold);
         }
 
-        /* شبكة عرض الأدوية والمنتجات المحدثة بالصور */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -201,12 +197,16 @@
             overflow: hidden;
         }
 
-        .product-card:hover {
+        .product-card.out-of-stock {
+            border-color: var(--border-color);
+            opacity: 0.75;
+        }
+
+        .product-card:hover:not(.out-of-stock) {
             border-color: var(--accent-gold);
             transform: translateY(-2px);
         }
 
-        /* حاوية صنف المنتج */
         .product-image-wrapper {
             width: 100%;
             height: 200px;
@@ -222,7 +222,7 @@
             transition: transform 0.4s ease;
         }
 
-        .product-card:hover .product-image-wrapper img {
+        .product-card:hover:not(.out-of-stock) .product-image-wrapper img {
             transform: scale(1.05);
         }
 
@@ -245,6 +245,16 @@
             font-weight: bold;
             z-index: 5;
         }
+
+        .stock-status-tag {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .status-finished { color: var(--danger-color); }
+        .status-low { color: var(--warning-color); }
 
         .product-name {
             font-size: 1.15rem;
@@ -275,7 +285,6 @@
             color: var(--accent-gold);
         }
 
-        /* أزرار فلات بنمط عصري وواضح */
         .btn-add-cart {
             background-color: transparent;
             color: var(--text-color);
@@ -287,13 +296,18 @@
             transition: all 0.3s;
         }
 
-        .btn-add-cart:hover {
+        .btn-add-cart:hover:not(:disabled) {
             background-color: var(--accent-gold);
             color: #fff;
             border-color: var(--accent-gold);
         }
 
-        /* ==================== الإعلان الذكي الجانبي المتحرك الفاتح ==================== */
+        .btn-add-cart:disabled {
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
         .smart-adv-banner {
             position: fixed;
             bottom: 20px;
@@ -354,7 +368,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* ==================== نافذة تفاصيل المنتج بنمط أمازون (فاتحة) ==================== */
         .amazon-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -438,7 +451,6 @@
             margin-top: 20px;
         }
 
-        /* شاشة التحميل الذكية لحين جلب البيانات من السيرفر */
         .loading-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -463,7 +475,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* ==================== الفوتر الشامل (Footer) الفاتح ==================== */
         .site-footer {
             background-color: var(--card-bg);
             border-top: 1px solid var(--border-color);
@@ -524,7 +535,7 @@
     </div>
 
     <nav class="navbar">
-        <div class="nav-logo">الصيدلية البيطرية الفاخرة 🐾</div>
+        <div class="nav-logo" id="navStoreName">الصيدلية البيطرية</div>
         <div class="nav-links">
             <a href="store.html">الرئيسية</a>
             <a href="chat.html">المساعد الذكي🤖</a>
@@ -537,8 +548,7 @@
         
         <div class="slider-wrapper">
             <button class="slider-btn prev" onclick="moveSlide(-1)">&#10095;</button>
-            <div class="slider-container" id="sliderContainer">
-                </div>
+            <div class="slider-container" id="sliderContainer"></div>
             <button class="slider-btn next" onclick="moveSlide(1)">&#10094;</button>
         </div>
 
@@ -551,7 +561,7 @@
             <div class="category-card" onclick="filterCategory('أليفة')">حيوانات أليفة</div>
         </div>
 
-        <div class="section-title">الأدوية المتاحة (اضغط على الصنف لعرض تفاصيل أمازون)</div>
+        <div class="section-title">الأدوية المتاحة</div>
         <div class="products-grid" id="productsContainer"></div>
 
     </div>
@@ -574,14 +584,14 @@
             <button class="modal-close" onclick="closeProductDetails()">إغلاق التصفح X</button>
             
             <div class="amazon-gallery">
-                <span class="badge-huge" id="modalProductBadge">مميز</span>
+                <span class="badge-huge" id="modalProductBadge"></span>
                 <img id="modalProductImage" src="" alt="صورة الصنف">
             </div>
             
             <div class="amazon-details">
                 <div>
                     <h1 class="amz-title" id="modalProductName">اسم الصنف البيطري</h1>
-                    <div class="amz-rating" id="modalProductRating">⭐⭐⭐⭐⭐ (٤.٨ من ٥) | ٤٢ تقييم موثق</div>
+                    <div class="amz-rating" id="modalProductRating"></div>
                     
                     <div class="amz-price-box">
                         <span style="font-size: 0.9rem; color: var(--text-muted); font-weight: normal;">السعر الحالي: </span>
@@ -589,21 +599,23 @@
                         <span style="font-size: 0.8rem; color: #2ecc71; font-weight: normal;"> (شامل ضريبة القيمة المضافة)</span>
                     </div>
 
+                    <div id="modalStockStatusBox" style="margin-bottom: 15px;"></div>
+
                     <div class="amz-section-header">وصف المنتج:</div>
-                    <p class="amz-text" id="modalProductDesc">الوصف المطور للمنتج.</p>
+                    <p class="amz-text" id="modalProductDesc"></p>
 
                     <div class="amz-section-header">بروتوكول وطريقة الاستخدام:</div>
-                    <p class="amz-text" id="modalProductUsage">يُحل في مياه الشرب أو حقن عضلي حسب توجيهات الطبيب البيطري المسؤول بالوحدة.</p>
+                    <p class="amz-text" id="modalProductUsage"></p>
                     
                     <div class="amz-section-header">فترة الأمان والانسحاب:</div>
-                    <p class="amz-text" id="modalProductSafety">اللحم: ٧ أيام | اللبن: ٤٨ ساعة من آخر جرعة.</p>
+                    <p class="amz-text" id="modalProductSafety"></p>
                 </div>
 
                 <div class="amazon-buy-box">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <span style="color: #2ecc71; font-weight:600;">✔️ متوفر في المخزن الرئيسي جاهز للشحن</span>
+                        <span id="modalBuyBoxStatusText" style="font-weight:600;"></span>
                     </div>
-                    <button class="btn-add-cart" id="modalAddToCartBtn" style="width: 100%; padding: 12px; font-weight:700;">إضافة إلى سلة المشتريات البيطرية</button>
+                    <button class="btn-add-cart" id="modalAddToCartBtn" style="width: 100%; padding: 12px; font-weight:700;">إضافة إلى سلة المشتريات</button>
                 </div>
             </div>
         </div>
@@ -613,71 +625,54 @@
         <div class="footer-grid">
             <div class="footer-col">
                 <h3>من نحن</h3>
-                <p>الصيدلية البيطرية الفاخرة هي المنصة الرقمية المعتمدة لتوفير العلاجات البيطرية والتحصينات والمكملات الغذائية بأعلى معايير الجودة لخدمة جميع الوحدات والمربين.</p>
+                <p id="footerAboutUs"></p>
             </div>
             <div class="footer-col">
                 <h3>شركاؤنا</h3>
-                <ul>
-                    <li><a href="#">الشركات الوطنية للمستحضرات الطبية</a></li>
-                    <li><a href="#">نقابة الأطباء البيطريين</a></li>
-                    <li><a href="#">موزعو اللقاحات السيادية المعتمدة</a></li>
-                </ul>
+                <ul id="footerPartners"></ul>
             </div>
             <div class="footer-col">
                 <h3>القوانين والسياسات</h3>
-                <ul>
-                    <li><a href="#">شروط الاستخدام والأمان الدوائي</a></li>
-                    <li><a href="#">سياسة الإرجاع للمستحضرات المبردة</a></li>
-                    <li><a href="#">قوانين التوزيع والطلبات بالجملة</a></li>
-                </ul>
+                <ul id="footerPolicies"></ul>
             </div>
             <div class="footer-col">
                 <h3>للتواصل والدعم</h3>
-                <p style="margin-bottom: 10px;">الخط الساخن: الاستشارات الفورية</p>
-                <p style="margin-bottom: 10px;">البريد: support@vet-luxury.com</p>
-                <p>المقر: الإدارة البيطرية - فاقوس، الشرقية</p>
+                <p style="margin-bottom: 10px;" id="footerPhone"></p>
+                <p style="margin-bottom: 10px;" id="footerEmail"></p>
+                <p id="footerAddress"></p>
             </div>
         </div>
         <div class="footer-bottom">
-            <div>© 2026 الصيدلية البيطرية الفاخرة. جميع الحقوق محفوظة.</div>
-            <div>نظام مبرمج بنمط ناعم عصري فاتح الألوان</div>
+            <div id="footerCopyright"></div>
         </div>
     </footer>
 
     <script>
-        // التحقق الأمني من حالة تسجيل الدخول
         if(localStorage.getItem('user_logged_in') !== 'true') {
             window.location.href = 'index.html';
         }
 
-        // رابط خادم Google Apps Script الخاص بك [cite: 176, 350]
         const SERVER_API_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec";
 
-        // قاعدة بيانات المنتجات (تصبح فارغة وسيتم ملؤها من السيرفر)
         let productsDatabase = [];
-        
-        // متغيرات البنرات المتحركة
+        let storeSettings = {};
         let currentSlideIndex = 0;
         let totalSlides = 0;
         const sliderContainer = document.getElementById('sliderContainer');
 
-        // دالة جلب البيانات الشاملة من السيرفر
         async function loadStoreData() {
             try {
                 const response = await fetch(SERVER_API_URL);
                 const data = await response.json();
                 
-                // 1. تحديث المنتجات وعرضها
                 productsDatabase = data.products || [];
+                storeSettings = data.settings || {};
+                
+                applyStoreSettings();
                 displayProducts();
-                
-                // 2. بناء البنرات المتحركة ديناميكياً
                 updateSlidersDynamic(data.sliders || []);
-                
-                // 3. تحديث الإعلان الطائر الذكي
                 updatePromoBannerDynamic(data.promo);
                 
-                // إخفاء شاشة التحميل بعد اكتمال جلب البيانات بنجاح
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 if(loadingOverlay) {
                     loadingOverlay.style.opacity = '0';
@@ -685,19 +680,52 @@
                 }
                 
             } catch (error) {
-                console.error("خطأ أثناء الاتصال بالسيرفر وجلب البيانات:", error);
-                alert("فشل الاتصال بالسيرفر، جاري المحاولة مرة أخرى أو الاعتماد على الذاكرة المحلية.");
+                console.error("خطأ أثناء الاتصال بالسيرفر:", error);
+                alert("فشل الاتصال بالسيرفر، جاري المحاولة مرة أخرى.");
             }
         }
 
-        // ==================== منطق تشغيل البنرات المتحركة التلقائية واليدوية ====================
+        function applyStoreSettings() {
+            if(storeSettings.store_name) {
+                document.getElementById('navStoreName').innerText = storeSettings.store_name;
+                document.title = storeSettings.store_name;
+                document.getElementById('footerCopyright').innerText = `© 2026 ${storeSettings.store_name}. جميع الحقوق محفوظة.`;
+            }
+            if(storeSettings.about_us) {
+                document.getElementById('footerAboutUs').innerText = storeSettings.about_us;
+            }
+            if(storeSettings.contact_phone) {
+                document.getElementById('footerPhone').innerText = `الهاتف: ${storeSettings.contact_phone}`;
+            }
+            if(storeSettings.contact_email) {
+                document.getElementById('footerEmail').innerText = `البريد: ${storeSettings.contact_email}`;
+            }
+            if(storeSettings.store_address) {
+                document.getElementById('footerAddress').innerText = `المقر: ${storeSettings.store_address}`;
+            }
+
+            if(storeSettings.partners_list) {
+                const partnersUl = document.getElementById('footerPartners');
+                partnersUl.innerHTML = '';
+                storeSettings.partners_list.split('|').forEach(p => {
+                    partnersUl.innerHTML += `<li><a href="#">${p.trim()}</a></li>`;
+                });
+            }
+
+            if(storeSettings.policies_list) {
+                const policiesUl = document.getElementById('footerPolicies');
+                policiesUl.innerHTML = '';
+                storeSettings.policies_list.split('|').forEach(p => {
+                    policiesUl.innerHTML += `<li><a href="#">${p.trim()}</a></li>`;
+                });
+            }
+        }
+
         function updateSlidersDynamic(sliders) {
             if(!sliders || sliders.length === 0) return;
             
             totalSlides = sliders.length;
             sliderContainer.innerHTML = '';
-            
-            // تعديل العرض الكلي للحاوية بناء على عدد البنرات القادمة من جوجل شيت
             sliderContainer.style.width = `${totalSlides * 100}%`;
             
             sliders.forEach(slide => {
@@ -716,7 +744,6 @@
 
         function updateSliderPosition() {
             if(totalSlides === 0) return;
-            // حساب نسبة الإزاحة بناءً على العدد الفعلي للبنرات
             const percentage = currentSlideIndex * (100 / totalSlides);
             sliderContainer.style.transform = `translateX(${percentage}%)`;
         }
@@ -732,12 +759,10 @@
             updateSliderPosition();
         }
 
-        // مؤقت مدمج للتغيير التلقائي كل 4 ثوانٍ دون تدخل
         setInterval(() => {
             moveSlide(1);
         }, 4000);
 
-        // ==================== منطق معالجة المنتجات والأصناف بالصور ====================
         function displayProducts(categoryFilter = 'الكل') {
             const container = document.getElementById('productsContainer');
             container.innerHTML = '';
@@ -747,9 +772,22 @@
                 : productsDatabase.filter(p => p.category === categoryFilter);
 
             filtered.forEach(product => {
+                const qty = parseInt(product.quantity) || 0;
+                let stockHTML = '';
+                let isOut = false;
+                let cardClass = 'product-card';
+
+                if (qty <= 0) {
+                    stockHTML = `<span class="stock-status-tag status-finished">خلص</span>`;
+                    isOut = true;
+                    cardClass += ' out-of-stock';
+                } else if (qty <= 10) {
+                    stockHTML = `<span class="stock-status-tag status-low">متبقي ${qty} وحدات فقط!</span>`;
+                }
+
                 const cardHTML = `
-                    <div class="product-card" onclick="openProductDetails(${product.id})">
-                        <span class="product-badge">${product.badge}</span>
+                    <div class="${cardClass}" onclick="openProductDetails(${product.id})">
+                        ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                         <div class="product-image-wrapper">
                             <img src="${product.image}" alt="${product.name}">
                         </div>
@@ -757,10 +795,13 @@
                             <div>
                                 <div class="product-name">${product.name}</div>
                                 <div class="product-desc">${product.desc}</div>
+                                ${stockHTML}
                             </div>
                             <div class="product-footer" onclick="event.stopPropagation();">
                                 <span class="product-price">${product.price} ج.م</span>
-                                <button class="btn-add-cart" onclick="addToCart(${product.id})">إضافة للسلة</button>
+                                <button class="btn-add-cart" ${isOut ? 'disabled' : ''} onclick="addToCart(${product.id})">
+                                    ${isOut ? 'خلص' : 'إضافة للسلة'}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -769,7 +810,6 @@
             });
         }
 
-        // فلترة الأقسام
         function filterCategory(categoryName) {
             const cards = document.querySelectorAll('.category-card');
             cards.forEach(card => {
@@ -782,44 +822,63 @@
             displayProducts(categoryName);
         }
 
-        // تحديث وإظهار الإعلان الجانبي الطائر من السيرفر
         function updatePromoBannerDynamic(promo) {
             const banner = document.getElementById('promoFloatingBanner');
-            
-            // إخفاء وحذف العنصر نهائياً لو تم قفله من الشيت أو كان الحقل false
             if (!promo || promo.show === false || promo.show === "false") {
                 if(banner) banner.remove();
                 return;
             }
             
-            // إسناد البيانات من السيرفر للبنر الإعلاني
             banner.querySelector('.adv-image-box img').src = promo.image;
             banner.querySelector('.adv-badge').innerText = promo.badge;
             banner.querySelector('.adv-title').innerText = promo.title;
             banner.querySelector('.adv-desc').innerText = promo.description;
             banner.querySelector('.adv-link').setAttribute('onclick', `openProductDetails(${promo.productId}); return false;`);
             
-            // مؤقت إظهار البنر بعد تحميل البيانات بثانية ونصف
             setTimeout(() => {
                 banner.classList.add('show');
             }, 1500);
         }
 
-        // ==================== فتح تفاصيل المنتج وعرض صورة الصنف الكبيرة ====================
         function openProductDetails(productId) {
             const product = productsDatabase.find(p => p.id == productId);
             if(!product) return;
 
+            const qty = parseInt(product.quantity) || 0;
+            const statusBox = document.getElementById('modalStockStatusBox');
+            const buyBoxStatusText = document.getElementById('modalBuyBoxStatusText');
+            const addBtn = document.getElementById('modalAddToCartBtn');
+
             document.getElementById('modalProductName').innerText = product.name;
-            document.getElementById('modalProductBadge').innerText = product.badge;
+            document.getElementById('modalProductBadge').innerText = product.badge || '';
             document.getElementById('modalProductPrice').innerText = product.price;
             document.getElementById('modalProductDesc').innerText = product.desc;
-            document.getElementById('modalProductUsage').innerText = product.usage;
-            document.getElementById('modalProductSafety').innerText = product.safety;
+            document.getElementById('modalProductUsage').innerText = product.usage || '';
+            document.getElementById('modalProductSafety').innerText = product.safety || '';
             document.getElementById('modalProductImage').src = product.image;
+            document.getElementById('modalProductRating').innerText = product.rating || '';
+
+            if (qty <= 0) {
+                statusBox.innerHTML = `<span class="stock-status-tag status-finished" style="font-size:1.1rem;">❌ الصنف خلص تماماً</span>`;
+                buyBoxStatusText.innerText = '❌ غير متوفر بالمخزن حالياً';
+                buyBoxStatusText.style.color = 'var(--danger-color)';
+                addBtn.disabled = true;
+                addBtn.innerText = 'نفدت الكمية';
+            } else if (qty <= 10) {
+                statusBox.innerHTML = `<span class="stock-status-tag status-low" style="font-size:1.1rem;">⚠️ تنبيه: متبقي في المخزن ${qty} وحدات فقط!</span>`;
+                buyBoxStatusText.innerText = '✔️ كمية محدودة جداً متوفرة';
+                buyBoxStatusText.style.color = 'var(--warning-color)';
+                addBtn.disabled = false;
+                addBtn.innerText = 'إضافة إلى سلة المشتريات';
+            } else {
+                statusBox.innerHTML = '';
+                buyBoxStatusText.innerText = '✔️ متوفر في المخزن وجاهز للشحن';
+                buyBoxStatusText.style.color = 'var(--success-color)';
+                addBtn.disabled = false;
+                addBtn.innerText = 'إضافة إلى سلة المشتريات';
+            }
             
-            // تعيين وظيفة زر السلة الداخلي
-            document.getElementById('modalAddToCartBtn').onclick = function() {
+            addBtn.onclick = function() {
                 addToCart(product.id);
             };
 
@@ -830,12 +889,17 @@
             document.getElementById('amazonProductModal').classList.remove('active');
         }
 
-        // إدارة السلة الاستضافية محلياً
         function addToCart(productId) {
             let currentCart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
             const product = productsDatabase.find(p => p.id == productId);
 
             if(product) {
+                const qty = parseInt(product.quantity) || 0;
+                if(qty <= 0) {
+                    alert("عذراً، هذا الصنف خلص تماماً ولا يمكن إضافته للسلة.");
+                    return;
+                }
+
                 const existingItem = currentCart.find(item => item.id == productId);
                 if(existingItem) {
                     existingItem.quantity += 1;
@@ -866,7 +930,6 @@
             window.location.href = 'index.html';
         }
 
-        // التشغيل الأولي: الاتصال بالسيرفر فور جاهزية الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             loadStoreData();
         });
