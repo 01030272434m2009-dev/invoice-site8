@@ -10,14 +10,15 @@
     
     <style>
         :root {
-            --bg-color: #0d0d0d;
-            --card-bg: #1a1a1a;
-            --accent-gold: #d4af37;
-            --text-color: #ffffff;
-            --text-muted: #aaaaaa;
-            --border-color: #2a2a2a;
-            --danger-color: #e74c3c;
-            --success-color: #2ecc71;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --accent-gold: #c5a059;
+            --accent-blue: #1e3a8a;
+            --text-color: #334155;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -31,12 +32,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
         }
-        .navbar a { color: var(--text-color); text-decoration: none; margin-right: 15px; }
+        .navbar a { color: var(--text-color); text-decoration: none; margin-right: 15px; font-weight: 600; transition: 0.3s; }
         .navbar a:hover { color: var(--accent-gold); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        h1 { font-size: 1.8rem; margin-bottom: 20px; border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; display: inline-block; }
+        h1 { font-size: 1.8rem; margin-bottom: 25px; color: var(--accent-blue); border-bottom: 3px solid var(--accent-gold); padding-bottom: 10px; display: inline-block; }
 
         .main-wrapper { display: flex; flex-direction: column; gap: 30px; }
         @media (min-width: 992px) { .main-wrapper { flex-direction: row; align-items: flex-start; } }
@@ -44,42 +46,45 @@
         /* يمين: السلة وبيانات الشحن */
         .left-side { flex: 2; display: flex; flex-direction: column; gap: 25px; }
         /* يسار: الفاتورة وإجمالي الدفع */
-        .right-side { flex: 1; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; position: sticky; top: 20px; }
+        .right-side { flex: 1; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; position: sticky; top: 20px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04); }
 
-        .section-box { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; }
-        .box-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: var(--accent-gold); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .section-box { background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 25px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04); }
+        .box-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: var(--accent-blue); border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
 
         /* المنتجات داخل السلة */
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
         .cart-item:last-child { border-bottom: none; }
         .item-info { flex: 2; }
+        .item-info div:first-child { font-weight: 600; color: #1e293b; }
         .item-price { color: var(--accent-gold); font-weight: bold; margin-top: 5px; }
-        .qty-controls { display: flex; align-items: center; gap: 10px; background: #0d0d0d; border: 1px solid var(--border-color); padding: 5px; }
-        .qty-btn { background: none; border: none; color: var(--accent-gold); font-size: 1.2rem; cursor: pointer; width: 25px; }
-        .delete-btn { background: none; border: none; color: var(--danger-color); cursor: pointer; font-size: 0.85rem; border: 1px solid var(--danger-color); padding: 3px 8px; margin-right: 15px; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f8fafc; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; }
+        .qty-btn { background: none; border: none; color: var(--accent-blue); font-size: 1.2rem; cursor: pointer; width: 25px; font-weight: 700; }
+        .delete-btn { background: none; border: 1px solid var(--danger-color); color: var(--danger-color); cursor: pointer; font-size: 0.85rem; padding: 5px 12px; margin-right: 15px; border-radius: 6px; font-weight: 600; transition: 0.3s; }
+        .delete-btn:hover { background: var(--danger-color); color: #fff; }
 
         /* النماذج والاستمارات الـ Flat */
-        .form-grid { display: grid; grid-template-columns: 1 stroke 1fr; gap: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-        .full-width { grid-column: span 2; }
+        .full-width { grid-column: span 1; }
+        @media (min-width: 600px) { .full-width { grid-column: span 2; } }
         
         .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 0.9rem; font-weight: 600; }
-        .form-group input, .form-group select { background-color: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 12px; outline: none; font-size: 0.95rem; }
-        .form-group input:focus, .form-group select:focus { border-color: var(--accent-gold); }
+        .form-group label { font-size: 0.9rem; font-weight: 700; color: #475569; }
+        .form-group input, .form-group select { background-color: #f8fafc; border: 1px solid var(--border-color); color: #1e293b; padding: 12px; outline: none; font-size: 0.95rem; border-radius: 8px; transition: 0.3s; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-gold); background-color: #fff; box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1); }
 
         /* الفاتورة */
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1rem; }
-        .summary-row.total { border-top: 1px solid var(--accent-gold); padding-top: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-gold); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 1rem; color: #475569; }
+        .summary-row.total { border-top: 2px dashed var(--border-color); padding-top: 25px; font-size: 1.3rem; font-weight: bold; color: var(--accent-blue); }
         
-        /* كوبون الخصم */
-        .coupon-box { display: flex; gap: 10px; margin-top: 15px; margin-bottom: 20px; }
+        /* كوبون الخصصم */
+        .coupon-box { display: flex; gap: 10px; margin-top: 8px; margin-bottom: 20px; }
         .coupon-box input { flex: 2; }
-        .btn-coupon { flex: 1; background: transparent; border: 1px solid var(--accent-gold); color: var(--accent-gold); cursor: pointer; }
-        .btn-coupon:hover { background: var(--accent-gold); color: #0d0d0d; }
+        .btn-coupon { flex: 1; background: #f1f5f9; border: 1px solid var(--border-color); color: var(--text-color); cursor: pointer; font-weight: 600; border-radius: 8px; transition: 0.3s; }
+        .btn-coupon:hover { background: var(--accent-gold); color: #fff; border-color: var(--accent-gold); }
 
-        .btn-submit { width: 100%; background: transparent; border: 2px solid var(--accent-gold); color: var(--accent-gold); padding: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; }
-        .btn-submit:hover { background: var(--accent-gold); color: #0d0d0d; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        .btn-submit { width: 100%; background: var(--accent-blue); border: none; color: #ffffff; padding: 14px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.2); }
+        .btn-submit:hover { background: var(--accent-gold); transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(197, 160, 89, 0.3); }
         
         .shipping-info-text { font-size: 0.85rem; color: var(--text-muted); margin-top: 5px; }
     </style>
@@ -87,7 +92,7 @@
 <body>
 
     <nav class="navbar">
-        <div style="font-weight:700; color:var(--accent-gold)">الصيدلية البيطرية الفاخرة 🐾</div>
+        <div style="font-weight:700; color:var(--accent-blue); font-size: 1.2rem;">الصيدلية البيطرية الفاخرة 🐾</div>
         <div>
             <a href="store.html">المتجر</a>
             <a href="cart.html">السلة</a>
@@ -103,8 +108,7 @@
                 
                 <div class="section-box">
                     <div class="box-title">الأدوية المحددة بالسلة</div>
-                    <div id="cartItemsList">
-                        </div>
+                    <div id="cartItemsList"></div>
                 </div>
 
                 <div class="section-box">
@@ -139,11 +143,6 @@
                             <label>المحافظة *</label>
                             <select id="govSelect" onchange="updateCities()">
                                 <option value="">اختر المحافظة...</option>
-                                <option value="القاهرة">القاهرة</option>
-                                <option value="الجيزة">الجيزة</option>
-                                <option value="الإسكندرية">الإسكندرية</option>
-                                <option value="الدقهلية">الدقهلية</option>
-                                <option value="الغربية">الغربية</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -162,27 +161,27 @@
 
             </div>
 
-            <div class="right-side section-box">
+            <div class="right-side">
                 <div class="box-title">ملخص الحساب والفاتورة</div>
                 
                 <div class="summary-row">
                     <span>إجمالي الأدوية:</span>
-                    <span id="subTotal">0 ج.م</span>
+                    <span id="subTotal" style="font-weight: 600; color: #1e293b;">0 ج.م</span>
                 </div>
                 <div class="summary-row">
                     <span>شركة الشحن المعتمدة:</span>
-                    <span id="shippingCompany" style="color:var(--accent-gold); font-weight:600;">البريد السريع البيطري</span>
+                    <span id="shippingCompany" style="color:var(--accent-gold); font-weight:700;">البريد السريع البيطري</span>
                 </div>
                 <div class="summary-row">
                     <span>تكلفة التوصيل الشحن:</span>
-                    <span id="shippingCost">0 ج.م</span>
+                    <span id="shippingCost" style="font-weight: 600; color: #1e293b;">0 ج.م</span>
                 </div>
-                <div class="summary-row" id="discountRow" style="display:none; color:var(--success-color);">
+                <div class="summary-row" id="discountRow" style="display:none; color:var(--success-color); font-weight: 600;">
                     <span>خصم الكوبون:</span>
                     <span id="discountValue">-0 ج.م</span>
                 </div>
 
-                <label style="font-size:0.85rem; display:block; margin-bottom:5px;">هل لديك كود خصم؟</label>
+                <label style="font-size:0.85rem; display:block; margin-bottom:5px; font-weight: 600; color: #475569;">هل لديك كود خصم؟</label>
                 <div class="coupon-box">
                     <input type="text" id="couponInput" placeholder="اكتب كود الخصم هنا">
                     <button class="btn-coupon" onclick="applyCoupon()">تطبيق</button>
@@ -200,24 +199,53 @@
     </div>
 
     <script>
-        // قاعدة بيانات المحافظات والمدن وأسعار شحنها المتغيرة
+        // قاعدة بيانات شاملة لكافة محافظات مصر الـ 27 مع أشهر مدنها ومراكزها بالكامل
         const shippingRates = {
-            "القاهرة": { cost: 40, cities: ["مصر الجديدة", "مدينة نصر", "شبرا", "حلوان", "التجمع الخامس"] },
-            "الجيزة": { cost: 45, cities: ["الدقي", "المهندسين", "الهرم", "6 أكتوبر", "الشيخ زايد"] },
-            "الإسكندرية": { cost: 60, cities: ["سموحة", "المنتزه", "محرم بك", "العجمي", "برج العرب"] },
-            "الدقهلية": { cost: 70, cities: ["المنصورة", "ميت غمر", "السنبلاوين", "طلخا", "دكرنس"] },
-            "الغربية": { cost: 65, cities: ["طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى"] }
+            "القاهرة": { cost: 40, cities: ["مدينة نصر", "مصر الجديدة", "المعادي", "حلوان", "شبرا", "التجمع الخامس", "وسط البلد", "الزيتون", "عين شمس", "المرج"] },
+            "الجيزة": { cost: 45, cities: ["الدقي", "المهندسين", "الهرم", "فيصل", "6 أكتوبر", "الشيخ زايد", "العجوزة", "إمبابة", "البدرشين", "العياط"] },
+            "الإسكندرية": { cost: 60, cities: ["سموحة", "المنتزه", "محرم بك", "العجمي", "برج العرب", "سيدي جابر", "السيوف", "العصافرة"] },
+            "القليوبية": { cost: 50, cities: ["بنها", "شبرا الخيمة", "قليوب", "الخانكة", "قناطر الخيرية", "طوخ", "ش provide", "كفر شكر"] },
+            "المنوفية": { cost: 55, cities: ["شبين الكوم", "منوف", "أشمون", "السادات", "باجور", "قويسنا", "تلا", "بركة السبع"] },
+            "الغربية": { cost: 55, cities: ["طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى", "السنطة", "بسيون", "قطور", "سمنود"] },
+            "الدقهلية": { cost: 60, cities: ["المنصورة", "ميت غمر", "السنبلاوين", "طلخا", "دكرنس", "بلقاس", "منزلة", "شربين"] },
+            "الشرقية": { cost: 60, cities: ["الزقازيق", "العاشر من رمضان", "بلبيس", "فاقوس", "أبو حماد", "أبو كبير", "الحسينية", "منيا القمح"] },
+            "دمياط": { cost: 65, cities: ["دمياط", "دمياط الجديدة", "رأس البر", "فارسكور", "الزرقا", "كفر سعد"] },
+            "كفر الشيخ": { cost: 60, cities: ["كفر الشيخ", "دسوق", "قلين", "سيدي سالم", "بلطيم", "الحامول", "فوه", "مطوبس"] },
+            "البحيرة": { cost: 60, cities: ["دمنهور", "كفر الدوار", "رشيد", "إدكو", "أبو حمص", "إيتاي البارود", "كوم حمادة", "حوش عيسى"] },
+            "الإسماعيلية": { cost: 60, cities: ["الإسماعيلية", "القصاصين", "التل الكبير", "القنطرة شرق", "القنطرة غرب", "فايد"] },
+            "بورسعيد": { cost: 65, cities: ["بورفؤاد", "حي الشرق", "حي العرب", "حي الضواحي", "حي المناخ"] },
+            "السويس": { cost: 65, cities: ["حي السويس", "حي الأربعين", "حي الجناين", "حي عتاقة", "حي فيصل"] },
+            "الفيوم": { cost: 60, cities: ["الفيوم", "إطسا", "سنورس", "طامية", "يوسف الصديق", "أبشواي"] },
+            "بني سويف": { cost: 60, cities: ["بني سويف", "الواسطى", "ناصر", "ببا", "الفشن", "سمسطا", "اهناسيا"] },
+            "المنيا": { cost: 65, cities: ["المنيا", "ملوي", "بني مزار", "مغاغة", "سمالوط", "أبو قرقاص", "دير مواس"] },
+            "أسيوط": { cost: 70, cities: ["أسيوط", "ديروط", "منفلوط", "القوصية", "أبو تيج", "أبنوب", "صدفا", "الغنايم"] },
+            "سوهاج": { cost: 75, cities: ["سوهاج", "أخميم", "طما", "طهطا", "المنشأة", "جرجا", "البلينا", "المراغة"] },
+            "قنا": { cost: 80, cities: ["قنا", "نجع حمادي", "دشنا", "قوص", "أبو تشت", "قفط", "نقادة", "فرشوط"] },
+            "الأقصر": { cost: 85, cities: ["الأقصر", "إسنا", "أرمنت", "القرنة", "الطود"] },
+            "أسوان": { cost: 90, cities: ["أسوان", "كوم أمبو", "إدفو", "نصر النوبة", "أبو سمبل"] },
+            "البحر الأحمر": { cost: 90, cities: ["الغردقة", "سفاجا", "القصير", "مرسى علم", "رأس غارب", "شلاتين"] },
+            "الوادى الجديد": { cost: 90, cities: ["الخارجة", "الداخلة", "الفرافرة", "باريس", "بلاط"] },
+            "مطروح": { cost: 80, cities: ["مرسى مطروح", "العلمين", "الضبعة", "سيوة", "الحمام", "السلوم"] },
+            "شمال سيناء": { cost: 85, cities: ["العريش", "بئر العبد", "الشيخ زويد", "رفح"] },
+            "جنوب سيناء": { cost: 85, cities: ["شرم الشيخ", "الطور", "دهب", "نويبع", "رأس سدر", "سانت كاترين"] }
         };
 
         let cart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
         let couponDiscount = 0;
 
-        // دالة عرض منتجات السلة
+        // دالة تعبئة قائمة المحافظات تلقائياً عند تحميل الصفحة
+        function initGovernates() {
+            const govSelect = document.getElementById('govSelect');
+            for (let gov in shippingRates) {
+                govSelect.innerHTML += `<option value="${gov}">${gov}</option>`;
+            }
+        }
+
         function renderCartItems() {
             const container = document.getElementById('cartItemsList');
             container.innerHTML = '';
             if(cart.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);">السلة فارغة حالياً.</p>';
+                container.innerHTML = '<p style="color:var(--text-muted); font-weight:600;">السلة فارغة حالياً.</p>';
                 return;
             }
             cart.forEach(item => {
@@ -255,7 +283,6 @@
             renderCartItems();
         }
 
-        // تحديث المدن والأسعار أوتوماتيكياً بناءً على اختيار المحافظة المختار
         function updateCities() {
             const gov = document.getElementById('govSelect').value;
             const citySelect = document.getElementById('citySelect');
@@ -284,10 +311,9 @@
             calculateFinalTotal();
         }
 
-        // تطبيق أكواد كوبونات الخصم والتحقق منها
         function applyCoupon() {
             const code = document.getElementById('couponInput').value.trim();
-            if(code === "VET20") { // كوبون خصم بيطري تجريبي بنسبة 20%
+            if(code === "VET20") {
                 couponDiscount = 0.20;
                 alert("تم تطبيق خصم 20% بنجاح على الأدوية!");
             } else {
@@ -297,30 +323,24 @@
             calculateFinalTotal();
         }
 
-        // الحساب الديناميكي الشامل (أدوية + شحن متغير حسب المحافظة + موعد التسليم - الخصم)
         function calculateFinalTotal() {
             let itemsSubtotal = 0;
             cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
             
-            // حساب الشحن حسب المحافظة
             const gov = document.getElementById('govSelect').value;
             let shipping = 0;
             if(gov && shippingRates[gov]) {
                 shipping = shippingRates[gov].cost;
             }
 
-            // إضافة تكلفة إضافية إذا اختار الشحن المسائي السريع
             const timeSlot = document.getElementById('deliveryTime').value;
             if(timeSlot === 'evening' && gov !== "") {
                 shipping += 15; 
             }
 
-            // حساب الخصم
             let discountAmount = itemsSubtotal * couponDiscount;
-            
             let final = (itemsSubtotal - discountAmount) + shipping;
 
-            // تحديث الشاشة
             document.getElementById('subTotal').innerText = itemsSubtotal + " ج.م";
             document.getElementById('shippingCost').innerText = shipping + " ج.م";
             
@@ -334,7 +354,6 @@
             document.getElementById('finalTotal').innerText = final + " ج.م";
         }
 
-        // تأكيد وإرسال الطلب وحفظ البيانات للاستعلام اللاحق
         function submitOrder() {
             if(cart.length === 0) { alert("السلة فارغة!"); return; }
             
@@ -352,7 +371,6 @@
                 return;
             }
 
-            // توليد رقم طلب عشوائي فريد للاستعلام عنه لاحقاً
             const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
 
             const orderDetails = {
@@ -365,19 +383,15 @@
                 date: new Date().toLocaleDateString('ar-EG')
             };
 
-            // حفظ الطلب في ذاكرة المتصفح لمحاكاة سيرفر الاستعلام
             localStorage.setItem(orderId, JSON.stringify(orderDetails));
-            
-            // تفريغ السلة بعد نجاح العملية
             localStorage.removeItem('pharmacy_cart');
             
             alert(`تم تأكيد طلبك بنجاح! \nرقم الطلب الخاص بك هو: ${orderId} \nاحتفظ بهذا الرقم للاستعلام عن حالة التوصيل في أي وقت.`);
-            
-            // في الخطوة القادمة نربط هذه البيانات لتذهب أوتوماتيكياً لـ Google Sheets.
             window.location.href = 'store.html';
         }
 
-        // التشغيل المبدئي للجريد
+        // تشغيل التهيئة المبدئية عند تحميل العناصر
+        initGovernates();
         renderCartItems();
     </script>
 </body>
