@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاستعلام عن شحنة - الصيدلية البيطرية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #0d0d0d; --card-bg: #1a1a1a; --accent-gold: #d4af37; --text-color: #ffffff; --border-color: #2a2a2a; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; align-items: center; justify-content: center; height: 100vh; padding: 20px; }
+        .track-box { background: var(--card-bg); border: 1px solid var(--border-color); padding: 35px; width: 100%; max-width: 500px; }
+        h2 { color: var(--accent-gold); margin-bottom: 20px; text-align: center; }
+        input { width: 100%; background: #0d0d0d; border: 1px solid var(--border-color); color: #fff; padding: 12px; margin-bottom: 15px; outline: none; text-align: center; font-size: 1.1rem; }
+        button { width: 100%; background: transparent; border: 2px solid var(--accent-gold); color: var(--accent-gold); padding: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        button:hover { background: var(--accent-gold); color: #000; }
+        .result-box { margin-top: 25px; border-top: 1px dashed var(--border-color); padding-top: 20px; display: none; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; }
+        .status-badge { color: var(--accent-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="track-box">
+        <h2>استعلام وتتبع حالة الطلب 📦</h2>
+        <input type="text" id="orderIdInput" placeholder="أدخل رقم طلبك (مثال: VET-123456)">
+        <button onclick="checkOrder()">استعلام الآن</button>
+
+        <div class="result-box" id="resultBox">
+            <div class="result-row"><span>اسم العميل:</span> <span id="resName"></span></div>
+            <div class="result-row"><span>تاريخ الطلب:</span> <span id="resDate"></span></div>
+            <div class="result-row"><span>العنوان ومكان التوصيل:</span> <span id="resAddress" style="text-align:left; max-width:60%;"></span></div>
+            <div class="result-row"><span>الحساب الكلي المدفوع:</span> <span id="resTotal" style="color:var(--accent-gold)"></span></div>
+            <div class="result-row" style="margin-top:15px;"><span>حالة الشحنة الحالية:</span> <span id="resStatus" class="status-badge"></span></div>
+        </div>
+    </div>
+
+    <script>
+        function checkOrder() {
+            const id = document.getElementById('orderIdInput').value.trim();
+            const resultBox = document.getElementById('resultBox');
+            
+            // جلب البيانات المخزنة من ذاكرة المتجر لمحاكاتها
+            const savedOrder = localStorage.getItem(id);
+
+            if(savedOrder) {
+                const order = JSON.parse(savedOrder);
+                document.getElementById('resName').innerText = order.customerName;
+                document.getElementById('resDate').innerText = order.date;
+                document.getElementById('resAddress').innerText = order.fullAddress;
+                document.getElementById('resTotal').innerText = order.totalPrice;
+                document.getElementById('resStatus').innerText = order.status;
+                resultBox.style.display = 'block';
+            } else {
+                alert("رقم الطلب هذا غير مسجل أو غير صحيح، يرجى مراجعته والمحاولة مرة أخرى.");
+                resultBox.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
