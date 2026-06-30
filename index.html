@@ -3,616 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مساعد طالب الثانوية العامة 2027 المنصة المتكاملة</title>
+    <title>بوابة الوصول - الصيدلية البيطرية الفاخرة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* التنسيق بالألوان الفاتحة والمريحة */
         :root {
-            --primary: #4A90E2;
-            --secondary: #6C5CE7;
-            --accent: #FF7675;
-            --success: #00B894;
-            --bg-gradient: linear-gradient(135deg, #FFEAA7 0%, #A8E6CF 100%);
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --text-color: #2D3436;
-            --card-border: 2px solid white;
-            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+            --bg-light: #f8f9fa;
+            --card-white: #ffffff;
+            --accent-gold: #c5a028; /* درجة ذهبية متناسقة مع الخلفيات الفاتحة */
+            --text-dark: #1a1a1a;
+            --text-muted: #6c757d;
+            --border-light: #e9ecef;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background: var(--bg-gradient); background-attachment: fixed; color: var(--text-color); min-height: 100vh; padding: 20px; transition: all 0.5s ease; display: flex; flex-direction: column; align-items: center; }
-        
-        header { text-align: center; margin-bottom: 20px; background: var(--card-bg); padding: 20px; border-radius: 20px; box-shadow: var(--shadow); border: var(--card-border); width: 100%; max-width: 1000px; animation: fadeIn 0.8s ease; backdrop-filter: blur(10px); }
-        h1 { color: var(--secondary); margin-bottom: 10px; font-weight: 900; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
 
-        nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; width: 100%; max-width: 1000px; flex-wrap: wrap; }
-        .nav-btn { background: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: var(--shadow); transition: 0.3s; color: var(--text-color); display: flex; align-items: center; gap: 10px; }
-        .nav-btn.active { background: var(--secondary); color: white; transform: scale(1.05); }
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-        .page { display: none; width: 100%; max-width: 1000px; animation: fadeIn 0.5s ease; }
-        .page.active { display: block; }
+        /* حاوية النموذج المركزية بنمط فلات ناعم */
+        .auth-container {
+            background-color: var(--card-white);
+            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px 30px;
+            position: relative;
+        }
 
-        .container { width: 100%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 25px; padding: 25px; box-shadow: var(--shadow); border: var(--card-border); transition: 0.3s; position: relative; backdrop-filter: blur(10px); }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-        .card-title { font-size: 1.3rem; color: var(--secondary); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+        /* خط زينة ذهبي علوي */
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background-color: var(--accent-gold);
+        }
 
-        /* العداد وشريط التقدم الأصلي */
-        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; margin-bottom: 20px; }
-        .countdown-item { background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .countdown-num { font-size: 1.8rem; font-weight: 900; color: var(--primary); }
-        
-        .progress-container { background: #dfe6e9; border-radius: 20px; height: 25px; width: 100%; position: relative; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
-        .progress-bar { background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 1s ease-in-out; border-radius: 20px; }
-        .progress-text { position: absolute; width: 100%; text-align: center; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.85rem; font-weight: bold; color: #2d3436; }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-        /* مواقيت الصلاة */
-        .prayer-time-row { display: flex; justify-content: space-between; padding: 11px; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 500; }
-        .prayer-time-row.active { background: rgba(108, 92, 231, 0.1); border-radius: 10px; color: var(--secondary); font-weight: bold; }
-        .quote-box { font-size: 1.1rem; line-height: 1.6; font-style: italic; text-align: center; margin-top: 15px; color: #555; }
-        .motivation-card { background: linear-gradient(135deg, #ff7675 0%, #ffb8b8 100%); color: white; }
-        .motivation-card .card-title, .motivation-card .quote-box { color: white !important; }
+        .auth-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
 
-        /* الامتحانات والخيارات الجمالية */
-        .quiz-option { display: block; background: white; padding: 15px; margin: 10px 0; border-radius: 12px; cursor: pointer; border: 2px solid #edf2f7; transition: 0.2s; text-align: right; font-weight: 500; color: #2D3436; }
-        .quiz-option:hover { border-color: var(--primary); background: #f7fafc; }
-        .quiz-option.correct-flash { background: #e6fffa; border-color: var(--success) !important; color: #006b54; font-weight: bold; }
-        .quiz-option.wrong-flash { background: #ffebeb; border-color: var(--accent) !important; color: #b33939; }
+        .auth-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
 
-        .btn { background: var(--secondary); color: white; border: none; padding: 12px 20px; border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; margin-top: 10px; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        textarea, input, select { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #edf2f7; font-size: 1rem; outline: none; margin-top: 5px; background: white; color: #2D3436; }
+        /* فروع التبديل بين الدخول والتسجيل */
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 25px;
+        }
 
-        .exam-box { display: none; background: var(--card-bg); padding: 25px; border-radius: 20px; box-shadow: var(--shadow); margin-top: 20px; border: var(--card-border); }
-        .question-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; line-height: 1.6; }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; background: var(--secondary); color: white; }
-        
-        /* كادر المحاكاة التلقائي للاقتباس المصور للكتاب */
-        .snapshot-container { display: none; margin-top: 15px; padding: 20px; background: #fffcf0; border: 2px dashed #f1c40f; border-radius: 15px; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02); }
-        .snapshot-header { font-size: 0.85rem; color: #e67e22; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-        .snapshot-view { font-style: italic; font-size: 1rem; color: #34495e; background: white; padding: 15px; border-radius: 10px; border: 1px solid #f6e58d; line-height: 1.7; position: relative; }
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
 
-        .result-box { display: none; text-align: center; padding: 30px; background: var(--card-bg); border: 2px solid var(--success); border-radius: 15px; margin-top: 20px; }
-        .loading { display: none; text-align: center; margin: 15px 0; font-weight: bold; color: var(--secondary); }
-        .history-list, .wrong-questions-list { margin-top: 10px; max-height: 250px; overflow-y: auto; }
-        .history-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-size: 0.95rem; border: 1px solid #edf2f7; cursor: pointer; transition: 0.2s; color: #2D3436; }
-        .wrong-q-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 8px; font-size: 0.9rem; border-right: 4px solid var(--accent); color: #2D3436; text-align: right; }
+        .tab-btn.active {
+            color: var(--accent-gold);
+            border-bottom: 2px solid var(--accent-gold);
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        /* النماذج وعناصر الإدخال */
+        .auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-light);
+            background-color: #fff;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        /* أزرار فلات حادة تناسب الهوية */
+        .btn-submit {
+            background-color: transparent;
+            color: var(--text-dark);
+            border: 2px solid var(--text-dark);
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--accent-gold);
+            border-color: var(--accent-gold);
+            color: #fff;
+        }
+
+        .form-footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+        }
+
+        .form-footer a {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1 id="hijri-date"><i class="fa-solid fa-moon"></i> جاري تحميل التاريخ الهجري...</h1>
-        <p id="gregorian-date" style="font-weight: 500; color: #666; margin-top: 5px;"></p>
-    </header>
-
-    <nav>
-        <button class="nav-btn active" onclick="switchPage('main-page')"><i class="fa-solid fa-gauge"></i> لوحة التحكم والمواقيت</button>
-        <button class="nav-btn" onclick="switchPage('exam-page')"><i class="fa-solid fa-brain"></i> فاحص ومولد الاختبارات الصارم</button>
-    </nav>
-
-    <!-- الصفحة الأولى الميزات الأساسية والعداد الأصلي ومواقيت الصلاة المباشرة -->
-    <div id="main-page" class="page active">
-        <div class="container">
-            <!-- كارت العداد التنازلي الحقيقي وشريط تقدم الأيام المارة -->
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-hourglass-half"></i> الوقت المتبقي لحلم 2027</div>
-                <div class="countdown-grid">
-                    <div class="countdown-item"><div class="countdown-num" id="days">0</div>يوم</div>
-                    <div class="countdown-item"><div class="countdown-num" id="hours">0</div>ساعة</div>
-                    <div class="countdown-item"><div class="countdown-num" id="minutes">0</div>دقيقة</div>
-                    <div class="countdown-item"><div class="countdown-num" id="seconds">0</div>ثانية</div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="myBar"></div>
-                    <div class="progress-text" id="progress-text">جاري الحساب...</div>
-                </div>
-                <button class="btn" onclick="requestNotificationPermission()"><i class="fa-solid fa-bell"></i> تفعيل الإشعارات التلقائية خارج الموقع</button>
-            </div>
-
-            <!-- مواقيت الصلاة لـ محافظة الشرقية المباشرة من الـ API -->
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-mosque"></i> مواقيت الصلاة بمحافظة الشرقية</div>
-                <div id="prayer-times">
-                    <div class="prayer-time-row" id="p-Fajr"><span>الفجر</span><span class="time">-:--</span></div>
-                    <div class="prayer-time-row" id="p-Dhuhr"><span>الظهر</span><span class="time">-:--</span></div>
-                    <div class="prayer-time-row" id="p-Asr"><span>العصر</span><span class="time">-:--</span></div>
-                    <div class="prayer-time-row" id="p-Maghrib"><span>المغرب</span><span class="time">-:--</span></div>
-                    <div class="prayer-time-row" id="p-Isha"><span>العشاء</span><span class="time">-:--</span></div>
-                </div>
-            </div>
-
-            <!-- إمساكية التعبد والحساب الدقيق المباشر من المرجع -->
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-cloud-moon"></i> إمساكية اليوم وحالة التعبد</div>
-                <div class="prayer-time-row"><span>الإمساك (قبل الفجر بـ 15 د)</span><span id="imsak-time" style="color: var(--accent); font-weight: bold;">-:--</span></div>
-                <div class="prayer-time-row"><span>الشروq</span><span id="shuruq-time">-:--</span></div>
-                <div class="prayer-time-row"><span>الإفطار (المغرب)</span><span id="iftar-time" style="color: green; font-weight: bold;">-:--</span></div>
-            </div>
-
-            <!-- نصائح وتحفيز متجددة عشوائياً بناء على تاريخ اليوم لمنع التكرار -->
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-lightbulb" style="color: #f1c40f;"></i> نصيحة اليوم الحياتية</div>
-                <div class="quote-box" id="daily-tip">-</div>
-            </div>
-
-            <div class="card motivation-card">
-                <div class="card-title"><i class="fa-solid fa-fire-flame-curved"></i> شعلة التحفيز اليومية</div>
-                <div class="quote-box" id="daily-motivation">-</div>
-            </div>
-
-            <!-- أرشيف الامتحانات المحفوظة بالكامل للرجوع للأسئلة وحلها بأي وقت -->
-            <div class="card" style="grid-column: span 1;">
-                <div class="card-title" style="color: #00B894;"><i class="fa-solid fa-box-archive"></i> أرشيف امتحاناتي المحفوظة بالكامل</div>
-                <div class="history-list" id="history-list">
-                    <p style="color:#888; text-align:center; padding:10px;">لا توجد اختبارات مؤرشفة حالياً.</p>
-                </div>
-                <button class="btn" style="background:#ff7675; font-size:0.8rem; padding:5px; margin-top:5px;" onclick="clearLogs()">تصفير سجلات الأرشيف</button>
-            </div>
-
-            <!-- بنك مراجعة الأخطاء الحرفية المقتبسة -->
-            <div class="card" style="grid-column: span 1;">
-                <div class="card-title" style="color: var(--accent);"><i class="fa-solid fa-circle-xmark"></i> مراجعة أخطائي السابقة من الكتاب المرفق</div>
-                <div class="wrong-questions-list" id="wrong-questions-list">
-                    <p style="color:#888; text-align:center; padding:10px;">القائمة نظيفة.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- الصفحة الثانية فاحص ومولد الامتحانات الملتزم بالنص مع 14 شكل متغير عشوائياً لمنع الملل -->
-    <div id="exam-page" class="page">
-        <div class="card">
-            <div class="card-title"><i class="fa-solid fa-wand-magic-sparkles"></i> لوحة استخراج وتوليد الأسئلة الصارمة من سطور كتابك فقط</div>
-            <label style="font-weight: bold; color: var(--secondary);">ارفع الكتاب بصيغة PDF أو الصق النص مباشرة بالأسفل:</label>
-            <input type="file" id="pdf-file" accept=".pdf" style="margin: 10px 0;">
-            <textarea id="syllabus-content" rows="5" placeholder="أدخل هنا نصوص الفصول والدروس بدقة متناهية..."></textarea>
-            
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:10px;">
-                <div>
-                    <label style="font-weight:bold;">عدد الأسئلة المطلوبة بالتوليد الواسع:</label>
-                    <input type="number" id="exam-q-count" min="1" max="30" value="5">
-                </div>
-                <div>
-                    <label style="font-weight:bold;">مستوى المطابقة الفورية والالتزام الحرفي:</label>
-                    <select id="strict-mode">
-                        <option value="yes">صارم جداً (يُمنع الخروج عن السطر المدرج نهائياً)</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn" style="background:#00B894;" onclick="generateAIExam()"><i class="fa-solid fa-gears"></i> ابدأ الفحص والمطابقة والتوليد الآن</button>
-            <div class="loading" id="loader-text"><i class="fa-solid fa-spinner fa-spin"></i> جاري قراءة ومسح الكتاب حرفياً من بين السطور وبناء الاختبار الجمالي الممتع...</div>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>الصيدلية البيطرية الفاخرة 🐾</h1>
+            <p>بوابة الخدمات والعلاجات الطبية المتكاملة</p>
         </div>
 
-        <!-- صندوق حل الامتحانات الجمالي المتغير مظهره بالكامل بـ 14 ثيم -->
-        <div class="exam-box" id="exam-box">
-            <div id="exam-theme-title" style="font-size:0.85rem; font-weight:bold; opacity:0.8; text-align:left; margin-bottom:10px; direction:ltr;"></div>
-            <div id="question-container"></div>
-            
-            <!-- كارت الكاميرا واللقطة الحية لإيضاح الخطأ حرفياً من صلب المرجع -->
-            <div class="snapshot-container" id="snapshot-container">
-                <div class="snapshot-header"><i class="fa-solid fa-camera"></i> اقتباس دقيق وحصري ومثبت من داخل كتابك المرفق للتوضيح:</div>
-                <div class="snapshot-view" id="snapshot-text-view"></div>
-            </div>
-            
-            <button class="btn" id="next-q-btn" onclick="goToNextQuestion()" style="display: none; margin-top:15px;">السؤال التالي <i class="fa-solid fa-arrow-left"></i></button>
-            <button class="btn" id="submit-exam-btn" onclick="finishExam()" style="display: none; background: var(--accent); margin-top:15px;">تسليم ومزامنة الاختبار الحالي للوحة الرئيسية</button>
+        <!-- أزرار التبديل العلوي -->
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
+            <button class="tab-btn" onclick="switchTab('register')">إنشاء حساب جديد</button>
         </div>
 
-        <div class="result-box" id="result-box">
-            <h2>🎉 نتيجة المحاولة الحالية: <span id="score-text">0/0</span></h2>
-            <p id="result-feedback" style="margin-top: 10px; font-weight: bold;"></p>
-            <button class="btn" onclick="resetExamBuilder()" style="max-width:250px; margin:15px auto 0 auto;">توليد محاولة اختبار جديدة</button>
-        </div>
+        <!-- نموذج تسجيل الدخول -->
+        <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>اسم المستخدم أو البريد الإلكتروني</label>
+                <input type="text" id="loginUser" required placeholder="أدخل اسم المستخدم...">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="loginPass" required placeholder="أدخل كلمة المرور...">
+            </div>
+            <button type="submit" class="btn-submit">دخول الحساب</button>
+            <div class="form-footer">
+                ليس لديك حساب؟ <a href="#" onclick="switchTab('register'); return false;">سجل الآن مجاناً</a>
+            </div>
+        </form>
+
+        <!-- نموذج إنشاء حساب جديد -->
+        <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="regName" required placeholder="مثال: د. أحمد محمد">
+            </div>
+            <div class="form-group">
+                <label>اسم المستخدم (بالإنجليزي)</label>
+                <input type="text" id="regUser" required placeholder="مثال: vet_user1">
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" id="regPass" required placeholder="أدخل كلمة مرور قوية...">
+            </div>
+            <button type="submit" class="btn-submit">تأكيد وإنشاء الحساب</button>
+            <div class="form-footer">
+                لديك حساب بالفعل؟ <a href="#" onclick="switchTab('login'); return false;">تسجيل الدخول</a>
+            </div>
+        </form>
     </div>
 
     <script>
-        // الـ 14 مظهر الجمالي المتبدل لكسر الرتابة والملل أثناء حل الامتحانات
-        const themes = [
-            { name: "ثيم الياقوت الملكي الأزرق", primary: "#0984e3", secondary: "#6c5ce7", bg: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)", text: "#2d3436", card: "rgba(255,255,255,0.96)" },
-            { name: "ثيم سايبر نيون داكن غامض", primary: "#00cec9", secondary: "#0984e3", bg: "linear-gradient(135deg, #1e272e 0%, #0f171e 100%)", text: "#ffffff", card: "rgba(30, 39, 46, 0.95)", border: "2px solid #00cec9" },
-            { name: "ثيم الزمردة والأعشاب الهادئة", primary: "#00b894", secondary: "#006b54", bg: "linear-gradient(135deg, #e8f8f5 0%, #a3e4d7 100%)", text: "#2d3436", card: "rgba(255,255,255,0.97)" },
-            { name: "ثيم لافندر البنفسجي الساحر", primary: "#9b59b6", secondary: "#6c5ce7", bg: "linear-gradient(135deg, #f5eef8 0%, #d7bde2 100%)", text: "#2d3436", card: "rgba(255,255,255,0.96)" },
-            { name: "ثيم زهرة الساكورا الوردية اللطيفة", primary: "#fd79a8", secondary: "#e84393", bg: "linear-gradient(135deg, #fff0f5 0%, #ffb6c1 100%)", text: "#2d3436", card: "rgba(255,255,255,0.95)" },
-            { name: "ثيم المحيط الإيجابي العميق", primary: "#2e86de", secondary: "#10ac84", bg: "linear-gradient(135deg, #dff9fb 0%, #c7ecee 100%)", text: "#2d3436", card: "rgba(255,255,255,0.95)" },
-            { name: "ثيم الغسق الساحر المتدرج", primary: "#6c5ce7", secondary: "#fd79a8", bg: "linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)", text: "#ffffff", card: "rgba(45, 52, 54, 0.9)", border: "2px solid #a29bfe" },
-            { name: "ثيم صحاري الذهب الدافئة", primary: "#e67e22", secondary: "#d35400", bg: "linear-gradient(135deg, #fef9e7 0%, #f9e79f 100%)", text: "#2d3436", card: "rgba(255,255,255,0.95)" },
-            { name: "ثيم جلاس مورفيزم الزجاجي الشفاف", primary: "#6c5ce7", secondary: "#fd79a8", bg: "linear-gradient(135deg, #ff9ff3 0%, #feca57 100%)", text: "#2d3436", card: "rgba(255, 255, 255, 0.8)", border: "2px solid rgba(255,255,255,0.6)" },
-            { name: "ثيم الفضاء الكوني اللامع", primary: "#9b59b6", secondary: "#34495e", bg: "linear-gradient(135deg, #2c3e50 0%, #111111 100%)", text: "#ecf0f1", card: "rgba(52, 73, 94, 0.95)", border: "2px solid #9b59b6" },
-            { name: "ثيم الكلاسيك والقهوة الدافئ", primary: "#7f8c8d", secondary: "#2c3e50", bg: "linear-gradient(135deg, #eaeded 0%, #d5dbdb 100%)", text: "#2c3e50", card: "rgba(255,255,255,0.96)" },
-            { name: "ثيم أوراق الخريف المتساقطة", primary: "#e74c3c", secondary: "#c0392b", bg: "linear-gradient(135deg, #fadbd8 0%, #f5b7b1 100%)", text: "#2d3436", card: "rgba(255,255,255,0.95)" },
-            { name: "ثيم النعناع البارد والأخضر اللطيف", primary: "#1dd1a1", secondary: "#10ac84", bg: "linear-gradient(135deg, #e8f8f5 0%, #d4efdf 100%)", text: "#2d3436", card: "rgba(255,255,255,0.96)" },
-            { name: "ثيم باستيل مريح للأعين الطامحة", primary: "#95afc0", secondary: "#57606f", bg: "linear-gradient(135deg, #f1f2f6 0%, #ced6e0 100%)", text: "#2f3542", card: "rgba(255,255,255,0.97)" }
-        ];
+        // ==================== الفحص الأمني التلقائي الفوري ====================
+        // هذه الدالة تمنع تكرار تسجيل الدخول؛ لو الجلسة نشطة يحول العميل للمتجر فوراً
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('user_logged_in') === 'true') {
+                window.location.href = 'store.html';
+            }
+        });
 
-        function applyRandomTheme() {
-            const randomIdx = Math.floor(Math.random() * themes.length);
-            const t = themes[randomIdx];
-            document.body.style.background = t.bg;
-            document.body.style.color = t.text;
+        // دالة التبديل السلس بين واجهة تسجيل الدخول وإنشاء الحساب
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const forms = document.querySelectorAll('.auth-form');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            forms.forEach(form => form.classList.remove('active'));
+
+            if (tabName === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // معالجة تسجيل الدخول وحفظ الحالة بذاكرة المتصفح للدوام
+        function handleLogin(event) {
+            event.preventDefault();
             
-            const examBox = document.getElementById('exam-box');
-            examBox.style.setProperty('--card-bg', t.card);
-            examBox.style.setProperty('--text-color', t.text);
-            examBox.style.setProperty('--card-border', t.border || "2px solid white");
-            
-            document.getElementById('exam-theme-title').innerText = `🎨 Active Modern Theme: ${t.name}`;
-        }
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
 
-        function restoreDefaultTheme() {
-            document.body.style.background = "linear-gradient(135deg, #FFEAA7 0%, #A8E6CF 100%)";
-            document.body.style.color = "#2D3436";
-        }
+            // جلب قائمة الحسابات المسجلة بذاكرة المتصفح (لو فارغة نضع حساباً افتراضياً للتجربة)
+            let accounts = JSON.parse(localStorage.getItem('pharmacy_accounts')) || [
+                { username: "admin", password: "123" } // حساب افتراضي سريع للتجربة
+            ];
 
-        function switchPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            if(pageId !== 'exam-page') restoreDefaultTheme();
-        }
+            const foundAccount = accounts.find(acc => acc.username === user && acc.password === pass);
 
-        // إعدادات العداد التنازلي الأصلي والمكتمل من ملفك
-        const targetDate = new Date("July 20, 2027 00:00:00").getTime();
-        const startDate = new Date("Jun 01, 2024 00:00:00").getTime();
-
-        const tips = [
-            "قسّم وقتك لـ 50 دقيقة مذاكرة و 10 دقائق راحة، هذا يمنع إجهاد العقل تماماً.",
-            "النوم الكافي (6-8 ساعات) قبل الفجر يزيد من قدرة الاستيعاب لأضعاف مضاعفة.",
-            "ابدأ بالمواد الصعبة دائماً في الصباح الباكر؛ ذهنك يكون في أعلى مستويات نشاطه.",
-            "التسويف هو سارق الوقت، تغلّب عليه ببدء المذاكرة لمدة 5 دقائق فقط وسينتهي العجز.",
-            "راجع ما ذاكرته الأسبوع الماضي لمدة ساعة واحدة اليوم لضمان ثبات المعلومة في الذاكرة الطويلة.",
-            "اجعل هاتفك خارج الغرفة تماماً أثناء وقت المذاكرة؛ التركيز يتطلب الانعزال التام.",
-            "لا تقارن نفسك بزميلك، فكل شخص له وتيرة استيعاب مختلفة، ركّز على نسختك السابقة فقط وزد عليها."
-        ];
-
-        const motivations = [
-            "تخيّل فرحة والديك يوم النتيجة، كل تعب الآن سيهون من أجل تلك اللحظة الاستثنائية!",
-            "القمة تتسع للجميع، ولكنها لا تستقبل إلا من دفع ثمن التميز جهداً وعرقاً صابراً.",
-            "ستمر الأيام والشهور، وسيبقى فقط فخر الإنجاز العظيم. قاتل من أجل حلمك ورفعة شأنك.",
-            "أنت لست مجرد طالب عادي، أنت مشروع نجاح مبهر للمستقبل، اصنع قصتك وبصمتك بنفسك.",
-            "كل فكرة صعبة تفهمها وتصبر عليها اليوم هي خطوة إضافية تقربك من الكلية المقربة لقلبك وبناء برج نجاحك."
-        ];
-
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-        document.getElementById('daily-tip').innerText = tips[dayOfYear % tips.length];
-        document.getElementById('daily-motivation').innerText = motivations[dayOfYear % motivations.length];
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const difference = targetDate - now;
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = days;
-            document.getElementById("hours").innerText = hours;
-            document.getElementById("minutes").innerText = minutes;
-            document.getElementById("seconds").innerText = seconds;
-
-            const totalDuration = targetDate - startDate;
-            const elapsed = now - startDate;
-            let progressPercent = (elapsed / totalDuration) * 100;
-            progressPercent = Math.max(0, Math.min(progressPercent, 100));
-
-            document.getElementById("myBar").style.width = progressPercent + "%";
-            document.getElementById("progress-text").innerText = `مرّ ${Math.floor(elapsed / (1000 * 60 * 60 * 24))} يوم وباقي ${days} يوم للامتحانات`;
-        }
-        setInterval(updateCountdown, 1000);
-
-        // جلب التاريخ الهجري والميلادي والصلوات لمحافظة الشرقية من الـ API بشكل تلقائي كامل
-        async function fetchPrayerTimesAndDates() {
-            try {
-                const lat = 30.5877;
-                const lng = 31.5020;
-                const response = await fetch(`https://api.aladhan.com/v1/timings/${Math.floor(Date.now() / 1000)}?latitude=${lat}&longitude=${lng}&method=5`);
-                const data = await response.json();
+            if (foundAccount) {
+                // حفظ الجلسة مفعّلة لعدم التكرار
+                localStorage.setItem('user_logged_in', 'true');
+                localStorage.setItem('current_user_name', user);
                 
-                if(data.code === 200) {
-                    const timings = data.data.timings;
-                    const dateInfo = data.data.date;
-
-                    document.getElementById('hijri-date').innerHTML = `<i class="fa-solid fa-moon"></i> ${dateInfo.hijri.day} ${dateInfo.hijri.month.ar} ${dateInfo.hijri.year} هـ`;
-                    document.getElementById('gregorian-date').innerText = `الموافق: ${dateInfo.gregorian.date} م | منصة المتفوقين`;
-
-                    document.getElementById('p-Fajr').querySelector('.time').innerText = timings.Fajr;
-                    document.getElementById('p-Dhuhr').querySelector('.time').innerText = timings.Dhuhr;
-                    document.getElementById('p-Asr').querySelector('.time').innerText = timings.Asr;
-                    document.getElementById('p-Maghrib').querySelector('.time').innerText = timings.Maghrib;
-                    document.getElementById('p-Isha').querySelector('.time').innerText = timings.Isha;
-
-                    document.getElementById('shuruq-time').innerText = timings.Sunrise;
-                    document.getElementById('iftar-time').innerText = timings.Maghrib;
-                    
-                    const fajrTime = timings.Fajr.split(':');
-                    let fajrMinutes = parseInt(fajrTime[0]) * 60 + parseInt(fajrTime[1]) - 15;
-                    let imsakH = Math.floor(fajrMinutes / 60);
-                    let imsakM = fajrMinutes % 60;
-                    document.getElementById('imsak-time').innerText = `${imsakH}:${imsakM < 10 ? '0'+imsakM : imsakM}`;
-
-                    setupPeriodicNotifications();
-                }
-            } catch (error) { console.log(error); }
-        }
-        fetchPrayerTimesAndDates();
-
-        function requestNotificationPermission() {
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    alert("تم تفعيل الإشعارات بنجاح ومزامنتها مع حلمك لعام 2027!");
-                    new Notification("أهلاً بك يا بطل!", { body: "تم ربط نظام الإشعارات الخارجي بنجاح وبشكل دوري تلقائي." });
-                }
-            });
-        }
-
-        function setupPeriodicNotifications() {
-            if (!("Notification" in window)) return;
-            setInterval(() => {
-                if (Notification.permission === "granted") {
-                    const randomMotivation = motivations[Math.floor(Math.random() * motivations.length)];
-                    new Notification("تذكير المنصة التعليمية 🎯", { body: randomMotivation });
-                }
-            }, 3600000); 
-        }
-
-        // نظام الفحص الصارم للامتحانات ومنع الـ Hallucination تماماً
-        let generatedQuestions = [];
-        let currentQuestionIndex = 0;
-        let userAnswers = [];
-        let optionSelectedInCurrentQ = false;
-        let originalContent = "";
-
-        function loadSavedLogs() {
-            const history = JSON.parse(localStorage.getItem('saved_full_exams')) || [];
-            const historyList = document.getElementById('history-list');
-            if(history.length > 0) {
-                historyList.innerHTML = history.map((exam, i) => `
-                    <div class="history-item" onclick="reviewOldExam(${i})">
-                        <strong>📦 محاولة اختبار محفوظة رقم (${i+1}):</strong><br>
-                        <small>التاريخ: ${exam.date} | النتيجة المستحقة: <b style="color:#00b894;">${exam.score}</b></small>
-                    </div>
-                `).join('');
-            } else { historyList.innerHTML = `<p style="color:#888; text-align:center; padding:10px;">لا توجد اختبارات مؤرشفة حالياً.</p>`; }
-
-            const wrongs = JSON.parse(localStorage.getItem('strict_wrongs')) || [];
-            const wrongList = document.getElementById('wrong-questions-list');
-            if(wrongs.length > 0) {
-                wrongList.innerHTML = wrongs.map(item => `
-                    <div class="wrong-q-item">
-                        <strong>سؤال أخطأت به:</strong> ${item.q}<br>
-                        <span style="color:#006b54; font-weight:bold;">✔️ الصواب الدقيق: ${item.correctOpt}</span><br>
-                        <small style="color:#e67e22;">📄 النص الحرفي: "${item.snapshot}"</small>
-                    </div>
-                `).join('');
-            } else { wrongList.innerHTML = `<p style="color:#888; text-align:center; padding:10px;">القائمة نظيفة.</p>`; }
-        }
-        window.onload = loadSavedLogs;
-
-        function clearLogs() { localStorage.clear(); location.reload(); }
-
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let text = "";
-            for (let i = 1; i <= Math.min(pdf.numPages, 100); i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                text += content.items.map(item => item.str).join(" ") + " \n";
+                alert("تم تسجيل الدخول بنجاح! جاري تحويلك للمتجر...");
+                window.location.href = 'store.html';
+            } else {
+                alert("خطأ: اسم المستخدم أو كلمة المرور غير صحيحة!");
             }
-            return text;
         }
 
-        async function generateAIExam() {
-            let content = document.getElementById('syllabus-content').value.trim();
-            const pdfFile = document.getElementById('pdf-file').files[0];
-            const qCount = document.getElementById('exam-q-count').value;
+        // معالجة إنشاء حساب جديد لأول مرة وحفظه محلياً ليعمل في الدخول
+        function handleRegister(event) {
+            event.preventDefault();
 
-            document.getElementById('loader-text').style.display = 'block';
+            const name = document.getElementById('regName').value.trim();
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
 
-            if (pdfFile) {
-                try {
-                    content = await extractTextFromPDF(pdfFile);
-                    document.getElementById('syllabus-content').value = content; 
-                } catch (e) { alert("حدث خطأ بقراءة ملف الـ PDF بالكامل، تم التحويل للنص المباشر."); }
-            }
+            let accounts = JSON.parse(localStorage.getItem('pharmacy_accounts')) || [
+                { username: "admin", password: "123" }
+            ];
 
-            if (!content) {
-                alert("برجاء إدراج أو كتابة نص المنهج لضمان المطابقة والتوليد!");
-                document.getElementById('loader-text').style.display = 'none';
+            // التأكد من عدم تكرار اسم المستخدم
+            const isExist = accounts.some(acc => acc.username === user);
+            if (isExist) {
+                alert("اسم المستخدم هذا مسجل بالفعل، يرجى اختيار اسم آخر.");
                 return;
             }
 
-            originalContent = content;
+            // إضافة الحساب الجديد للقائمة
+            accounts.push({ name: name, username: user, password: pass });
+            localStorage.setItem('pharmacy_accounts', JSON.stringify(accounts));
 
-            const prompt = `<|system|>أنت معلم مصمم امتحانات صارم وتلتزم بالحقائق. اقرأ هذا المرجع بدقة بالغة: "${content.substring(0, 5000)}". صمم اختباراً من بين السطور يحتوي على ${qCount} أسئلة خيارات متعددة.
-            شروط حاسمة لا بديل عنها:
-            1. كل سؤال وكل خيار يجب أن يكون مأخوذاً ومستنبطاً من الجمل الموجودة في هذا النص فقط! لا تذكر أي معلومات عامة أو خارجية لم تذكر هنا.
-            2. يجب أن تقتبس جملة كاملة دقيقة من صلب هذا النص تسمى "snapshot_text" تثبت صحة الإجابة حرفياً بدون أي تعديل لتظهر للطالب.
-            صغ الإجابة فوراً على شكل مصفوفة JSON نقية ومباشرة كالتالي دون أي جمل ترحيبية:
-            [{"q": "نص السؤال الحصري من النص", "options": ["خيار 1", "خيار 2", "خيار 3", "خيار 4"], "correct": 0, "snapshot_text": "الجملة أو السطر الحرفي كما ورد بالنص تماماً"}] <|user|>أنتج مصفوفة الـ JSON المطابقة للنص الآن.<|assistant|>`;
-
-            try {
-                const response = await fetch("https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct", {
-                    method: "POST",
-                    headers: { "Authorization": "Bearer hf_MvgXpLgXqWpYmNjKzQwRTFTbUxPaFpxU3V2V3", "Content-Type": "application/json" },
-                    body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 1500, temperature: 0.2 } })
-                });
-
-                const data = await response.json();
-                let rawText = data[0].generated_text;
-                const jsonStartIndex = rawText.lastIndexOf("[");
-                const jsonEndIndex = rawText.lastIndexOf("]") + 1;
-                let cleanJson = rawText.substring(jsonStartIndex, jsonEndIndex).trim();
-
-                let rawQuestions = JSON.parse(cleanJson);
-
-                // فلترة المطابقة للتأكد من أن النص يحتوي فعلياً على السطر المقتبس ومنع الهلوسة
-                generatedQuestions = rawQuestions.filter(q => {
-                    return originalContent.toLowerCase().includes(q.snapshot_text.toLowerCase().substring(0, 10));
-                });
-
-                if(generatedQuestions.length === 0) generatedQuestions = rawQuestions;
-
-                currentQuestionIndex = 0;
-                userAnswers = [];
-                document.getElementById('loader-text').style.display = 'none';
-                document.getElementById('exam-box').style.display = 'block';
-                document.getElementById('result-box').style.display = 'none';
-                showQuestion(0);
-
-            } catch (error) {
-                // خطة احتياطية فورية ومطابقة كلياً لضمان العمل الدائم
-                generatedQuestions = [
-                    { q: "وفقاً للنص المدرج، أي السكريات التالية تتكون من اتحاد جزيئين متماثلين من السكريات الأحادية؟", options: ["سكر المالتوز (سكر الشعير)", "سكر السكاروز", "السيليلوز", "اللاكتوز"], correct: 0, snapshot_text: "المالتوز سكر شعير ثنائي يتكون عند اتحاد جزيئين من الجلوكوز المتماثلين وفقاً لمنهجك المرفق." },
-                    { q: "ما هي الخاصية المميزة للسكريات المعقدة كما ذكرت في كتابك؟", options: ["تذوب في الماء بسهولة", "لها وزن جزيئي منخفض", "لها وزن جزيئي عالٍ ولا تذوب في الماء", "حلوة المذاق دائماً"], correct: 2, snapshot_text: "السكريات المعقدة مثل النشا والسيليلوز والجيلكوجين وهي لا تذوب في الماء ولها وزن جزيئي عالٍ وتتكون من جزيئات جلوكوز." }
-                ];
-                document.getElementById('loader-text').style.display = 'none';
-                document.getElementById('exam-box').style.display = 'block';
-                showQuestion(0);
-            }
-        }
-
-        function showQuestion(index) {
-            applyRandomTheme();
-            optionSelectedInCurrentQ = false;
-            const container = document.getElementById('question-container');
-            container.innerHTML = "";
-            document.getElementById('snapshot-container').style.display = 'none';
-            
-            const qData = generatedQuestions[index];
-
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.innerText = `🔍 سؤال مستنبط وحصري من السطور المدرجة`;
-            container.appendChild(badge);
-
-            const title = document.createElement('div');
-            title.className = 'question-title';
-            title.innerText = `سؤال ${index + 1}: ${qData.q}`;
-            container.appendChild(title);
-
-            qData.options.forEach((opt, idx) => {
-                const optBtn = document.createElement('div');
-                optBtn.className = 'quiz-option';
-                optBtn.innerText = opt;
-                
-                optBtn.onclick = () => {
-                    if(optionSelectedInCurrentQ) return; 
-                    optionSelectedInCurrentQ = true;
-                    userAnswers[index] = idx;
-                    
-                    if(idx === qData.correct) {
-                        optBtn.classList.add('correct-flash');
-                    } else {
-                        optBtn.classList.add('wrong-flash');
-                        const snapshotContainer = document.getElementById('snapshot-container');
-                        const snapshotTextView = document.getElementById('snapshot-text-view');
-                        snapshotContainer.style.display = 'block';
-                        snapshotTextView.innerText = qData.snapshot_text || "تم استنباط هذا السؤال ومطابقته مباشرة من الجمل المدرجة.";
-                        
-                        saveWrongLog(qData.q, qData.options[qData.correct], qData.snapshot_text);
-                    }
-                    
-                    document.querySelectorAll('.quiz-option')[qData.correct].classList.add('correct-flash');
-                    if(index < generatedQuestions.length - 1) {
-                        document.getElementById('next-q-btn').style.display = 'block';
-                    } else {
-                        document.getElementById('submit-exam-btn').style.display = 'block';
-                    }
-                };
-                container.appendChild(optBtn);
-            });
-        }
-
-        function saveWrongLog(qText, correctOpt, snapshotText) {
-            let wrongs = JSON.parse(localStorage.getItem('strict_wrongs')) || [];
-            if(!wrongs.some(e => e.q === qText)) {
-                wrongs.push({ q: qText, correctOpt: correctOpt, snapshot: snapshotText });
-                localStorage.setItem('strict_wrongs', JSON.stringify(wrongs));
-                loadSavedLogs();
-            }
-        }
-
-        function goToNextQuestion() {
-            currentQuestionIndex++;
-            document.getElementById('next-q-btn').style.display = 'none';
-            showQuestion(currentQuestionIndex);
-        }
-
-        function finishExam() {
-            let correctCount = 0;
-            generatedQuestions.forEach((q, idx) => {
-                if(userAnswers[idx] === q.correct) correctCount++;
-            });
-
-            document.getElementById('exam-box').style.display = 'none';
-            document.getElementById('submit-exam-btn').style.display = 'none';
-            
-            const resBox = document.getElementById('result-box');
-            resBox.style.display = 'block';
-            
-            const scoreStr = `${correctCount} / ${generatedQuestions.length}`;
-            document.getElementById('score-text').innerText = scoreStr;
-            document.getElementById('result-feedback').innerText = "تمت العملية ومزامنة المحاولة الحالية للأرشيف بنجاح.";
-
-            let savedExams = JSON.parse(localStorage.getItem('saved_full_exams')) || [];
-            savedExams.unshift({
-                date: new Date().toLocaleString('ar-EG'),
-                score: scoreStr,
-                questions: generatedQuestions,
-                userAnswers: userAnswers
-            });
-            localStorage.setItem('saved_full_exams', JSON.stringify(savedExams));
-            loadSavedLogs();
-            restoreDefaultTheme();
-        }
-
-        function reviewOldExam(index) {
-            const exams = JSON.parse(localStorage.getItem('saved_full_exams'));
-            const selectedExam = exams[index];
-            switchPage('exam-page');
-            
-            document.getElementById('exam-box').style.display = 'block';
-            document.getElementById('result-box').style.display = 'none';
-            
-            generatedQuestions = selectedExam.questions;
-            userAnswers = selectedExam.userAnswers;
-            
-            const container = document.getElementById('question-container');
-            container.innerHTML = `<h3 style="margin-bottom:15px; color: var(--secondary);">🧐 مراجعة كاملة للمحاولة المؤرشفة (${selectedExam.score}):</h3>`;
-            
-            generatedQuestions.forEach((q, qIdx) => {
-                const qDiv = document.createElement('div');
-                qDiv.style.marginBottom = "20px";
-                qDiv.innerHTML = `<strong>س ${qIdx+1}: ${q.q}</strong>`;
-                
-                q.options.forEach((opt, oIdx) => {
-                    const optDiv = document.createElement('div');
-                    optDiv.className = 'quiz-option';
-                    optDiv.innerText = opt;
-                    if(oIdx === q.correct) optDiv.classList.add('correct-flash');
-                    if(userAnswers[qIdx] === oIdx && oIdx !== q.correct) optDiv.classList.add('wrong-flash');
-                    qDiv.appendChild(optDiv);
-                });
-                container.appendChild(qDiv);
-            });
-            
-            document.getElementById('next-q-btn').style.display = 'none';
-            document.getElementById('submit-exam-btn').style.display = 'none';
-        }
-
-        function resetExamBuilder() {
-            document.getElementById('result-box').style.display = 'none';
-            document.getElementById('exam-box').style.display = 'none';
-            restoreDefaultTheme();
+            alert("تم إنشاء حسابك البيطري بنجاح! يمكنك الآن تسجيل الدخول.");
+            switchTab('login'); // إرجاعه لصفحة الدخول تلقائياً
         }
     </script>
 </body>
