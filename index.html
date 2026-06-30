@@ -9,11 +9,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* التنسيق بالألوان الفاتحة والمريحة */
         :root {
             --bg-light: #f8f9fa;
             --card-white: #ffffff;
-            --accent-gold: #c5a028; /* درجة ذهبية متناسقة مع الخلفيات الفاتحة */
+            --accent-gold: #c5a028;
             --text-dark: #1a1a1a;
             --text-muted: #6c757d;
             --border-light: #e9ecef;
@@ -36,7 +35,6 @@
             padding: 20px;
         }
 
-        /* حاوية النموذج المركزية بنمط فلات ناعم */
         .auth-container {
             background-color: var(--card-white);
             border: 1px solid var(--border-light);
@@ -47,7 +45,6 @@
             position: relative;
         }
 
-        /* خط زينة ذهبي علوي */
         .auth-container::before {
             content: '';
             position: absolute;
@@ -73,7 +70,6 @@
             color: var(--text-muted);
         }
 
-        /* فروع التبديل بين الدخول والتسجيل */
         .auth-tabs {
             display: flex;
             border-bottom: 1px solid var(--border-light);
@@ -98,7 +94,6 @@
             border-bottom: 2px solid var(--accent-gold);
         }
 
-        /* النماذج وعناصر الإدخال */
         .auth-form {
             display: none;
             flex-direction: column;
@@ -136,7 +131,6 @@
             border-color: var(--accent-gold);
         }
 
-        /* أزرار فلات حادة تناسب الهوية */
         .btn-submit {
             background-color: transparent;
             color: var(--text-dark);
@@ -178,17 +172,15 @@
             <p>بوابة الخدمات والعلاجات الطبية المتكاملة</p>
         </div>
 
-        <!-- أزرار التبديل العلوي -->
         <div class="auth-tabs">
             <button class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
             <button class="tab-btn" onclick="switchTab('register')">إنشاء حساب جديد</button>
         </div>
 
-        <!-- نموذج تسجيل الدخول -->
         <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label>اسم المستخدم أو البريد الإلكتروني</label>
-                <input type="text" id="loginUser" required placeholder="أدخل اسم المستخدم...">
+                <input type="text" id="loginUser" required placeholder="أدخل اسم المستخدم..." oninput="checkSecretCode(this.value)">
             </div>
             <div class="form-group">
                 <label>كلمة المرور</label>
@@ -200,7 +192,6 @@
             </div>
         </form>
 
-        <!-- نموذج إنشاء حساب جديد -->
         <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
             <div class="form-group">
                 <label>الاسم الكامل</label>
@@ -222,15 +213,25 @@
     </div>
 
     <script>
-        // ==================== الفحص الأمني التلقائي الفوري ====================
-        // هذه الدالة تمنع تكرار تسجيل الدخول؛ لو الجلسة نشطة يحول العميل للمتجر فوراً
+        // الرمز السري الفائق لدخول الإدارة مباشرة
+        const SECRET_ADMIN_CODE = "VET999ADMIN";
+
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('user_logged_in') === 'true') {
                 window.location.href = 'store.html';
             }
         });
 
-        // دالة التبديل السلس بين واجهة تسجيل الدخول وإنشاء الحساب
+        // دالة الفحص السري الفوري أثناء الكتابة
+        function checkSecretCode(value) {
+            if (value.trim() === SECRET_ADMIN_CODE) {
+                // تصفير الحقل لمنع كشفه وإعادة التوجيه فوراً لصفحة التحكم المخصصة
+                document.getElementById('loginUser').value = "";
+                alert("مرحباً بك في النظام السري للإدارة.. جاري فتح لوحة التحكم.");
+                window.location.href = 'admin_dashboard.html'; 
+            }
+        }
+
         function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-btn');
             const forms = document.querySelectorAll('.auth-form');
@@ -247,25 +248,20 @@
             }
         }
 
-        // معالجة تسجيل الدخول وحفظ الحالة بذاكرة المتصفح للدوام
         function handleLogin(event) {
             event.preventDefault();
-            
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value;
 
-            // جلب قائمة الحسابات المسجلة بذاكرة المتصفح (لو فارغة نضع حساباً افتراضياً للتجربة)
             let accounts = JSON.parse(localStorage.getItem('pharmacy_accounts')) || [
-                { username: "admin", password: "123" } // حساب افتراضي سريع للتجربة
+                { username: "admin", password: "123" }
             ];
 
             const foundAccount = accounts.find(acc => acc.username === user && acc.password === pass);
 
             if (foundAccount) {
-                // حفظ الجلسة مفعّلة لعدم التكرار
                 localStorage.setItem('user_logged_in', 'true');
                 localStorage.setItem('current_user_name', user);
-                
                 alert("تم تسجيل الدخول بنجاح! جاري تحويلك للمتجر...");
                 window.location.href = 'store.html';
             } else {
@@ -273,10 +269,8 @@
             }
         }
 
-        // معالجة إنشاء حساب جديد لأول مرة وحفظه محلياً ليعمل في الدخول
         function handleRegister(event) {
             event.preventDefault();
-
             const name = document.getElementById('regName').value.trim();
             const user = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value;
@@ -285,19 +279,17 @@
                 { username: "admin", password: "123" }
             ];
 
-            // التأكد من عدم تكرار اسم المستخدم
             const isExist = accounts.some(acc => acc.username === user);
             if (isExist) {
                 alert("اسم المستخدم هذا مسجل بالفعل، يرجى اختيار اسم آخر.");
                 return;
             }
 
-            // إضافة الحساب الجديد للقائمة
             accounts.push({ name: name, username: user, password: pass });
             localStorage.setItem('pharmacy_accounts', JSON.stringify(accounts));
 
             alert("تم إنشاء حسابك البيطري بنجاح! يمكنك الآن تسجيل الدخول.");
-            switchTab('login'); // إرجاعه لصفحة الدخول تلقائياً
+            switchTab('login');
         }
     </script>
 </body>
