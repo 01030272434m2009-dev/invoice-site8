@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المتجر الرئيسي - الصيدلية البيطرية الفاخرة</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* الألوان التنسيقية الفاخرة */
+        :root {
+            --bg-color: #0d0d0d;
+            --card-bg: #1a1a1a;
+            --accent-gold: #d4af37;
+            --text-color: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #2a2a2a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 60px;
+        }
+
+        /* شريط التنقل العلوي Navbar */
+        .navbar {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin-right: 20px;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-gold);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* البنر الإعلاني المتحرك/القابل للتحكم عن بعد */
+        .promo-banner {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            border: 2px solid var(--accent-gold);
+            margin: 10px;
+            pointer-events: none;
+        }
+
+        .promo-banner h2 {
+            font-size: 2rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .promo-banner p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* قـسم الأقسام والفئات البيطرية */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-right: 4px solid var(--accent-gold);
+            padding-right: 10px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-card:hover, .category-card.active {
+            border-color: var(--accent-gold);
+            background-color: #222222;
+        }
+
+        /* شبكة عرض الأدوية والمنتجات */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: var(--accent-gold);
+            color: var(--bg-color);
+            padding: 2px 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 15px 0 10px 0;
+        }
+
+        .product-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        /* أزرار فلات حادة */
+        .btn-add-cart {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--text-color);
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background-color: var(--accent-gold);
+            color: var(--bg-color);
+            border-color: var(--accent-gold);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">الصيدلية البيطرية الفاخرة 🐾</div>
+        <div class="nav-links">
+            <a href="store.html">الرئيسية</a>
+            <a href="cart.html">السلة🛒</a>
+            <a href="#" onclick="logout()">خروج</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="promo-banner" id="promoBanner">
+            <h2 id="bannerTitle">خصومات الموسم البيطري المميز</h2>
+            <p id="bannerDesc">تخفيضات تصل إلى 20% على جميع تحصينات ومكملات الدواجن والمواشي لفترة محدودة.</p>
+        </div>
+
+        <div class="section-title">أقسام الصيدلية</div>
+        <div class="categories-grid">
+            <div class="category-card active" onclick="filterCategory('الكل')">كل الأدوية</div>
+            <div class="category-card" onclick="filterCategory('دواجن')">أدوية دواجن</div>
+            <div class="category-card" onclick="filterCategory('مواشي')">أدوية مواشي</div>
+            <div class="category-card" onclick="filterCategory('فيتامينات')">فيتامينات ومكملات</div>
+            <div class="category-card" onclick="filterCategory('أليفة')">حيوانات أليفة</div>
+        </div>
+
+        <div class="section-title">الأدوية المتاحة</div>
+        <div class="products-grid" id="productsContainer">
+            </div>
+
+    </div>
+
+    <script>
+        // التحقق الأمني: لو غير مسجل دخول يرجعه لصفحة الحساب لمنع التصفح العشوائي
+        if(localStorage.getItem('user_logged_in') !== 'true') {
+            window.location.href = 'index.html';
+        }
+
+        // قاعدة بيانات المنتجات والأدوية البيطرية (سيتم ربطها لاحقاً بلوحة التحكم)
+        const productsDatabase = [
+            { id: 101, name: "مضاد حيوي أوكسي تتراسيكلين", category: "مواشي", desc: "مضاد حيوي واسع الطيف لعلاج الالتهابات التنفسية والمعوية في الماشية.", price: 180, badge: "الأكثر مبيعاً" },
+            { id: 102, name: "مكمل فيتامين هـ + سيلينيوم", category: "فيتامينات", desc: "رافع كفاءة ومخصب ممتاز لزيادة إنتاج البيض والخصوبة للدواجن والمواشي.", price: 95, badge: "جديد" },
+            { id: 103, name: "مضاد سموم فطرية سائل", category: "دواجن", desc: "مركب مركز لغسيل وتنشيط الكلى والكبد وحماية طيور الدواجن من السموم.", price: 140, badge: "عرض خاص" },
+            { id: 104, name: "مضاد طفيليات إيفرمكتين سوبر", category: "مواشي", desc: "حقن فعال جداً للقضاء على الطفيليات الداخلية والخارجية والديدان في المواشي.", price: 220, badge: "طبي" },
+            { id: 105, name: "شامبو علاجي للبراغيث والقراد", category: "أليفة", desc: "مخصص للكلاب والقطط، آمن تماماً ويقضي على الحشرات من أول غسلة.", price: 75, badge: "متاح" }
+        ];
+
+        // دالة لعرض الأدوية في الشاشة وفقاً للقسم المختار
+        function displayProducts(categoryFilter = 'الكل') {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+
+            const filtered = categoryFilter === 'الكل' 
+                ? productsDatabase 
+                : productsDatabase.filter(p => p.category === categoryFilter);
+
+            filtered.forEach(product => {
+                const cardHTML = `
+                    <div class="product-card">
+                        <div>
+                            <span class="product-badge">${product.badge}</span>
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-desc">${product.desc}</div>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price">${product.price} ج.م</span>
+                            <button class="btn-add-cart" onclick="addToCart(${product.id})">إضافة للسلة</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += cardHTML;
+            });
+        }
+
+        // دالة التبديل بين الأقسام وسحب البيانات المناسبة
+        function filterCategory(categoryName) {
+            // تغيير الشكل المرئي للزر النشط
+            const cards = document.querySelectorAll('.category-card');
+            cards.forEach(card => {
+                if(card.innerText === categoryName || (categoryName === 'الكل' && card.innerText === 'كل الأدوية')) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+            displayProducts(categoryName);
+        }
+
+        // دالة إضافة الدواء في سلة المشتريات المشتركة وحفظها بذاكرة المتصفح
+        function addToCart(productId) {
+            let currentCart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
+            const product = productsDatabase.find(p => p.id === productId);
+
+            if(product) {
+                const existingItem = currentCart.find(item => item.id === productId);
+                if(existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    currentCart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        quantity: 1
+                    });
+                }
+                localStorage.setItem('pharmacy_cart', JSON.stringify(currentCart));
+                alert(`تم إضافة (${product.name}) إلى السلة بنجاح!`);
+            }
+        }
+
+        // دالة تسجيل الخروج المسؤولة عن تصفير الجلسة الأمنية
+        function logout() {
+            localStorage.setItem('user_logged_in', 'false');
+            window.location.href = 'index.html';
+        }
+
+        // تشغيل العرض التلقائي بمجرد فتح صيدليتك
+        displayProducts();
+    </script>
+</body>
+</html>
