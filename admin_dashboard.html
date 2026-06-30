@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم السرية - الإدارة العليا</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #f4f6f9;
+            --sidebar-white: #ffffff;
+            --accent-blue: #1e3a8a;
+            --accent-gold: #c5a059;
+            --text-dark: #334155;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+
+        /* الشاشة المقسمة: القائمة الجانبية المتقدمة */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-white);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--bg-body);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            padding: 12px 15px;
+            text-align: right;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: 0.3s;
+        }
+
+        .menu-btn:hover, .menu-btn.active {
+            background-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            background-color: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* حاوية المحتويات المتغيرة الأساسية */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        h2 { font-size: 1.5rem; color: var(--accent-blue); margin-bottom: 20px; border-bottom: 2px solid var(--accent-gold); padding-bottom: 8px; display: inline-block; }
+
+        /* التنسيقات الفلات للنماذج والجداول */
+        .admin-box { background: #fff; border: 1px solid var(--border-color); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 25px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.9rem; font-weight: 700; }
+        .form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid var(--border-color); background: #f8fafc; border-radius: 8px; outline: none; }
+        .form-group input:focus { border-color: var(--accent-gold); background: #fff; }
+        
+        .btn-action { background: var(--accent-blue); color: #fff; border: none; padding: 12px 25px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.3s; width: fit-content; margin-top: 15px; }
+        .btn-action:hover { background: var(--accent-gold); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #fff; }
+        th, td { padding: 14px; text-align: right; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #f8fafc; color: var(--accent-blue); font-weight: 700; }
+        
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        .badge.pending { background: #fef3c7; color: #d97706; }
+        .badge.completed { background: #d1fae5; color: #059669; }
+
+        .status-select { padding: 5px; font-size: 0.85rem; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">لوحة التحكم الفاخرة ⚙️</div>
+        <button class="menu-btn active" onclick="showSection('products')">📦 إدراج الأصناف والأسعار</button>
+        <button class="menu-btn" onclick="showSection('ads')">✨ إدارة الإعلانات والعروض</button>
+        <button class="menu-btn" onclick="showSection('orders')" onclick="loadOrders()">📥 استقبال ومعالجة الطلبات</button>
+        <button class="logout-btn" onclick="logoutAdmin()">خروج من اللوحة</button>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="productsSection" class="dashboard-section active">
+            <h2>إدراج صنف دوائي أو بيطري جديد</h2>
+            <div class="admin-box">
+                <form onsubmit="saveProduct(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>اسم الدواء / المنتج البيطري</label>
+                            <input type="text" id="prodName" required placeholder="مثال: مضاد حيوي تيراميسين">
+                        </div>
+                        <div class="form-group">
+                            <label>السعر الافتراضي (ج.م)</label>
+                            <input type="number" id="prodPrice" required placeholder="مثال: 150">
+                        </div>
+                        <div class="form-group">
+                            <label>التصنيف</label>
+                            <select id="prodCat">
+                                <option value="أدوية دواجن">أدوية دواجن</option>
+                                <option value="أدوية مواشي">أدوية مواشي</option>
+                                <option value="فيتامينات ومكملات">فيتامينات ومكملات</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-action">حفظ وإدراج الصنف بمخزن المتجر</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="adsSection" class="dashboard-section">
+            <h2>إدارة الإعلانات الترويجية والعروض</h2>
+            <div class="admin-box">
+                <form onsubmit="saveAd(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>عنوان الإعلان أو العرض</label>
+                            <input type="text" id="adTitle" required placeholder="مثال: خصم خاص 20% على تحصينات الدواجن">
+                        </div>
+                        <div class="form-group">
+                            <label>كود الكوبون المرفق (إن وجد)</label>
+                            <input type="text" id="adCoupon" placeholder="مثال: VET20">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-action">نشر الإعلان على الواجهة الأساسية</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="ordersSection" class="dashboard-section">
+            <h2>طلبات العملاء الواردة من المتجر</h2>
+            <div class="admin-box" style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>العميل</th>
+                            <th>العنوان بالكامل</th>
+                            <th>الحساب الإجمالي</th>
+                            <th>الحالة الحالية</th>
+                            <th>تعديل الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminOrdersTable">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // دالة التنقل السريع بين التبويبات بدون تحميل الصفحة
+        function showSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(sectionId + 'Section').classList.add('active');
+            event.target.classList.add('active');
+
+            if(sectionId === 'orders') { loadOrders(); }
+        }
+
+        // محاكاة حفظ الأصناف الجديدة في قاعدة بيانات المتصفح المحلي
+        function saveProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById('prodName').value;
+            const price = document.getElementById('prodPrice').value;
+            const cat = document.getElementById('prodCat').value;
+
+            let storeProducts = JSON.parse(localStorage.getItem('custom_store_products')) || [];
+            storeProducts.push({ id: Date.now(), name, price: parseFloat(price), category: cat });
+            localStorage.setItem('custom_store_products', JSON.stringify(storeProducts));
+
+            alert("تم إدراج الصنف البيطري الجديد بنجاح في قاعدة البيانات!");
+            e.target.reset();
+        }
+
+        // محاكاة نشر الإعلانات
+        function saveAd(e) {
+            e.preventDefault();
+            const title = document.getElementById('adTitle').value;
+            const coupon = document.getElementById('adCoupon').value;
+
+            localStorage.setItem('active_store_ad', JSON.stringify({ title, coupon }));
+            alert("تم تنشيط ونشر الإعلان بنجاح للجمهور!");
+            e.target.reset();
+        }
+
+        // جلب وقراءة كافة طلبات الشراء الحقيقية التي تمت بالبرنامج وتعديل حالتها فورياً
+        function loadOrders() {
+            const tbody = document.getElementById('adminOrdersTable');
+            tbody.innerHTML = "";
+            let matchCounter = 0;
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith("VET-")) {
+                    matchCounter++;
+                    const order = JSON.parse(localStorage.getItem(key));
+                    const isCompleted = order.status.includes("تم التوصيل");
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><strong>${order.orderId}</strong></td>
+                            <td>${order.customerName}<br><small style="color:gray;">${order.phones.join(' - ')}</small></td>
+                            <td>${order.fullAddress}</td>
+                            <td><span style="color:#1e3a8a; font-weight:700;">${order.totalPrice}</span></td>
+                            <td><span class="badge ${isCompleted ? 'completed' : 'pending'}">${order.status}</span></td>
+                            <td>
+                                <select class="status-select" onchange="changeOrderStatus('${order.orderId}', this.value)">
+                                    <option value="">تغيير الحالة لـ...</option>
+                                    <option value="قيد المراجعة والتحضير بالصيدلية">قيد المراجعة والتحضير</option>
+                                    <option value="تم تسليمه لشركة الشحن">خرج مع المندوب للشحن</option>
+                                    <option value="تم التوصيل والتحصيل بنجاح د. أحمد">تم التوصيل والتحصيل</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+            if(matchCounter === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:gray;">لا توجد أي طلبات واردة حتى الآن.</td></tr>`;
+            }
+        }
+
+        // دالة حفظ التغييرات على الحالات لتعود وتنعكس بصفحة الاستعلام للعميل
+        function changeOrderStatus(orderId, newStatus) {
+            if(!newStatus) return;
+            let order = JSON.parse(localStorage.getItem(orderId));
+            if(order) {
+                order.status = newStatus;
+                localStorage.setItem(orderId, JSON.stringify(order));
+                alert(`تم تحديث حالة الطلب ${orderId} بنجاح!`);
+                loadOrders(); // إعادة التحديث الفوري للجدول
+            }
+        }
+
+        function logoutAdmin() {
+            alert("جاري الخروج الآمن من نظام الإدارة العليا.");
+            window.location.href = 'login.html'; // أو اسم ملف بوابة الدخول الخاص بك
+        }
+    </script>
+</body>
+</html>
