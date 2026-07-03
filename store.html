@@ -660,19 +660,32 @@
         let totalSlides = 0;
         const sliderContainer = document.getElementById('sliderContainer');
 
-        async function loadStoreData() {
+     async function loadStoreData() {
             try {
-                const response = await fetch(SERVER_API_URL);
+                // تأمين الاتصال بالسيرفر مع تتبع إعادة التوجيه التلقائي لجوجل
+                const response = await fetch(SERVER_API_URL, {
+                    method: "GET",
+                    redirect: "follow"
+                });
                 const data = await response.json();
                 
+                // التأكد من أن البيانات القادمة صحيحة وليست فارغة
                 productsDatabase = data.products || [];
                 storeSettings = data.settings || {};
                 
+                // تشغيل وتوزيع البيانات على الواجهة بالترتيب
                 applyStoreSettings();
                 displayProducts();
-                updateSlidersDynamic(data.sliders || []);
-                updatePromoBannerDynamic(data.promo);
                 
+                if (data.sliders && data.sliders.length > 0) {
+                    updateSlidersDynamic(data.sliders);
+                }
+                
+                if (data.promo) {
+                    updatePromoBannerDynamic(data.promo);
+                }
+                
+                // إخفاء شاشة التحميل بمجرد النجاح
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 if(loadingOverlay) {
                     loadingOverlay.style.opacity = '0';
@@ -680,8 +693,9 @@
                 }
                 
             } catch (error) {
-                console.error("خطأ أثناء الاتصال بالسيرفر:", error);
-                alert("فشل الاتصال بالسيرفر، جاري المحاولة مرة أخرى.");
+                // طباعة الخطأ الحقيقي في الكونسول للمطورين لمعرفته بدقة
+                console.error("تفاصيل الخطأ الحقيقي:", error);
+                alert("جاري جلب البيانات... لو استمرت الرسالة تأكد من تحديث صفحة المتجر أو عمل إصدار جديد (Deploy) للسيرفر.");
             }
         }
 
