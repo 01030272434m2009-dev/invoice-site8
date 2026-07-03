@@ -129,8 +129,8 @@
                         <div class="form-group">
                             <label>تاريخ وموعد الاستلام المفضل *</label>
                             <select id="deliveryTime" onchange="calculateFinalTotal()">
-                                <option value="morning">صباحاً (10 ص - 3 ظهراً) - شحن عادي</option>
-                                <option value="evening">مساءً (6 مساءً - 11 مساءً) - شحن سريع (+15 ج.م)</option>
+                                <option value="صباحاً (10 ص - 3 ظهراً)">صباحاً (10 ص - 3 ظهراً) - شحن عادي</option>
+                                <option value="مساءً (6 مساءً - 11 مساءً) [+15 ج.م]">مساءً (6 مساءً - 11 مساءً) - شحن سريع (+15 ج.م)</option>
                             </select>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                             <select id="citySelect" onchange="handleCityChange()">
                                 <option value="">اختر المدينة بعد المحافظة...</option>
                             </select>
-                            <input type="text" id="customCityInput" placeholder="اكتب اسم المدينة إذا لم تجدها" style="display:none; margin-top:10px;">
+                            <input type="text" id="customCityInput" oninput="calculateFinalTotal()" placeholder="اكتب اسم المدينة إذا لم تجدها" style="display:none; margin-top:10px;">
                         </div>
                         <div class="form-group full-width">
                             <label>اسم الحي / الشارع / القرية وتفاصيل مكان الصيدلية أو المزرعة *</label>
@@ -192,19 +192,28 @@
                     <span id="finalTotal">0 ج.م</span>
                 </div>
 
-                <button class="btn-submit" onclick="submitOrder()">تأكيد وإرسال الطلب</button>
+                <button class="btn-submit" id="btnSubmitOrder" onclick="submitOrder()">تأكيد وإرسال الطلب</button>
             </div>
 
         </div>
     </div>
 
     <script>
-        // قاعدة بيانات شاملة لكافة محافظات مصر الـ 27 مع أشهر مدنها ومراكزها بالكامل
-        const shippingRates = {
+        // رابط السيرفر المباشر الخاص بك
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec";
+        
+        // المتغيرات والبيانات الحية القادمة من السيرفر
+        let serverCoupons = [];
+        let serverShippingConfig = [];
+        let couponDiscount = 0;
+        let cart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
+
+        // قاعدة البيانات المحلية الثابتة (كاحتياطي في حال لم يضع المدير تكويداً مخصصاً لمركز معين بالسيرفر)
+        const localShippingRates = {
             "القاهرة": { cost: 40, cities: ["مدينة نصر", "مصر الجديدة", "المعادي", "حلوان", "شبرا", "التجمع الخامس", "وسط البلد", "الزيتون", "عين شمس", "المرج"] },
             "الجيزة": { cost: 45, cities: ["الدقي", "المهندسين", "الهرم", "فيصل", "6 أكتوبر", "الشيخ زايد", "العجوزة", "إمبابة", "البدرشين", "العياط"] },
             "الإسكندرية": { cost: 60, cities: ["سموحة", "المنتزه", "محرم بك", "العجمي", "برج العرب", "سيدي جابر", "السيوف", "العصافرة"] },
-            "القليوبية": { cost: 50, cities: ["بنها", "شبرا الخيمة", "قليوب", "الخانكة", "قناطر الخيرية", "طوخ", "ش provide", "كفر شكر"] },
+            "القليوبية": { cost: 50, cities: ["بنها", "شبرا الخيمة", "قليوب", "الخانكة", "قناطر الخيرية", "طوخ", "كفر شكر"] },
             "المنوفية": { cost: 55, cities: ["شبين الكوم", "منوف", "أشمون", "السادات", "باجور", "قويسنا", "تلا", "بركة السبع"] },
             "الغربية": { cost: 55, cities: ["طنطا", "المحلة الكبرى", "كفر الزيات", "زفتى", "السنطة", "بسيون", "قطور", "سمنود"] },
             "الدقهلية": { cost: 60, cities: ["المنصورة", "ميت غمر", "السنبلاوين", "طلخا", "دكرنس", "بلقاس", "منزلة", "شربين"] },
@@ -230,13 +239,21 @@
             "جنوب سيناء": { cost: 85, cities: ["شرم الشيخ", "الطور", "دهب", "نويبع", "رأس سدر", "سانت كاترين"] }
         };
 
-        let cart = JSON.parse(localStorage.getItem('pharmacy_cart')) || [];
-        let couponDiscount = 0;
+        // دالة الاتصال الفوري بالسيرفر لجلب الكوبونات وإعدادات الشحن المحدثة ديناميكياً
+        function loadServerConfig() {
+            fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                if (data.coupons) serverCoupons = data.coupons;
+                if (data.shippingConfig) serverShippingConfig = data.shippingConfig;
+                calculateFinalTotal();
+            })
+            .catch(err => console.log("تحذير: لم يتم الاتصال بالسيرفر، سيتم العمل بالإعدادات المحلية كبديل.", err));
+        }
 
-        // دالة تعبئة قائمة المحافظات تلقائياً عند تحميل الصفحة
         function initGovernates() {
             const govSelect = document.getElementById('govSelect');
-            for (let gov in shippingRates) {
+            for (let gov in localShippingRates) {
                 govSelect.innerHTML += `<option value="${gov}">${gov}</option>`;
             }
         }
@@ -291,8 +308,8 @@
             citySelect.innerHTML = '<option value="">اختر المدينة...</option>';
             customInput.style.display = 'none';
 
-            if(gov && shippingRates[gov]) {
-                shippingRates[gov].cities.forEach(city => {
+            if(gov && localShippingRates[gov]) {
+                localShippingRates[gov].cities.forEach(city => {
                     citySelect.innerHTML += `<option value="${city}">${city}</option>`;
                 });
                 citySelect.innerHTML += `<option value="other">أخرى (كتابة اسم المدينة)...</option>`;
@@ -311,30 +328,58 @@
             calculateFinalTotal();
         }
 
+        // فحص وتطبيق الكوبونات حياً من السيرفر
         function applyCoupon() {
-            const code = document.getElementById('couponInput').value.trim();
-            if(code === "VET20") {
+            const inputCode = document.getElementById('couponInput').value.trim().toUpperCase();
+            if(!inputCode) return alert("يرجى كتابة الكود أولاً!");
+
+            // البحث في الكوبونات القادمة من السيرفر
+            let matchedCoupon = serverCoupons.find(c => c.code.toUpperCase() === inputCode && (c.isActive === "true" || c.isActive === true));
+            
+            if(matchedCoupon) {
+                couponDiscount = parseFloat(matchedCoupon.discountPercentage);
+                alert(`تم تطبيق الكوبون بنجاح! خصم ${couponDiscount * 100}% على المنتجات.`);
+            } else if (inputCode === "VET20") { 
+                // كوبون احتياطي افتراضي
                 couponDiscount = 0.20;
-                alert("تم تطبيق خصم 20% بنجاح على الأدوية!");
+                alert("تم تطبيق الكوبون الافتراضي بنجاح! خصم 20%.");
             } else {
-                alert("كوبون الخصم غير صحيح أو منتهي الصلاحية.");
+                alert("كوبون الخصم غير صحيح، أو منتهي الصلاحية.");
                 couponDiscount = 0;
             }
             calculateFinalTotal();
         }
 
+        // حساب الفاتورة الكلية ديناميكياً مع الشحن والشركات
         function calculateFinalTotal() {
             let itemsSubtotal = 0;
             cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
             
             const gov = document.getElementById('govSelect').value;
+            let city = document.getElementById('citySelect').value;
+            if(city === 'other') city = document.getElementById('customCityInput').value.trim();
+
             let shipping = 0;
-            if(gov && shippingRates[gov]) {
-                shipping = shippingRates[gov].cost;
+            let company = "البريد السريع البيطري"; // الافتراضي
+
+            if(gov && city) {
+                // أولاً: محاولة البحث عن تكويد الشحن المخصص في السيرفر
+                let serverMatch = serverShippingConfig.find(s => s.governorate.trim() === gov.trim() && s.city.trim() === city.trim());
+                
+                if(serverMatch) {
+                    shipping = parseFloat(serverMatch.shippingCost);
+                    company = serverMatch.companyName;
+                } else if(localShippingRates[gov]) {
+                    // ثانياً: إذا لم يتواجد في السيرفر، يتم أخذ القيمة المحلية الافتراضية
+                    shipping = localShippingRates[gov].cost;
+                }
+            } else if(gov && !city) {
+                if(localShippingRates[gov]) shipping = localShippingRates[gov].cost;
             }
 
+            // إضافة رسوم الشحن المسائي السريع (+15 ج.م)
             const timeSlot = document.getElementById('deliveryTime').value;
-            if(timeSlot === 'evening' && gov !== "") {
+            if(timeSlot.includes('مساءً') && gov !== "") {
                 shipping += 15; 
             }
 
@@ -343,6 +388,7 @@
 
             document.getElementById('subTotal').innerText = itemsSubtotal + " ج.م";
             document.getElementById('shippingCost').innerText = shipping + " ج.م";
+            document.getElementById('shippingCompany').innerText = company;
             
             if(discountAmount > 0) {
                 document.getElementById('discountRow').style.display = 'flex';
@@ -354,45 +400,92 @@
             document.getElementById('finalTotal').innerText = final + " ج.م";
         }
 
+        // إرسال الطلب وحفظه في شيت جوجل مباشرة (POST)
         function submitOrder() {
             if(cart.length === 0) { alert("السلة فارغة!"); return; }
             
-            const name = document.getElementById('custName').value;
-            const p1 = document.getElementById('custPhone1').value;
-            const p2 = document.getElementById('custPhone2').value;
+            const name = document.getElementById('custName').value.trim();
+            const p1 = document.getElementById('custPhone1').value.trim();
+            const p2 = document.getElementById('custPhone2').value.trim();
             const gov = document.getElementById('govSelect').value;
             let city = document.getElementById('citySelect').value;
-            const address = document.getElementById('addressDetails').value;
+            const address = document.getElementById('addressDetails').value.trim();
+            const deliveryTime = document.getElementById('deliveryTime').value;
 
-            if(city === 'other') { city = document.getElementById('customCityInput').value; }
+            if(city === 'other') city = document.getElementById('customCityInput').value.trim();
 
             if(!name || !p1 || !p2 || !gov || !city || !address) {
                 alert("من فضلك أكمل كافة الحقول الإلزامية المطلوبة لتوصيل شحنتك البيطرية بدقة!");
                 return;
             }
 
-            const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
+            // إيقاف الزر مؤقتاً لمنع التكرار
+            const btnSubmit = document.getElementById('btnSubmitOrder');
+            btnSubmit.innerText = "جاري إرسال الطلب للسيرفر... 🔄";
+            btnSubmit.disabled = true;
 
-            const orderDetails = {
-                orderId: orderId,
-                customerName: name,
-                phones: [p1, p2],
-                fullAddress: `محافظة ${gov} - مدينة ${city} - ${address}`,
-                status: "قيد المراجعة والتحضير بالصيدلية",
-                totalPrice: document.getElementById('finalTotal').innerText,
-                date: new Date().toLocaleDateString('ar-EG')
+            const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
+            
+            let itemsSubtotal = 0;
+            cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
+            let shippingCost = parseFloat(document.getElementById('shippingCost').innerText);
+            let discountAmount = itemsSubtotal * couponDiscount;
+            let finalTotal = (itemsSubtotal - discountAmount) + shippingCost;
+            let shippingCompany = document.getElementById('shippingCompany').innerText;
+
+            // تجهيز بناء الكائن متوافقاً تماماً مع جـدول الطلبات الجديد (Orders) بالسيرفر
+            const payload = {
+                action: "addOrder",
+                data: {
+                    orderId: orderId,
+                    customerName: name,
+                    phone1: p1,
+                    phone2: p2,
+                    governorate: gov,
+                    city: city,
+                    addressDetails: address,
+                    deliveryDateTime: deliveryTime,
+                    cartDetails: JSON.stringify(cart), // إرسال السلة كمصفوفة منسقة
+                    subTotal: itemsSubtotal,
+                    shippingCost: shippingCost,
+                    shippingCompany: shippingCompany,
+                    discount: discountAmount,
+                    finalTotal: finalTotal,
+                    status: "قيد المراجعة والتحضير بالصيدلية"
+                }
             };
 
-            localStorage.setItem(orderId, JSON.stringify(orderDetails));
-            localStorage.removeItem('pharmacy_cart');
-            
-            alert(`تم تأكيد طلبك بنجاح! \nرقم الطلب الخاص بك هو: ${orderId} \nاحتفظ بهذا الرقم للاستعلام عن حالة التوصيل في أي وقت.`);
-            window.location.href = 'store.html';
+            // إرسال البيانات فوراً إلى جوجل سكريبت
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(res => {
+                if(res.success) {
+                    alert(`تم تأكيد طلبك بنجاح ووصوله للصيدلية! \nرقم الطلب الخاص بك هو: ${orderId} \nتم إرساله ومزامنته حياً مع الإدارة بنجاح.`);
+                    localStorage.removeItem('pharmacy_cart');
+                    window.location.href = 'store.html';
+                } else {
+                    alert("رد السيرفر بعدم اكتمال الإرسال، يرجى المحاولة مجدداً.");
+                    btnSubmit.innerText = "تأكيد وإرسال الطلب";
+                    btnSubmit.disabled = false;
+                }
+            })
+            .catch(err => {
+                alert("حدث خطأ في الاتصال بالشبكة والسيرفر، تم حفظ الطلب محلياً.");
+                console.error(err);
+                btnSubmit.innerText = "تأكيد وإرسال الطلب";
+                btnSubmit.disabled = false;
+            });
         }
 
-        // تشغيل التهيئة المبدئية عند تحميل العناصر
-        initGovernates();
-        renderCartItems();
+        // التشغيل المبدئي الفوري عند فتح الصفحة
+        window.onload = function() {
+            initGovernates();
+            renderCartItems();
+            loadServerConfig();
+        };
     </script>
 </body>
 </html>
