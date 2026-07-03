@@ -172,7 +172,6 @@
                     <span id="discountValue">-0 ج.م</span>
                 </div>
 
-                <label style="font-size:0.85rem; display:block; margin-bottom:5px; font-weight: 600; color: #475569;">هل لديك كود خصم؟</label>
                 <div class="coupon-box">
                     <input type="text" id="couponInput" placeholder="اكتب كود الخصم هنا">
                     <button class="btn-coupon" onclick="applyCoupon()">تطبيق</button>
@@ -384,76 +383,81 @@
             document.getElementById('finalTotal').innerText = final + " ج.م";
         }
 
-    function submitOrder() {
-    if(cart.length === 0) { alert("السلة فارغة!"); return; }
-    
-    const name = document.getElementById('custName').value.trim();
-    const p1 = document.getElementById('custPhone1').value.trim();
-    const p2 = document.getElementById('custPhone2').value.trim();
-    const gov = document.getElementById('govSelect').value;
-    let city = document.getElementById('citySelect').value;
-    const address = document.getElementById('addressDetails').value.trim();
-    const deliveryTime = document.getElementById('deliveryTime').value;
+        function submitOrder() {
+            if(cart.length === 0) { alert("السلة فارغة!"); return; }
+            
+            const name = document.getElementById('custName').value.trim();
+            const p1 = document.getElementById('custPhone1').value.trim();
+            const p2 = document.getElementById('custPhone2').value.trim();
+            const gov = document.getElementById('govSelect').value;
+            let city = document.getElementById('citySelect').value;
+            const address = document.getElementById('addressDetails').value.trim();
+            const deliveryTime = document.getElementById('deliveryTime').value;
 
-    if(city === 'other') city = document.getElementById('customCityInput').value.trim();
+            if(city === 'other') city = document.getElementById('customCityInput').value.trim();
 
-    if(!name || !p1 || !p2 || !gov || !city || !address) {
-        alert("من فضلك أكمل كافة الحقول الإلزامية المطلوبة لتوصيل شحنتك البيطرية بدقة!");
-        return;
-    }
+            if(!name || !p1 || !p2 || !gov || !city || !address) {
+                alert("من فضلك أكمل كافة الحقول الإلزامية المطلوبة لتوصيل شحنتك البيطرية بدقة!");
+                return;
+            }
 
-    const btnSubmit = document.getElementById('btnSubmitOrder');
-    btnSubmit.innerText = "جاري إرسال الطلب للسيرفر... 🔄";
-    btnSubmit.disabled = true;
+            const btnSubmit = document.getElementById('btnSubmitOrder');
+            btnSubmit.innerText = "جاري إرسال الطلب للسيرفر... 🔄";
+            btnSubmit.disabled = true;
 
-    const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
-    
-    let itemsSubtotal = 0;
-    cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
-    let shippingCost = parseFloat(document.getElementById('shippingCost').innerText);
-    let discountAmount = itemsSubtotal * couponDiscount;
-    let finalTotal = (itemsSubtotal - discountAmount) + shippingCost;
-    let shippingCompany = document.getElementById('shippingCompany').innerText;
+            const orderId = "VET-" + Math.floor(100000 + Math.random() * 900000);
+            
+            let itemsSubtotal = 0;
+            cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
+            let shippingCost = parseFloat(document.getElementById('shippingCost').innerText);
+            let discountAmount = itemsSubtotal * couponDiscount;
+            let finalTotal = (itemsSubtotal - discountAmount) + shippingCost;
+            let shippingCompany = document.getElementById('shippingCompany').innerText;
 
-    // بناء كائن البيانات متوافق 100% مع دالة (submitNewOrder) في السيرفر
-    const payload = {
-        action: "submitNewOrder", // مطابقة مع السيرفر تماماً
-        data: {
-            orderId: orderId,
-            customerName: name,
-            phone1: p1,
-            phone2: p2,
-            governorate: gov,
-            city: city,
-            addressDetails: address,
-            deliveryDateTime: deliveryTime,
-            cart: cart, // السيرفر يتوقع مصفوفة الكائن ليعمل لها stringify بنفسه
-            subTotal: itemsSubtotal,
-            shippingCost: shippingCost,
-            shippingCompany: shippingCompany,
-            discount: discountAmount,
-            finalTotal: finalTotal
+            // بناء البيانات بالتوافق الكامل مع دالة submitNewOrder(data) في ملف السيرفر (الجديد.txt)
+            const payload = {
+                action: "submitNewOrder",
+                data: {
+                    orderId: orderId,
+                    customerName: name,
+                    phone1: p1,
+                    phone2: p2,
+                    governorate: gov,
+                    city: city,
+                    addressDetails: address,
+                    deliveryDateTime: deliveryTime,
+                    cart: cart, // يتم إرسالها كمصفوفة والسيرفر يقوم بعمل الـ stringify تلقائياً
+                    subTotal: itemsSubtotal,
+                    shippingCost: shippingCost,
+                    shippingCompany: shippingCompany,
+                    discount: discountAmount,
+                    finalTotal: finalTotal
+                }
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors", // لتجنب مشاكل الـ CORS بالمتصفحات ولضمان الاستقبال المباشر
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert(`تم تأكيد طلبك بنجاح ووصوله للصيدلية! \nرقم الطلب الخاص بك هو: ${orderId} \nتم إرساله ومزامنته حياً مع الإدارة بنجاح.`);
+                localStorage.removeItem('pharmacy_cart');
+                window.location.href = 'store.html';
+            })
+            .catch(err => {
+                alert("حدث خطأ في الاتصال بالشبكة والسيرفر.");
+                console.error(err);
+                btnSubmit.innerText = "تأكيد وإرسال الطلب";
+                btnSubmit.disabled = false;
+            });
         }
-    };
 
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors", // لتجنب مشاكل الـ CORS وضمان الإرسال السلس من المتصفح
-        body: JSON.stringify(payload)
-    })
-    .then(() => {
-        // الاستجابة في وضع no-cors لا يمكن قراءتها كـ JSON، ولكن وصول العميل لهذه النقطة يعني نجاح الإرسال للسيرفر
-        alert(`تم تأكيد طلبك بنجاح ووصوله للصيدلية! \nرقم الطلب الخاص بك هو: ${orderId} \nتم إرساله ومزامنته حياً مع الإدارة بنجاح.`);
-        localStorage.removeItem('pharmacy_cart');
-        window.location.href = 'store.html';
-    })
-    .catch(err => {
-        alert("حدث خطأ في الاتصال بالشبكة والسيرفر.");
-        console.error(err);
-        btnSubmit.innerText = "تأكيد وإرسال الطلب";
-        btnSubmit.disabled = false;
-    });
-}
+        window.onload = function() {
+            initGovernates();
+            renderCartItems();
+            loadServerConfig();
+        };
     </script>
 </body>
 </html>
