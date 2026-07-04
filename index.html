@@ -463,6 +463,7 @@
     </div>
 
     <script>
+        // رابط السيرفر المعتمد لديك
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec"; 
         const SECRET_ADMIN_CODE = "VET999ADMIN";
         let timerInterval;
@@ -504,10 +505,9 @@
 
             setLoading('login', true);
 
-            // تم إزالة mode: "no-cors" لمعالجة الرد بشكل صحيح من السيرفر
             fetch(SCRIPT_URL, {
                 method: "POST",
-                headers: { "Content-Type": "text/plain" }, // استخدام text/plain يتفادى مشاكل CORS مسبقة التحقق (Preflight) مع Apps Script
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     action: "loginCustomer",
                     data: { userOrEmail: user, password: pass }
@@ -518,7 +518,8 @@
                 setLoading('login', false);
                 if (response.success) {
                     localStorage.setItem('user_logged_in', 'true');
-                    localStorage.setItem('current_user_name', user);
+                    // حفظ الاسم الراجع من قاعدة البيانات الفعلي إذا توفر أو حفظ المدخل
+                    localStorage.setItem('current_user_name', response.name || user);
                     alert("أهلاً بك! تم تسجيل الدخول بنجاح.");
                     window.location.href = 'store.html';
                 } else {
@@ -637,8 +638,10 @@
             inputs.forEach((input, index) => {
                 input.addEventListener('input', (e) => {
                     const value = input.value;
-                    if (value.length >= 1) {
-                        input.value = value.substr(0, 1);
+                    // تصفية المدخلات لتقبل الأرقام فقط
+                    input.value = value.replace(/[^0-9]/g, '');
+                    if (input.value.length >= 1) {
+                        input.value = input.value.substr(0, 1);
                         if (index < inputs.length - 1) inputs[index + 1].focus();
                     }
                 });
