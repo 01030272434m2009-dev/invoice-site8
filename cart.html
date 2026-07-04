@@ -213,6 +213,15 @@
                                 <option value="مساءً (6 مساءً - 11 مساءً)">مساءً (6 مساءً - 11 مساءً) - شحن سريع (+15 ج.م)</option>
                             </select>
                         </div>
+                        <!-- التعديل الجديد: إضافة خيار تحديد طريقة الدفع للعميل -->
+                        <div class="form-group">
+                            <label>💳 طريقة الدفع المفضلة *</label>
+                            <select id="paymentMethod">
+                                <option value="الدفع عند الاستلام (COD)">💵 الدفع عند الاستلام (كاش)</option>
+                                <option value="محفظة إلكترونية (فودافون كاش)">📱 تحويل محفظة إلكترونية (فودافون كاش)</option>
+                                <option value="حساب بنكي / إنستا باي">🏦 تحويل بنكي / إنستا باي (InstaPay)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -350,7 +359,6 @@
                 localStorage.removeItem('pharmacy_cart');
                 renderCartItems();
             });
-            // تحويل الزر في المودال ليصبح نعم/لا إذا أردت، أو الموافقة المباشرة عند الضغط.
         }
 
         function loadServerConfig() {
@@ -574,10 +582,11 @@
             let city = document.getElementById('citySelect').value;
             const address = document.getElementById('addressDetails').value.trim();
             const deliveryTime = document.getElementById('deliveryTime').value;
+            const paymentMethod = document.getElementById('paymentMethod').value; // التعديل الجديد: سحب طريقة الدفع المحددة
 
             if(city === 'other') city = document.getElementById('customCityInput').value.trim();
 
-            if(!name || !p1 || !p2 || !gov || !city || !address) {
+            if(!name || !p1 || !p2 || !gov || !city || !address || !paymentMethod) {
                 showMsg("بيانات ناقصة", "من فضلك أكمل كافة الحقول الإلزامية المطلوبة لتوصيل شحنتك البيطرية بدقة!", "⚠️");
                 return;
             }
@@ -611,7 +620,8 @@
                     shippingCost: shippingCost,
                     shippingCompany: shippingCompany,
                     discount: discountAmount,
-                    finalTotal: finalTotal
+                    finalTotal: finalTotal,
+                    paymentMethod: paymentMethod // التعديل الجديد: إرسال طريقة الدفع مع حمولة البيانات
                 }
             };
 
@@ -623,7 +633,7 @@
             .then(() => {
                 showMsg(
                     "تم إرسال طلبك بنجاح! 🎉", 
-                    `رقم الطلب الخاص بك هو: ${orderId} \nتم حفظ الطلب وإرساله ومزامنته حياً مع إدارة الصيدلية البيطرية.`, 
+                    `رقم الطلب الخاص بك هو: ${orderId} \nتم حفظ الطلب وإرسال الفاتورة لإيميلك ومزامنته حياً مع إدارة الصيدلية البيطرية.`, 
                     "✅",
                     function() {
                         localStorage.removeItem('pharmacy_cart');
