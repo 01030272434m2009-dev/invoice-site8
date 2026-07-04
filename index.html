@@ -463,7 +463,6 @@
     </div>
 
     <script>
-        // رابط السيرفر والتحقق
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec"; 
         const SECRET_ADMIN_CODE = "VET999ADMIN";
         let timerInterval;
@@ -505,30 +504,31 @@
 
             setLoading('login', true);
 
+            // تم إزالة mode: "no-cors" لمعالجة الرد بشكل صحيح من السيرفر
             fetch(SCRIPT_URL, {
                 method: "POST",
-                mode: "no-cors", // مضاف لضمان إرسال الطلبات بنجاح للسيرفر بدون تعقيدات الـ CORS الخارجي
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "text/plain" }, // استخدام text/plain يتفادى مشاكل CORS مسبقة التحقق (Preflight) مع Apps Script
                 body: JSON.stringify({
                     action: "loginCustomer",
                     data: { userOrEmail: user, password: pass }
                 })
             })
-            .then(() => {
-                // ملاحظة: بسبب وضع no-cors، لا يمكن قراءة الرد المباشر بـ json() ولكن يتم تسجيل الدخول على السيرفر بنجاح.
-                // إذا كان السيرفر يدعم CORS كاملاً يمكنك حذف mode: "no-cors" واسترجاع المنطق التالي:
+            .then(res => res.json())
+            .then(response => {
                 setLoading('login', false);
-                
-                // افتراضياً للعمل المرن:
-                localStorage.setItem('user_logged_in', 'true');
-                localStorage.setItem('current_user_name', user);
-                alert("أهلاً بك! تم تسجيل الدخول بنجاح.");
-                window.location.href = 'store.html';
+                if (response.success) {
+                    localStorage.setItem('user_logged_in', 'true');
+                    localStorage.setItem('current_user_name', user);
+                    alert("أهلاً بك! تم تسجيل الدخول بنجاح.");
+                    window.location.href = 'store.html';
+                } else {
+                    alert(response.message || "اسم المستخدم أو كلمة المرور غير صحيحة.");
+                }
             })
             .catch((error) => {
                 setLoading('login', false);
                 console.error("Login Error:", error);
-                alert("حدث خطأ في الاتصال بالسيرفر.");
+                alert("حدث خطأ في الاتصال بالسيرفر، يرجى المحاولة لاحقاً.");
             });
         }
 
@@ -540,6 +540,7 @@
             setLoading('reg', true);
             fetch(SCRIPT_URL, {
                 method: "POST",
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     action: "sendVerificationCode",
                     data: { email: email, phone: phone, method: "email" }
@@ -562,12 +563,7 @@
             .catch((err) => {
                 setLoading('reg', false);
                 console.error(err);
-                // لإتاحة تجربة الواجهة حتى لو كان السيرفر متوقف مؤقتاً:
-                document.getElementById('registerForm').style.display = "none";
-                document.getElementById('authTabs').style.display = "none";
-                document.getElementById('targetEmail').innerText = email;
-                document.getElementById('verificationZone').style.display = "block";
-                startTimer();
+                alert("خطأ بالاتصال بالسيرفر عند إرسال رمز التحقق.");
             });
         }
 
@@ -590,6 +586,7 @@
             
             fetch(SCRIPT_URL, {
                 method: "POST",
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({
                     action: "checkVerificationCode",
                     data: { email: email, code: vCodeValue }
@@ -600,6 +597,7 @@
                 if (checkResponse.success) {
                     fetch(SCRIPT_URL, {
                         method: "POST",
+                        headers: { "Content-Type": "text/plain" },
                         body: JSON.stringify({
                             action: "registerNewCustomer",
                             data: { name: name, username: user, email: email, phone: phone, password: pass }
@@ -625,9 +623,7 @@
             })
             .catch(() => {
                 setLoading('verify', false);
-                // السلوك الاحتياطي في حال نجاح الكود محلياً
-                alert("تم التحقق بنجاح وجاري إعداد حسابك!");
-                switchTab('login');
+                alert("حدث خطأ في عملية التحقق والتسجيل.");
             });
         }
 
