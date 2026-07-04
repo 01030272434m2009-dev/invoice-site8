@@ -31,7 +31,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4ecfa 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -42,14 +42,15 @@
 
         .auth-container {
             background-color: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
             width: 100%;
             max-width: 480px;
             padding: 40px 35px;
             position: relative;
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
         }
 
         .auth-container::before {
@@ -66,27 +67,33 @@
         }
 
         .auth-header .logo-icon {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             color: var(--accent-gold);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .auth-header h1 {
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--text-main);
             margin-bottom: 6px;
         }
 
         .auth-header p {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: var(--text-muted);
         }
 
         .auth-tabs {
             display: flex;
             background-color: #f8f9fa;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 5px;
             margin-bottom: 25px;
             border: 1px solid var(--border-color);
@@ -96,26 +103,26 @@
             flex: 1;
             background: none;
             border: none;
-            padding: 10px;
+            padding: 12px;
             font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
         .tab-btn.active {
             color: var(--text-main);
             background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .auth-form {
             display: none;
             flex-direction: column;
-            gap: 18px;
+            gap: 20px;
         }
 
         .auth-form.active {
@@ -125,11 +132,11 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .form-group label {
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-main);
         }
@@ -140,19 +147,19 @@
 
         .input-wrapper i {
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 1rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 11px 38px 11px 12px;
+            padding: 12px 42px 12px 14px;
             border: 1px solid var(--border-color);
             background-color: #fafbfc;
-            border-radius: 8px;
+            border-radius: 10px;
             color: var(--text-main);
             font-size: 0.95rem;
             outline: none;
@@ -165,77 +172,111 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
         }
 
-        .method-selector {
-            display: flex;
-            gap: 15px;
-            margin: 5px 0;
-        }
-        
-        .method-option {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background-color: #fafbfc;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        
-        .method-option input {
+        /* واجهة كود التحقق الفاخرة */
+        .verification-zone {
             display: none;
-        }
-        
-        .method-option.selected {
-            border-color: var(--accent-gold);
-            background-color: #fffdf6;
-            color: var(--accent-gold-hover);
-            box-shadow: 0 2px 6px rgba(212, 175, 55, 0.1);
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out forwards;
         }
 
-        .verification-box {
-            display: none;
-            background-color: #fcf8e3;
-            border: 1px dashed #faebcc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .verification-zone p {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .otp-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            direction: ltr; /* لجعل الخانات تترتب من اليسار لليمين برمجياً */
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 55px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+            background-color: #fafbfc;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .otp-input:focus {
+            border-color: var(--accent-gold);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+        }
+
+        .timer-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .timer-text span {
+            color: var(--accent-gold);
+            font-weight: 700;
+        }
+
+        .resend-btn {
+            background: none;
+            border: none;
+            color: var(--accent-gold);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.9rem;
+        }
+
+        .resend-btn:disabled {
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .btn-submit {
             background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-hover));
             color: #fff;
             border: none;
-            padding: 12px;
+            padding: 14px;
             font-size: 1rem;
             font-weight: 700;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            width: 100%;
         }
 
         .btn-submit:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
         }
 
         .social-divider {
             display: flex;
             align-items: center;
             text-align: center;
-            margin: 20px 0;
+            margin: 25px 0;
             color: var(--text-muted);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
 
         .social-divider::before, .social-divider::after {
@@ -254,16 +295,16 @@
 
         .social-btn {
             flex: 1;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 10px;
             background-color: #fff;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.2s ease;
         }
@@ -271,15 +312,15 @@
         .social-btn.google:hover { background-color: #fff5f5; border-color: var(--google-color); color: var(--google-color); }
         .social-btn.facebook:hover { background-color: #f0f7ff; border-color: var(--facebook-color); color: var(--facebook-color); }
 
-        .social-btn i { font-size: 1rem; }
+        .social-btn i { font-size: 1.1rem; }
         .social-btn.google i { color: var(--google-color); }
         .social-btn.facebook i { color: var(--facebook-color); }
 
         .form-footer {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .form-footer a {
@@ -293,9 +334,9 @@
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top: 2px solid #fff;
-            width: 16px;
-            height: 16px;
-            animation: spin 1.0s linear infinite;
+            width: 18px;
+            height: 18px;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -313,7 +354,7 @@
             <p>منصتكم الطبية الرقمية المتكاملة برعاية د. أحمد</p>
         </div>
 
-        <div class="auth-tabs">
+        <div class="auth-tabs" id="authTabs">
             <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
             <button id="tab-register" class="tab-btn" onclick="switchTab('register')">إنشاء حساب جديد</button>
         </div>
@@ -345,11 +386,11 @@
             </div>
 
             <div class="form-footer">
-                ليس لديك حساب؟ <a href="#" onclick="switchTab('register'); return false;">اضغط هنا للتسجيل مجاناً</a>
+                ليس لديك حساب؟ <a href="#" onclick="switchTab('register'); return false;">سجل مجاناً الآن</a>
             </div>
         </form>
 
-        <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+        <form id="registerForm" class="auth-form" onsubmit="sendOTPRequest(event)">
             <div class="form-group">
                 <label>الاسم الكامل</label>
                 <div class="input-wrapper">
@@ -378,19 +419,6 @@
                     <input type="tel" id="regPhone" required placeholder="01000000000">
                 </div>
             </div>
-            
-            <div class="form-group">
-                <label>وسيلة استقبال كود التحقق (صالح لمدة يوم)</label>
-                <div class="method-selector">
-                    <div class="method-option selected" id="opt-email" onclick="selectMethod('email')">
-                        <i class="fa-solid fa-envelope"></i> البريد الإلكتروني
-                    </div>
-                    <div class="method-option" id="opt-whatsapp" onclick="selectMethod('whatsapp')">
-                        <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> الواتساب
-                    </div>
-                </div>
-            </div>
-
             <div class="form-group">
                 <label>كلمة المرور</label>
                 <div class="input-wrapper">
@@ -399,53 +427,61 @@
                 </div>
             </div>
 
-            <div id="verificationBox" class="verification-box">
-                <div class="form-group">
-                    <label id="vCodeLabel" style="color:#8a6d3b;">أدخل رمز التحقق المكون من 6 أرقام</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <input type="text" id="vCodeInput" placeholder="أدخل الـ 6 أرقام...">
-                    </div>
-                </div>
-            </div>
-
             <button type="submit" class="btn-submit" id="regBtn">
                 <span class="loading-spinner" id="regSpinner"></span>
-                <span id="regBtnText">إرسال كود التحقق وتأكيد الحساب</span>
+                <span>إرسال رمز التحقق للبريد الإلكتروني</span>
             </button>
             
             <div class="form-footer">
                 لديك حساب بالفعل؟ <a href="#" onclick="switchTab('login'); return false;">تسجيل الدخول</a>
             </div>
         </form>
+
+        <div id="verificationZone" class="verification-zone">
+            <p>تم إرسال كود تفعيل مكون من 6 أرقام إلى: <br><strong id="targetEmail" style="color:var(--accent-gold);"></strong></p>
+            
+            <div class="otp-wrapper">
+                <input type="text" class="otp-input" maxlength="1" data-index="0">
+                <input type="text" class="otp-input" maxlength="1" data-index="1">
+                <input type="text" class="otp-input" maxlength="1" data-index="2">
+                <input type="text" class="otp-input" maxlength="1" data-index="3">
+                <input type="text" class="otp-input" maxlength="1" data-index="4">
+                <input type="text" class="otp-input" maxlength="1" data-index="5">
+            </div>
+
+            <div class="timer-text">
+                يمكنك إعادة إرسال الكود بعد: <span id="countdown">60</span> ثانية
+            </div>
+            <p style="margin-bottom:20px;"><button id="resendBtn" class="resend-btn" disabled onclick="resendOTP()">إعادة إرسال الرمز</button></p>
+
+            <button type="button" class="btn-submit" id="verifyBtn" onclick="verifyAndRegister()">
+                <span class="loading-spinner" id="verifySpinner"></span>
+                <span>تأكيد الرمز وإنشاء الحساب الحين</span>
+            </button>
+        </div>
     </div>
 
     <script>
-        // ========================================================
-        // تم ربط رابط الـ Web App الخاص بك هنا بنجاح وثبات
-        // ========================================================
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec"; 
-        
         const SECRET_ADMIN_CODE = "VET999ADMIN";
-        let isCodeSent = false; 
-        let chosenMethod = "email"; 
+        let timerInterval;
 
-        // التحقق التلقائي عند فتح الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('user_logged_in') === 'true') {
                 window.location.href = 'store.html';
             }
+            setupOTPBehavior();
         });
 
-        // دالة اختيار وسيلة الإرسال
-        function selectMethod(method) {
-            if (isCodeSent) return; 
-            chosenMethod = method;
-            document.getElementById('opt-email').classList.toggle('selected', method === 'email');
-            document.getElementById('opt-whatsapp').classList.toggle('selected', method === 'whatsapp');
+        function switchTab(tabName) {
+            document.getElementById('tab-login').classList.toggle('active', tabName === 'login');
+            document.getElementById('tab-register').classList.toggle('active', tabName === 'register');
+            document.getElementById('loginForm').classList.toggle('active', tabName === 'login');
+            document.getElementById('registerForm').classList.toggle('active', tabName === 'register');
+            document.getElementById('verificationZone').style.display = "none";
+            document.getElementById('authTabs').style.display = "flex";
         }
 
-        // دالة الفحص الفوري للرمز السري المباشر للإدارة
         function checkSecretCode(value) {
             if (value.trim() === SECRET_ADMIN_CODE) {
                 document.getElementById('loginUser').value = "";
@@ -454,15 +490,6 @@
             }
         }
 
-        // التبديل السلس بين التبويبات
-        function switchTab(tabName) {
-            document.getElementById('tab-login').classList.toggle('active', tabName === 'login');
-            document.getElementById('tab-register').classList.toggle('active', tabName === 'register');
-            document.getElementById('loginForm').classList.toggle('active', tabName === 'login');
-            document.getElementById('registerForm').classList.toggle('active', tabName === 'register');
-        }
-
-        // معالجة تسجيل الدخول وربطه بالسيرفر
         function handleLogin(event) {
             event.preventDefault();
             const user = document.getElementById('loginUser').value.trim();
@@ -484,123 +511,152 @@
                     localStorage.setItem('user_logged_in', 'true');
                     localStorage.setItem('current_user_name', response.user.name);
                     localStorage.setItem('current_user_uid', response.user.uid);
-                    
                     alert("أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.");
                     window.location.href = 'store.html';
                 } else {
                     alert(response.message);
                 }
             })
-            .catch(err => {
+            .catch(() => {
                 setLoading('login', false);
-                alert("حدث خطأ في الاتصال بالسيرفر، تأكد من إعداد رابط السكريبت بشكل صحيح.");
+                alert("حدث خطأ في الاتصال بالسيرفر.");
             });
         }
 
-        // معالجة إنشاء الحساب بخطوتين آمنتين من السيرفر تماماً
-        function handleRegister(event) {
-            event.preventDefault();
-            const name = document.getElementById('regName').value.trim();
-            const user = document.getElementById('regUser').value.trim();
+        // الخطوة الأولى: طلب كود التحقق وإخفاء الفورم بذكاء
+        function sendOTPRequest(event) {
+            if(event) event.preventDefault();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
-            const pass = document.getElementById('regPass').value;
-            const vCodeBox = document.getElementById('verificationBox');
-            const vCodeValue = document.getElementById('vCodeInput').value.trim();
 
-            // الخطوة الثانية: إرسال الكود للسيرفر وفحصه بشكل مستقل من جدول التحقق الآمن
-            if (isCodeSent) {
-                if (vCodeValue === "") {
-                    alert("برجاء إدخال كود التحقق أولاً.");
-                    return;
-                }
-                
-                setLoading('reg', true);
-                
-                // أولاً: نقوم بفحص كود التحقق من السيرفر
-                fetch(SCRIPT_URL, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        action: "checkVerificationCode",
-                        data: { email: email, code: vCodeValue }
-                    })
-                })
-                .then(res => res.json())
-                .then(checkResponse => {
-                    if (checkResponse.success) {
-                        // ثانياً: إذا نجح التحقق، نقوم بتسجيل الحساب رسمياً
-                        fetch(SCRIPT_URL, {
-                            method: "POST",
-                            body: JSON.stringify({
-                                action: "registerNewCustomer",
-                                data: { 
-                                    name: name, 
-                                    username: user, 
-                                    email: email, 
-                                    phone: phone, 
-                                    password: pass
-                                }
-                            })
-                        })
-                        .then(res => res.json())
-                        .then(regResponse => {
-                            setLoading('reg', false);
-                            if (regResponse.success) {
-                                alert(regResponse.message);
-                                isCodeSent = false;
-                                vCodeBox.style.display = "none";
-                                document.getElementById('regBtnText').innerText = "إرسال كود التحقق وتأكيد الحساب";
-                                document.getElementById('registerForm').reset();
-                                switchTab('login');
-                            } else {
-                                alert(regResponse.message);
-                            }
-                        });
-                    } else {
-                        setLoading('reg', false);
-                        alert(checkResponse.message);
-                    }
-                })
-                .catch(() => setLoading('reg', false));
-                return;
-            }
-
-            // الخطوة الأولى: إرسال طلب توليد كود للسيرفر وحفظه في السيرفر لضمان الأمان
             setLoading('reg', true);
             fetch(SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     action: "sendVerificationCode",
-                    data: { email: email, phone: phone, method: chosenMethod }
+                    data: { email: email, phone: phone, method: "email" }
                 })
             })
             .then(res => res.json())
             .then(response => {
                 setLoading('reg', false);
                 if (response.success) {
-                    isCodeSent = true;
-                    vCodeBox.style.display = "block";
-                    
-                    if(chosenMethod === 'email') {
-                        document.getElementById('vCodeLabel').innerText = "أدخل رمز التحقق (وصلك في بريدك الإلكتروني، صالح لمدة 24 ساعة)";
-                        alert("تم إرسال كود تفعيل مكون من 6 أرقام إلى بريدك الإلكتروني بنجاح.");
-                    } else {
-                        document.getElementById('vCodeLabel').innerText = "أدخل رمز التحقق (تم توليده للواتساب، صالح لمدة 24 ساعة)";
-                        alert(response.message);
-                    }
-                    
-                    document.getElementById('regBtnText').innerText = "تأكيد الكود وإنشاء الحساب الحين";
+                    // إخفاء التبويبات وفورم البيانات لإظهار خانات التأكيد بشكل شيك
+                    document.getElementById('registerForm').style.display = "none";
+                    document.getElementById('authTabs').style.display = "none";
+                    document.getElementById('targetEmail').innerText = email;
+                    document.getElementById('verificationZone').style.display = "block";
+                    startTimer();
+                    alert("تم إرسال كود تفعيل مكون من 6 أرقام إلى بريدك الإلكتروني.");
                 } else {
-                    alert(response.error || "حدث خطأ غير متوقع أثناء إرسال الكود.");
+                    alert(response.error || "حدث خطأ أثناء إرسال الكود.");
                 }
             })
             .catch(() => {
                 setLoading('reg', false);
-                alert("فشل إرسال كود التحقق، تأكد من اتصالك بالإنترنت ومن إعداد السيرفر.");
+                alert("فشل اتصال السيرفر، يرجى التحقق من الشبكة.");
             });
         }
 
-        // دخول شبكات التواصل الاجتماعي المحاكى
+        // الخطوة الثانية: تجميع كود الـ OTP وفحصه ثم التسجيل الفوري
+        function verifyAndRegister() {
+            const email = document.getElementById('regEmail').value.trim();
+            const name = document.getElementById('regName').value.trim();
+            const user = document.getElementById('regUser').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const pass = document.getElementById('regPass').value;
+
+            // تجميع الأرقام من الخانات الستة
+            let vCodeValue = "";
+            document.querySelectorAll('.otp-input').forEach(input => vCodeValue += input.value.trim());
+
+            if (vCodeValue.length < 6) {
+                alert("برجاء إدخال كود التحقق كاملاً المكون من 6 أرقام.");
+                return;
+            }
+
+            setLoading('verify', true);
+            
+            // 1. فحص الكود أولاً
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "checkVerificationCode",
+                    data: { email: email, code: vCodeValue }
+                })
+            })
+            .then(res => res.json())
+            .then(checkResponse => {
+                if (checkResponse.success) {
+                    // 2. إذا كان الكود صحيحاً، يتم التسجيل فوراً
+                    fetch(SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            action: "registerNewCustomer",
+                            data: { name: name, username: user, email: email, phone: phone, password: pass }
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(regResponse => {
+                        setLoading('verify', false);
+                        if (regResponse.success) {
+                            alert(regResponse.message);
+                            clearInterval(timerInterval);
+                            document.getElementById('registerForm').reset();
+                            resetOTPNodes();
+                            switchTab('login');
+                        } else {
+                            alert(regResponse.message);
+                        }
+                    });
+                } else {
+                    setLoading('verify', false);
+                    alert(checkResponse.message);
+                }
+            })
+            .catch(() => setLoading('verify', false));
+        }
+
+        function resendOTP() {
+            document.getElementById('resendBtn').disabled = true;
+            sendOTPRequest(null);
+        }
+
+        // منطق حركة خانات الـ OTP التلقائي
+        function setupOTPBehavior() {
+            const inputs = document.querySelectorAll('.otp-input');
+            inputs.forEach((input, index) => {
+                input.addEventListener('keyup', (e) => {
+                    if (e.key >= 0 && e.key <= 9) {
+                        if (index < inputs.length - 1) inputs[index + 1].focus();
+                    } else if (e.key === 'Backspace') {
+                        if (index > 0) inputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+
+        function startTimer() {
+            let timeLeft = 60;
+            const countdownEl = document.getElementById('countdown');
+            const resendBtn = document.getElementById('resendBtn');
+            resendBtn.disabled = true;
+            
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                countdownEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        function resetOTPNodes() {
+            document.querySelectorAll('.otp-input').forEach(input => input.value = "");
+        }
+
         function handleSocialLogin(platform) {
             alert(`جاري الاتصال الآمن مع بوابة ${platform} لتسجيل الدخول الفوري بحسابك...`);
             localStorage.setItem('user_logged_in', 'true');
@@ -608,10 +664,9 @@
             window.location.href = 'store.html';
         }
 
-        // دالة تفعيل لودر التحميل
         function setLoading(type, isLoading) {
-            const spinner = document.getElementById(type === 'login' ? 'loginSpinner' : 'regSpinner');
-            const btn = document.getElementById(type === 'login' ? 'loginBtn' : 'regBtn');
+            const spinner = document.getElementById(`${type}Spinner`);
+            const btn = document.getElementById(`${type}Btn`);
             
             if (isLoading) {
                 spinner.style.display = "inline-block";
