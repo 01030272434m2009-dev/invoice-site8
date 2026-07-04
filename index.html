@@ -165,6 +165,37 @@
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
         }
 
+        /* ستايل نظام اختيار وسيلة التفعيل */
+        .method-selector {
+            display: flex;
+            gap: 15px;
+            margin: 5px 0;
+        }
+        .method-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fafbfc;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .method-option input {
+            display: none;
+        }
+        .method-option.selected {
+            border-color: var(--accent-gold);
+            background-color: #fffdf6;
+            color: var(--accent-gold-hover);
+            box-shadow: 0 2px 6px rgba(212, 175, 55, 0.1);
+        }
+
         .verification-box {
             display: none;
             background-color: #fcf8e3;
@@ -345,6 +376,19 @@
                     <input type="tel" id="regPhone" required placeholder="01000000000">
                 </div>
             </div>
+            
+            <div class="form-group">
+                <label>وسيلة استقبال كود التحقق (صالح لمدة يوم)</label>
+                <div class="method-selector">
+                    <div class="method-option selected" id="opt-email" onclick="selectMethod('email')">
+                        <i class="fa-solid fa-envelope"></i> البريد الإلكتروني
+                    </div>
+                    <div class="method-option" id="opt-whatsapp" onclick="selectMethod('whatsapp')">
+                        <i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> الواتساب
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label>كلمة المرور</label>
                 <div class="input-wrapper">
@@ -355,7 +399,7 @@
 
             <div id="verificationBox" class="verification-box">
                 <div class="form-group">
-                    <label style="color:#8a6d3b;">أدخل رمز التحقق (وصلك في بريدك الإلكتروني)</label>
+                    <label id="vCodeLabel" style="color:#8a6d3b;">أدخل رمز التحقق المكون من 6 أرقام</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-shield-halved"></i>
                         <input type="text" id="vCodeInput" placeholder="أدخل الـ 6 أرقام...">
@@ -381,14 +425,23 @@
         const SCRIPT_URL = "https://script.google.com/macros/s/XXXXX/exec"; 
         
         const SECRET_ADMIN_CODE = "VET999ADMIN";
-        let generatedCode = ""; // لحفظ كود التفعيل المرسل مؤقتاً بالمتصفح
+        let isCodeSent = false; // لمتابعة ما إذا كان قد تم إرسال الكود للعميل أم لا
+        let chosenMethod = "email"; // الافتراضي هو البريد الإلكتروني
 
-        // التحقق التلقائي عند فتح الصفحة: لو العميل مسجل دخوله مسبقاً لا نطلب منه إعادة البيانات
+        // التحقق التلقائي عند فتح الصفحة
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('user_logged_in') === 'true') {
-                window.location.href = 'store.html'; // تحويل فوري لصفحة المتجر الرئيسي
+                window.location.href = 'store.html';
             }
         });
+
+        // دالة اختيار وسيلة الإرسال
+        function selectMethod(method) {
+            if (isCodeSent) return; // منع التغيير بعد إرسال الكود
+            chosenMethod = method;
+            document.getElementById('opt-email').classList.toggle('selected', method === 'email');
+            document.getElementById('opt-whatsapp').classList.toggle('selected', method === 'whatsapp');
+        }
 
         // دالة الفحص الفوري للرمز السري المباشر للإدارة
         function checkSecretCode(value) {
@@ -426,7 +479,6 @@
             .then(response => {
                 setLoading('login', false);
                 if (response.success) {
-                    // حفظ حالة تسجيل الدخول الدائم بالمتصفح
                     localStorage.setItem('user_logged_in', 'true');
                     localStorage.setItem('current_user_name', response.user.name);
                     localStorage.setItem('current_user_uid', response.user.uid);
@@ -443,7 +495,7 @@
             });
         }
 
-        // معالجة خطوتين لإنشاء الحساب (إرسال الكود -> التثبيت بالسيرفر)
+        // معالجة إنشاء الحساب بخطوتين آمنتين من السيرفر تماماً
         function handleRegister(event) {
             event.preventDefault();
             const name = document.getElementById('regName').value.trim();
@@ -454,52 +506,71 @@
             const vCodeBox = document.getElementById('verificationBox');
             const vCodeValue = document.getElementById('vCodeInput').value.trim();
 
-            // الخطوة الثانية: إذا كان كود التحقق قد تم إرساله ويقوم العميل بتأكيده الآن
-            if (generatedCode !== "") {
-                if (vCodeValue === generatedCode) {
-                    setLoading('reg', true);
-                    fetch(SCRIPT_URL, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            action: "registerNewCustomer",
-                            data: { name: name, username: user, email: email, phone: phone, password: pass }
-                        })
-                    })
-                    .then(res => res.json())
-                    .then(response => {
-                        setLoading('reg', false);
-                        if (response.success) {
-                            alert(response.message);
-                            generatedCode = ""; // تصفير الرمز
-                            vCodeBox.style.display = "none";
-                            switchTab('login');
-                        } else {
-                            alert(response.message);
+            // الخطوة الثانية: إرسال الكود وكافة البيانات للسيرفر ليتحقق من وقت الصلاحية ويسجل الحساب
+            if (isCodeSent) {
+                if (vCodeValue === "") {
+                    alert("برجاء إدخال كود التحقق أولاً.");
+                    return;
+                }
+                
+                setLoading('reg', true);
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "registerNewCustomer",
+                        data: { 
+                            name: name, 
+                            username: user, 
+                            email: email, 
+                            phone: phone, 
+                            password: pass,
+                            code: vCodeValue,
+                            method: chosenMethod
                         }
                     })
-                    .catch(() => setLoading('reg', false));
-                } else {
-                    alert("كود التحقق الذي أدخلته غير صحيح! يرجى التأكد وإعادة المحاولة.");
-                }
+                })
+                .then(res => res.json())
+                .then(response => {
+                    setLoading('reg', false);
+                    if (response.success) {
+                        alert(response.message);
+                        isCodeSent = false;
+                        vCodeBox.style.display = "none";
+                        document.getElementById('regBtnText').innerText = "إرسال كود التحقق وتأكيد الحساب";
+                        document.getElementById('registerForm').reset();
+                        switchTab('login');
+                    } else {
+                        alert(response.message);
+                    }
+                })
+                .catch(() => setLoading('reg', false));
                 return;
             }
 
-            // الخطوة الأولى: إرسال كود التحقق للبريد الإلكتروني للعميل
+            // الخطوة الأولى: إرسال طلب توليد كود للسيرفر بناءً على الوسيلة المفضلة
             setLoading('reg', true);
             fetch(SCRIPT_URL, {
                 method: "POST",
                 body: JSON.stringify({
                     action: "sendVerificationCode",
-                    data: { email: email }
+                    data: { email: email, phone: phone, method: chosenMethod }
                 })
             })
             .then(res => res.json())
             .then(response => {
                 setLoading('reg', false);
                 if (response.success) {
-                    generatedCode = response.code; // تخزين الكود مؤقتاً للفحص
-                    alert("تم إرسال كود تفعيل مكون من 6 أرقام إلى بريدك الإلكتروني بنجاح، يرجى كتابته بالأسفل للتأكيد.");
+                    isCodeSent = true;
                     vCodeBox.style.display = "block";
+                    
+                    if(chosenMethod === 'email') {
+                        document.getElementById('vCodeLabel').innerText = "أدخل رمز التحقق (وصلك في بريدك الإلكتروني، صالح لمدة 24 ساعة)";
+                        alert("تم إرسال كود تفعيل مكون من 6 أرقام إلى بريدك الإلكتروني بنجاح.");
+                    } else {
+                        document.getElementById('vCodeLabel').innerText = "أدخل رمز التحقق (تم توليده للواتساب، صالح لمدة 24 ساعة)";
+                        alert(response.message);
+                    }
+                    
                     document.getElementById('regBtnText').innerText = "تأكيد الكود وإنشاء الحساب الحين";
                 } else {
                     alert(response.error);
@@ -511,16 +582,15 @@
             });
         }
 
-        // محاكاة سريعة وراقية لخدمات الدخول عبر شبكات التواصل الشهيرة
+        // دخول شبكات التواصل الاجتماعي المحاكى
         function handleSocialLogin(platform) {
             alert(`جاري الاتصال الآمن مع بوابة ${platform} لتسجيل الدخول الفوري بحسابك...`);
-            // هنا يمكنك مستقبلاً ربط الـ OAuth، لتسهيل الأمر حالياً نقوم بتهيئة الجلسة
             localStorage.setItem('user_logged_in', 'true');
             localStorage.setItem('current_user_name', "عميل مميز");
             window.location.href = 'store.html';
         }
 
-        // دالة تحسين تجربة الانتظار وإظهار أزرار التحميل
+        // دالة تفعيل لودر التحميل
         function setLoading(type, isLoading) {
             const spinner = document.getElementById(type === 'login' ? 'loginSpinner' : 'regSpinner');
             const btn = document.getElementById(type === 'login' ? 'loginBtn' : 'regBtn');
