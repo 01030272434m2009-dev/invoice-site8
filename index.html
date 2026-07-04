@@ -6,16 +6,21 @@
     <title>بوابة الوصول - الصيدلية البيطرية الفاخرة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-light: #f8f9fa;
-            --card-white: #ffffff;
-            --accent-gold: #c5a028;
-            --text-dark: #1a1a1a;
-            --text-muted: #6c757d;
-            --border-light: #e9ecef;
+            --bg-main: #f4f6f9;
+            --card-bg: #ffffff;
+            --accent-gold: #d4af37;
+            --accent-gold-hover: #b89528;
+            --text-main: #2d3436;
+            --text-muted: #7f8c8d;
+            --border-color: #edf2f7;
+            --success-color: #2ecc71;
+            --google-color: #ea4335;
+            --facebook-color: #1877f2;
         }
 
         * {
@@ -26,9 +31,9 @@
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,21 +41,23 @@
         }
 
         .auth-container {
-            background-color: var(--card-white);
-            border: 1px solid var(--border-light);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
             width: 100%;
-            max-width: 450px;
-            padding: 40px 30px;
+            max-width: 480px;
+            padding: 40px 35px;
             position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .auth-container::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
-            background-color: var(--accent-gold);
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-gold), #f39c12);
         }
 
         .auth-header {
@@ -58,11 +65,17 @@
             margin-bottom: 30px;
         }
 
+        .auth-header .logo-icon {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
         .auth-header h1 {
-            font-size: 1.6rem;
+            font-size: 1.7rem;
             font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
+            color: var(--text-main);
+            margin-bottom: 6px;
         }
 
         .auth-header p {
@@ -72,32 +85,37 @@
 
         .auth-tabs {
             display: flex;
-            border-bottom: 1px solid var(--border-light);
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 5px;
             margin-bottom: 25px;
+            border: 1px solid var(--border-color);
         }
 
         .tab-btn {
             flex: 1;
             background: none;
             border: none;
-            padding: 12px;
-            font-size: 1rem;
+            padding: 10px;
+            font-size: 0.95rem;
             font-weight: 600;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             text-align: center;
+            border-radius: 6px;
         }
 
         .tab-btn.active {
-            color: var(--accent-gold);
-            border-bottom: 2px solid var(--accent-gold);
+            color: var(--text-main);
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .auth-form {
             display: none;
             flex-direction: column;
-            gap: 20px;
+            gap: 18px;
         }
 
         .auth-form.active {
@@ -107,48 +125,122 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .form-group label {
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             font-weight: 600;
-            color: var(--text-dark);
+            color: var(--text-main);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.95rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-light);
-            background-color: #fff;
-            color: var(--text-dark);
+            padding: 11px 38px 11px 12px;
+            border: 1px solid var(--border-color);
+            background-color: #fafbfc;
+            border-radius: 8px;
+            color: var(--text-main);
             font-size: 0.95rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus {
             border-color: var(--accent-gold);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        }
+
+        .verification-box {
+            display: none;
+            background-color: #fcf8e3;
+            border: 1px dashed #faebcc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
         }
 
         .btn-submit {
-            background-color: transparent;
-            color: var(--text-dark);
-            border: 2px solid var(--text-dark);
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-hover));
+            color: #fff;
+            border: none;
             padding: 12px;
             font-size: 1rem;
             font-weight: 700;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 10px;
-            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-submit:hover {
-            background-color: var(--accent-gold);
-            border-color: var(--accent-gold);
-            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.3);
         }
+
+        .social-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .social-divider::before, .social-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .social-divider:not(:empty)::before { margin-left: .5em; }
+        .social-divider:not(:empty)::after { margin-right: .5em; }
+
+        .social-connect {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .social-btn.google:hover { background-color: #fff5f5; border-color: var(--google-color); color: var(--google-color); }
+        .social-btn.facebook:hover { background-color: #f0f7ff; border-color: var(--facebook-color); color: var(--facebook-color); }
+
+        .social-btn i { font-size: 1rem; }
+        .social-btn.google i { color: var(--google-color); }
+        .social-btn.facebook i { color: var(--facebook-color); }
 
         .form-footer {
             text-align: center;
@@ -162,50 +254,120 @@
             text-decoration: none;
             font-weight: 600;
         }
+
+        .loading-spinner {
+            display: none;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 2px solid #fff;
+            width: 16px;
+            height: 16px;
+            animation: spin 1.0s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 
     <div class="auth-container">
         <div class="auth-header">
-            <h1>الصيدلية البيطرية الفاخرة 🐾</h1>
-            <p>بوابة الخدمات والعلاجات الطبية المتكاملة</p>
+            <div class="logo-icon"><i class="fa-solid fa-paw"></i></div>
+            <h1>الصيدلية البيطرية الفاخرة</h1>
+            <p>منصتكم الطبية الرقمية المتكاملة برعاية د. أحمد</p>
         </div>
 
         <div class="auth-tabs">
-            <button class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
-            <button class="tab-btn" onclick="switchTab('register')">إنشاء حساب جديد</button>
+            <button id="tab-login" class="tab-btn active" onclick="switchTab('login')">تسجيل الدخول</button>
+            <button id="tab-register" class="tab-btn" onclick="switchTab('register')">إنشاء حساب جديد</button>
         </div>
 
         <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
             <div class="form-group">
                 <label>اسم المستخدم أو البريد الإلكتروني</label>
-                <input type="text" id="loginUser" required placeholder="أدخل اسم المستخدم..." oninput="checkSecretCode(this.value)">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="loginUser" required placeholder="أدخل اسم الحساب..." oninput="checkSecretCode(this.value)">
+                </div>
             </div>
             <div class="form-group">
                 <label>كلمة المرور</label>
-                <input type="password" id="loginPass" required placeholder="أدخل كلمة المرور...">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPass" required placeholder="أدخل كلمة المرور...">
+                </div>
             </div>
-            <button type="submit" class="btn-submit">دخول الحساب</button>
+            <button type="submit" class="btn-submit" id="loginBtn">
+                <span class="loading-spinner" id="loginSpinner"></span>
+                <span>دخول الحساب</span>
+            </button>
+            
+            <div class="social-divider">أو تسجيل سريع عبر</div>
+            <div class="social-connect">
+                <button type="button" class="social-btn google" onclick="handleSocialLogin('جوجل')"><i class="fa-brands fa-google"></i> Google</button>
+                <button type="button" class="social-btn facebook" onclick="handleSocialLogin('فيسبوك')"><i class="fa-brands fa-facebook-f"></i> Facebook</button>
+            </div>
+
             <div class="form-footer">
-                ليس لديك حساب؟ <a href="#" onclick="switchTab('register'); return false;">سجل الآن مجاناً</a>
+                ليس لديك حساب؟ <a href="#" onclick="switchTab('register'); return false;">اضغط هنا للتسجيل مجاناً</a>
             </div>
         </form>
 
         <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
             <div class="form-group">
                 <label>الاسم الكامل</label>
-                <input type="text" id="regName" required placeholder="مثال: د. أحمد محمد">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <input type="text" id="regName" required placeholder="مثال: د. أحمد محمد">
+                </div>
             </div>
             <div class="form-group">
                 <label>اسم المستخدم (بالإنجليزي)</label>
-                <input type="text" id="regUser" required placeholder="مثال: vet_user1">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-at"></i>
+                    <input type="text" id="regUser" required placeholder="مثال: vet_user1" pattern="^[a-zA-Z0-9_]+$">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني للتحقق</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="regEmail" required placeholder="example@domain.com">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>رقم الهاتف / الواتساب</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" id="regPhone" required placeholder="01000000000">
+                </div>
             </div>
             <div class="form-group">
                 <label>كلمة المرور</label>
-                <input type="password" id="regPass" required placeholder="أدخل كلمة مرور قوية...">
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="regPass" required placeholder="اكتب كلمة مرور قوية...">
+                </div>
             </div>
-            <button type="submit" class="btn-submit">تأكيد وإنشاء الحساب</button>
+
+            <div id="verificationBox" class="verification-box">
+                <div class="form-group">
+                    <label style="color:#8a6d3b;">أدخل رمز التحقق (وصلك في بريدك الإلكتروني)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <input type="text" id="vCodeInput" placeholder="أدخل الـ 6 أرقام...">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="regBtn">
+                <span class="loading-spinner" id="regSpinner"></span>
+                <span id="regBtnText">إرسال كود التحقق وتأكيد الحساب</span>
+            </button>
+            
             <div class="form-footer">
                 لديك حساب بالفعل؟ <a href="#" onclick="switchTab('login'); return false;">تسجيل الدخول</a>
             </div>
@@ -213,83 +375,165 @@
     </div>
 
     <script>
-        // الرمز السري الفائق لدخول الإدارة مباشرة
+        // ========================================================
+        // هام جداً: ضع هنا رابط الـ Web App المأخوذ من Google Script بعد عمل Deploy
+        // ========================================================
+        const SCRIPT_URL = "https://script.google.com/macros/s/XXXXX/exec"; 
+        
         const SECRET_ADMIN_CODE = "VET999ADMIN";
+        let generatedCode = ""; // لحفظ كود التفعيل المرسل مؤقتاً بالمتصفح
 
+        // التحقق التلقائي عند فتح الصفحة: لو العميل مسجل دخوله مسبقاً لا نطلب منه إعادة البيانات
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('user_logged_in') === 'true') {
-                window.location.href = 'store.html';
+                window.location.href = 'store.html'; // تحويل فوري لصفحة المتجر الرئيسي
             }
         });
 
-        // دالة الفحص السري الفوري أثناء الكتابة
+        // دالة الفحص الفوري للرمز السري المباشر للإدارة
         function checkSecretCode(value) {
             if (value.trim() === SECRET_ADMIN_CODE) {
-                // تصفير الحقل لمنع كشفه وإعادة التوجيه فوراً لصفحة التحكم المخصصة
                 document.getElementById('loginUser').value = "";
-                alert("مرحباً بك في النظام السري للإدارة.. جاري فتح لوحة التحكم.");
+                alert("مرحباً بك دكتور أحمد. جاري فتح لوحة التحكم الرئيسية...");
                 window.location.href = 'admin_dashboard.html'; 
             }
         }
 
+        // التبديل السلس بين التبويبات
         function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-btn');
-            const forms = document.querySelectorAll('.auth-form');
-
-            tabs.forEach(tab => tab.classList.remove('active'));
-            forms.forEach(form => form.classList.remove('active'));
-
-            if (tabName === 'login') {
-                tabs[0].classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
+            document.getElementById('tab-login').classList.toggle('active', tabName === 'login');
+            document.getElementById('tab-register').classList.toggle('active', tabName === 'register');
+            document.getElementById('loginForm').classList.toggle('active', tabName === 'login');
+            document.getElementById('registerForm').classList.toggle('active', tabName === 'register');
         }
 
+        // معالجة تسجيل الدخول وربطه بالسيرفر
         function handleLogin(event) {
             event.preventDefault();
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value;
 
-            let accounts = JSON.parse(localStorage.getItem('pharmacy_accounts')) || [
-                { username: "admin", password: "123" }
-            ];
+            setLoading('login', true);
 
-            const foundAccount = accounts.find(acc => acc.username === user && acc.password === pass);
-
-            if (foundAccount) {
-                localStorage.setItem('user_logged_in', 'true');
-                localStorage.setItem('current_user_name', user);
-                alert("تم تسجيل الدخول بنجاح! جاري تحويلك للمتجر...");
-                window.location.href = 'store.html';
-            } else {
-                alert("خطأ: اسم المستخدم أو كلمة المرور غير صحيحة!");
-            }
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "loginCustomer",
+                    data: { userOrEmail: user, password: pass }
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                setLoading('login', false);
+                if (response.success) {
+                    // حفظ حالة تسجيل الدخول الدائم بالمتصفح
+                    localStorage.setItem('user_logged_in', 'true');
+                    localStorage.setItem('current_user_name', response.user.name);
+                    localStorage.setItem('current_user_uid', response.user.uid);
+                    
+                    alert("أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.");
+                    window.location.href = 'store.html';
+                } else {
+                    alert(response.message);
+                }
+            })
+            .catch(err => {
+                setLoading('login', false);
+                alert("حدث خطأ في الاتصال بالسيرفر، تأكد من إعداد رابط السكريبت بشكل صحيح.");
+            });
         }
 
+        // معالجة خطوتين لإنشاء الحساب (إرسال الكود -> التثبيت بالسيرفر)
         function handleRegister(event) {
             event.preventDefault();
             const name = document.getElementById('regName').value.trim();
             const user = document.getElementById('regUser').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
             const pass = document.getElementById('regPass').value;
+            const vCodeBox = document.getElementById('verificationBox');
+            const vCodeValue = document.getElementById('vCodeInput').value.trim();
 
-            let accounts = JSON.parse(localStorage.getItem('pharmacy_accounts')) || [
-                { username: "admin", password: "123" }
-            ];
-
-            const isExist = accounts.some(acc => acc.username === user);
-            if (isExist) {
-                alert("اسم المستخدم هذا مسجل بالفعل، يرجى اختيار اسم آخر.");
+            // الخطوة الثانية: إذا كان كود التحقق قد تم إرساله ويقوم العميل بتأكيده الآن
+            if (generatedCode !== "") {
+                if (vCodeValue === generatedCode) {
+                    setLoading('reg', true);
+                    fetch(SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            action: "registerNewCustomer",
+                            data: { name: name, username: user, email: email, phone: phone, password: pass }
+                        })
+                    })
+                    .then(res => res.json())
+                    .then(response => {
+                        setLoading('reg', false);
+                        if (response.success) {
+                            alert(response.message);
+                            generatedCode = ""; // تصفير الرمز
+                            vCodeBox.style.display = "none";
+                            switchTab('login');
+                        } else {
+                            alert(response.message);
+                        }
+                    })
+                    .catch(() => setLoading('reg', false));
+                } else {
+                    alert("كود التحقق الذي أدخلته غير صحيح! يرجى التأكد وإعادة المحاولة.");
+                }
                 return;
             }
 
-            accounts.push({ name: name, username: user, password: pass });
-            localStorage.setItem('pharmacy_accounts', JSON.stringify(accounts));
+            // الخطوة الأولى: إرسال كود التحقق للبريد الإلكتروني للعميل
+            setLoading('reg', true);
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: JSON.stringify({
+                    action: "sendVerificationCode",
+                    data: { email: email }
+                })
+            })
+            .then(res => res.json())
+            .then(response => {
+                setLoading('reg', false);
+                if (response.success) {
+                    generatedCode = response.code; // تخزين الكود مؤقتاً للفحص
+                    alert("تم إرسال كود تفعيل مكون من 6 أرقام إلى بريدك الإلكتروني بنجاح، يرجى كتابته بالأسفل للتأكيد.");
+                    vCodeBox.style.display = "block";
+                    document.getElementById('regBtnText').innerText = "تأكيد الكود وإنشاء الحساب الحين";
+                } else {
+                    alert(response.error);
+                }
+            })
+            .catch(() => {
+                setLoading('reg', false);
+                alert("فشل إرسال كود التحقق، تأكد من اتصالك بالإنترنت ومن إعداد السيرفر.");
+            });
+        }
 
-            alert("تم إنشاء حسابك البيطري بنجاح! يمكنك الآن تسجيل الدخول.");
-            switchTab('login');
+        // محاكاة سريعة وراقية لخدمات الدخول عبر شبكات التواصل الشهيرة
+        function handleSocialLogin(platform) {
+            alert(`جاري الاتصال الآمن مع بوابة ${platform} لتسجيل الدخول الفوري بحسابك...`);
+            // هنا يمكنك مستقبلاً ربط الـ OAuth، لتسهيل الأمر حالياً نقوم بتهيئة الجلسة
+            localStorage.setItem('user_logged_in', 'true');
+            localStorage.setItem('current_user_name', "عميل مميز");
+            window.location.href = 'store.html';
+        }
+
+        // دالة تحسين تجربة الانتظار وإظهار أزرار التحميل
+        function setLoading(type, isLoading) {
+            const spinner = document.getElementById(type === 'login' ? 'loginSpinner' : 'regSpinner');
+            const btn = document.getElementById(type === 'login' ? 'loginBtn' : 'regBtn');
+            
+            if (isLoading) {
+                spinner.style.display = "inline-block";
+                btn.style.opacity = "0.8";
+                btn.style.pointerEvents = "none";
+            } else {
+                spinner.style.display = "none";
+                btn.style.opacity = "1";
+                btn.style.pointerEvents = "auto";
+            }
         }
     </script>
 </body>
