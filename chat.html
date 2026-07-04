@@ -185,37 +185,29 @@
         </div>
 
         <div class="chat-messages" id="chatMessagesContainer">
-            <div class="message bot">
-                مرحباً بك في قسم الاستشارات الفورية للصيدلية البيطرية! أنا طبيبك المساعد الذكي. 
-                <br><br>
-                يمكنني إفادتك فوراً في:
-                <br>• معرفة مواعيد الشحن وأسعار التوصيل.
-                <br>• <b>الاستعلام عن حالة الطلب والشحنات (اكتب كلمة "اوردر" أو "طلب").</b>
-                <br>• تقديم نصائح سريعة لأمراض الدواجن والمواشي والحيوانات الأليفة.
-                <br><br>
-                اكتب سؤالك الآن، وفي حال تعذر عليّ إجابتك، سأقوم بنقل محادثتك فوراً للطبيب البشري المختص بمتابعتك!
-                <span class="msg-time">آلي</span>
             </div>
-        </div>
 
         <div class="typing-indicator" id="typingIndicator">
             <span></span><span></span><span></span>
         </div>
 
         <div class="chat-input-area">
-            <input type="text" id="userInputField" placeholder="اكتب رسالتك أو استشارتك الطبية هنا..." onkeypress="handleKeyPress(event)">
+            <input type="text" id="userInputField" placeholder="اكتب رسالتك هنا..." onkeypress="handleKeyPress(event)">
             <button class="btn-send" onclick="sendMessage()">إرسال</button>
         </div>
     </div>
 
     <script>
-        // رابط السيرفر الخاص بك المقيد بالأكشنات المقسمة والمحمية
         const SERVER_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec";
         
         let isHumanAgentRequired = false;
-        let userIdentifier = "";
+        let userIdentifier = ""; // رقم الهاتف أو الـ Username
+        let customerCleanName = ""; // الاسم المنسق للعرض باللوحة
+        
+        // مراحل تجميع بيانات العميل الزائر
+        // "NEED_NAME" -> بحاجة للاسم | "NEED_PHONE" -> بحاجة للهاتف | "READY" -> جاهز للشات الطبي المعتاد
+        let onboardingState = "READY"; 
 
-        // قاعدة معرفية ذكية ومحسنة وشاملة جداً للرد التلقائي المرن
         const aiKnowledgeBase = [
             { keywords: ["شحن", "توصيل", "محافظات", "سعر التوصيل", "مصاريف", "امتى", "يوصل"], response: "نوفر خدمة الشحن لكافة محافظات جمهورية مصر العربية عبر البريد السريع البيطري المبرد. الأسعار تبدأ من 40 ج.م وتتغير ديناميكياً حسب المحافظة المحددة وموعد التوصيل المختار داخل السلة عند إتمام طلبك." },
             { keywords: ["مضاد حيوي", "أوكسي", "التهاب", "جرعة", "تتراسيكلين", "مضادات", "علاج معوي", "تنفسي"], response: "مضاد حيوي (أوكسي تتراسيكلين) المتوفر بالصيدلية طويل المفعول وواسع الطيف، فعال جداً في علاج حالات الالتهابات المعوية والتنفسية وحمى النقل للمواشي والدواجن. يرجى دائماً مراجعة الوزن التقريبي للحيوان لمراجعة الجرعة الدقيقة المدونة على العبوة." },
@@ -227,108 +219,168 @@
 
         const orderKeywords = ["اوردر", "طلب", "الطلب", "الاوردر", "تتبع", "شحنة", "الشحنة"];
 
-        // دالة التحقق الذكي من هوية العميل لضمان العزل التام للرسائل
         window.onload = function() {
-            // محاولة جلب العميل المسجل مسبقاً في المتجر
             const loggedInCustomer = localStorage.getItem('customerInfo');
+            const guestChatProfile = localStorage.getItem('guestChatProfile'); // البيانات المجمعة من الشات تالياً
+
             if (loggedInCustomer) {
+                // 1. العميل مسجل بالفعل بالمتجر (له حساب رسمي)
                 const customer = JSON.parse(loggedInCustomer);
-                userIdentifier = customer.username || customer.email;
+                userIdentifier = customer.phone || customer.username || customer.email;
+                customerCleanName = customer.name || customer.username;
+                onboardingState = "READY";
+                initUserChat();
+            } else if (guestChatProfile) {
+                // 2. زائر مسجل بياناته من قبل في شات سابق وجهازه محفوظ
+                const guest = JSON.parse(guestChatProfile);
+                userIdentifier = guest.phone;
+                customerCleanName = guest.name;
+                onboardingState = "READY";
                 initUserChat();
             } else {
-                // إذا لم يكن مسجلاً، نسأله عن معرّف فريد لحفظ أرشيفه الخاص به دون خلط
-                let savedUid = localStorage.getItem('guestChatUid');
-                if (!savedUid) {
-                    savedUid = "GUEST-" + Math.floor(10000 + Math.random() * 90000);
-                    localStorage.setItem('guestChatUid', savedUid);
-                }
-                userIdentifier = savedUid;
-                initUserChat();
+                // 3. زائر جديد تماماً لأول مرة -> نطلق سيناريو جمع البيانات
+                onboardingState = "NEED_NAME";
+                document.getElementById('userInputField').placeholder = "برجاء كتابة اسمك الكريم هنا...";
+                
+                // إظهار رسالة الترحيب الأولى لطلب الاسم
+                appendMessageHtml("مرحباً بك في الصيدلية البيطرية الفاخرة! لكي نتمكن من تسجيل استشارتك ومتابعة حالتك الطبية بدقة مع طبيب العيادة، يرجى كتابة **اسمك الثنائي أو الثلاثي الكرام** أولاً المتابعة.", 'bot', 'الآن');
             }
         };
 
-        // جلب الأرشيف القديم والجديد للعميل من السيرفر فور الدخول
+        // دالة تهيئة الشات وجلب الأرشيف القديم
         function initUserChat() {
-            fetch(`${SERVER_URL}?timestamp=${Date.now()}`) // منع التخزين المؤقت للمتصفح
+            fetch(`${SERVER_URL}?timestamp=${Date.now()}`)
             .then(res => res.json())
             .then(db => {
+                const container = document.getElementById('chatMessagesContainer');
                 if (db && db.allChats) {
-                    const container = document.getElementById('chatMessagesContainer');
-                    // تصفية وعزل الرسائل الخاصة بهذا العميل فقط بناءً على معرّفه
-                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toLowerCase());
+                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toString().toLowerCase());
                     
                     if (userChats.length > 0) {
-                        container.innerHTML = ""; // تصفية الرسالة الافتراضية إذا كان له تاريخ سابق
+                        container.innerHTML = ""; // مسح الترحيب وعرض المحادثة الفعلية المحفوظة بالكامل
                         userChats.forEach(chat => {
                             appendMessageHtml(chat.message, chat.sender, chat.timestamp);
                         });
+                    } else {
+                        // إذا كانت المحادثة بالسيرفر فارغة نضع الترحيب الطبي القياسي
+                        showStandardBotWelcome();
                     }
+                } else {
+                    showStandardBotWelcome();
                 }
-                // بدء الفحص الدوري الذكي كل 5 ثوانٍ لجلب ردود الطبيب البشري فور كتابتها بالسيرفر
                 setInterval(listenForDoctorReplies, 5000);
-            }).catch(err => console.log("خطأ في جلب أرشيف الرسائل القديمة:", err));
+            }).catch(err => {
+                showStandardBotWelcome();
+                console.log("خطأ أرشيف السيرفر:", err);
+            });
+        }
+
+        function showStandardBotWelcome() {
+            const container = document.getElementById('chatMessagesContainer');
+            container.innerHTML = "";
+            const welcomeText = `أهلاً بك يا أستاذ ${customerCleanName} في قسم الاستشارات الفورية! أنا طبيبك المساعد الذكي المربوط بالعيادة البيطرية.<br><br>يمكنني مساعدتك تلقائياً في الاستعلام عن الأوردرات (اكتب كلمة "طلب")، أسعار الشحن، أو إعطائك نصائح سريعة للأعراض الطبية. وفي حال تعذر فهمي لحالتك، سيتم نقلك مباشرة للطبيب البشري!`;
+            appendMessageHtml(welcomeText, 'bot', 'آلي');
         }
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') sendMessage();
         }
 
-        // إرسال الرسالة وحفظها بالسيرفر
+        // دالة معالجة الإرسال والتحكم بالمراحل المتعددة
         function sendMessage() {
             const inputElement = document.getElementById('userInputField');
-            const messageText = inputElement.value.trim();
-            if (!messageText) return;
+            const rawText = inputElement.value.trim();
+            if (!rawText) return;
 
-            // 1. إظهار الرسالة في واجهة المستخدم فوراً
             const timeNow = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-            appendMessageHtml(messageText, 'user', timeNow);
-            inputElement.value = '';
 
-            // 2. تفعيل مؤشر الكتابة الحركي للبوت
+            // [المرحلة أ]: العميل يكتب اسمه الآن
+            if (onboardingState === "NEED_NAME") {
+                appendMessageHtml(rawText, 'user', timeNow);
+                customerCleanName = rawText;
+                inputElement.value = '';
+                
+                showTyping(true);
+                setTimeout(() => {
+                    showTyping(false);
+                    onboardingState = "NEED_PHONE";
+                    document.getElementById('userInputField').placeholder = "أدخل رقم هاتفك (مثال: 010...)";
+                    appendMessageHtml(`تشرفنا بك يا أستاذ ${customerCleanName}. فضلاً وليس أمراً، اكتب **رقم تليفونك المحمول** لربطه بملف استشاراتك وتسهيل تواصل الطبيب معك عند الحاجة.`, 'bot', timeNow);
+                }, 1000);
+                return;
+            }
+
+            // [المرحلة ب]: العميل يكتب رقم تليفونه الآن
+            if (onboardingState === "NEED_PHONE") {
+                // التحقق من أن المدخل يحتوي على أرقام فقط كحماية أساسية
+                if(isNaN(rawText) || rawText.length < 10) {
+                    alert("يرجى إدخال رقم تليفون صحيح ومقبول للمتابعة!");
+                    return;
+                }
+                
+                appendMessageHtml(rawText, 'user', timeNow);
+                userIdentifier = rawText; // الهاتف أصبح هو المعرّف الرسمي الشامل!
+                inputElement.value = '';
+                
+                // حفظ الهوية المجمعة كاش بالمتصفح للأبد
+                const profile = { name: customerCleanName, phone: userIdentifier };
+                localStorage.setItem('guestChatProfile', JSON.stringify(profile));
+                
+                showTyping(true);
+                setTimeout(() => {
+                    showTyping(false);
+                    onboardingState = "READY";
+                    document.getElementById('userInputField').placeholder = "اكتب رسالتك أو استشارتك الطبية هنا...";
+                    
+                    // إطلاق الترحيب والتحويل وبدء المزامنة الفورية
+                    showStandardBotWelcome();
+                    initUserChat(); 
+                }, 1200);
+                return;
+            }
+
+            // [المرحلة ج]: المحادثة الطبيعية المستقرة بعد انتهاء مرحلة التسجيل بنجاح
+            appendMessageHtml(rawText, 'user', timeNow);
+            inputElement.value = '';
             showTyping(true);
 
-            // 3. حفظ الرسالة في شيت السيرفر لحفظ الأرشيف الدائم
-            saveMessageToDatabase('user', messageText);
+            // نرسل الاسم مدمجاً مع رقم الهاتف للسيرفر في خانة الـ UserIdentifier ليظهر لك كالتالي: "010xxxx (الاسم)"
+            const serverUserLabel = `${userIdentifier} - (${customerCleanName})`;
+            
+            saveMessageToDatabase('user', rawText, serverUserLabel);
 
             if (isHumanAgentRequired) {
-                // إذا تم التحويل مسبقاً للطبيب البشري
                 setTimeout(() => {
                     showTyping(false);
-                    appendMessageHtml("رسالتك تم تسليمها مباشرة للوحة تحكم الطبيب المسؤول، وجاري مراجعة الأعراض المكتوبة للرد عليك.", 'bot', timeNow);
+                    appendMessageHtml("رسالتك تم تسليمها مباشرة لوحة تحكم الطبيب المسؤول، وجاري مراجعة الأعراض المكتوبة للرد عليك.", 'bot', timeNow);
                 }, 1500);
             } else {
-                // معالجة الرد الالي الذكي
                 setTimeout(() => {
                     showTyping(false);
-                    processAdvancedAI(messageText, timeNow);
+                    processAdvancedAI(rawText, timeNow, serverUserLabel);
                 }, 1200);
             }
         }
 
-        // خوارزمية محسنة لقياس درجة تشابه النصوص بالكلمات المفتاحية المتقاطعة
-        function processAdvancedAI(userMessage, timeStr) {
+        function processAdvancedAI(userMessage, timeStr, serverLabel) {
             const cleanMsg = userMessage.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()؟?]/g,"");
             
-            // الفحص الذكي لطلبات التتبع والأوردرات
             const wantsOrder = orderKeywords.some(keyword => cleanMsg.includes(keyword));
             if (wantsOrder) {
                 const reply = "بالتأكيد! يمكنك كتابة رقم الطلب الخاص بك في النافذة التالية للاستعلام فوراً عن حالته وموعد وصوله المتوقع:";
                 appendMessageHtml(reply, 'bot', timeStr);
-                saveMessageToDatabase('bot', reply);
+                saveMessageToDatabase('bot', reply, serverLabel);
                 setTimeout(() => { appendOrderTrackingBox(); }, 400);
                 return;
             }
 
-            // البحث الذكي القائم على احتساب عدد الكلمات المتطابقة (خوارزمية ذكاء محسنة)
             let bestMatch = null;
             let highestScore = 0;
 
             for (let item of aiKnowledgeBase) {
                 let score = 0;
                 item.keywords.forEach(keyword => {
-                    if (cleanMsg.includes(keyword)) {
-                        score += 2; // وزن أعلى للكلمة المتطابقة بالكامل
-                    }
+                    if (cleanMsg.includes(keyword)) score += 2;
                 });
                 if (score > highestScore) {
                     highestScore = score;
@@ -338,9 +390,8 @@
 
             if (highestScore > 0 && bestMatch) {
                 appendMessageHtml(bestMatch, 'bot', timeStr);
-                saveMessageToDatabase('bot', bestMatch);
+                saveMessageToDatabase('bot', bestMatch, serverLabel);
             } else {
-                // في حال عدم فهم السؤال بالكامل، تحويل المحادثة يدوياً للطبيب البشري وتنبيه السيرفر
                 isHumanAgentRequired = true;
                 
                 document.getElementById('chatMode').innerText = "تم التحويل للطبيب المختص ⚠️";
@@ -356,14 +407,13 @@
                 container.scrollTop = container.scrollHeight;
 
                 setTimeout(() => {
-                    const docGreeting = "مرحباً بك، أنا الطبيب المختص بالصيدلية. اطلعت على حالتك المحولة من النظام التلقائي، يرجى كتابة أي تفاصيل إضافية أو أعراض ظاهرة على الحيوان لتقديم البروتوكول الطبي الصحيح فوراً.";
+                    const docGreeting = `مرحباً بك يا أستاذ ${customerCleanName}، أنا الطبيب المختص بالصيدلية. اطلعت على استشارتك وجاري مراجعة الأعراض المكتوبة لتقديم البروتوكول الطبي الصحيح فوراً.`;
                     appendMessageHtml(docGreeting, 'doctor', timeStr);
-                    saveMessageToDatabase('bot', docGreeting);
+                    saveMessageToDatabase('bot', docGreeting, serverLabel);
                 }, 1500);
             }
         }
 
-        // دالة إدراج الرسائل في الواجهة بشكل منسق مع دعم نوع المرسل البشري والآلي والطبيب
         function appendMessageHtml(text, sender, time) {
             const container = document.getElementById('chatMessagesContainer');
             let senderLabel = "آلي";
@@ -386,8 +436,8 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // دالة حفظ الرسائل بشكل فوري في السيرفر دون انتظار لتأمين وحفظ المحادثات بالكامل والرسائل القديمة
-        function saveMessageToDatabase(senderType, msg) {
+        function saveMessageToDatabase(senderType, msg, customLabel) {
+            const targetUser = customLabel || userIdentifier;
             fetch(SERVER_URL, {
                 method: "POST",
                 mode: "no-cors",
@@ -396,22 +446,24 @@
                     action: "sendChatMessage",
                     data: {
                         senderType: senderType,
-                        userIdentifier: userIdentifier,
+                        userIdentifier: targetUser,
                         message: msg
                     }
                 })
-            }).catch(err => console.log("فشل مزامنة الرسالة مع السيرفر:", err));
+            }).catch(err => console.log("خطأ في المزامنة مع السيرفر:", err));
         }
 
-        // دالة الاستماع الدوري لجلب ردود الطبيب البشري من السيرفر بشكل حي ومتزامن
         let lastLoggedChatLength = 0;
         function listenForDoctorReplies() {
+            if(!userIdentifier) return;
             fetch(`${SERVER_URL}?timestamp=${Date.now()}`)
             .then(res => res.json())
             .then(db => {
                 if (db && db.allChats) {
-                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toLowerCase());
-                    // إذا ظهرت رسائل جديدة في السيرفر كتبها الطبيب أو من لوحة التحكم
+                    const serverUserLabel = `${userIdentifier} - (${customerCleanName})`;
+                    // البحث بكلا الصيغتين لضمان استقرار قراءة الردود من اللوحة
+                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toString().toLowerCase() || c.user.toLowerCase() === serverUserLabel.toLowerCase());
+                    
                     if (userChats.length > lastLoggedChatLength) {
                         if(lastLoggedChatLength !== 0) {
                             const container = document.getElementById('chatMessagesContainer');
@@ -423,44 +475,14 @@
                         lastLoggedChatLength = userChats.length;
                     }
                 }
-            }).catch(err => console.log("خطأ في تحديث المحادثة المباشرة:", err));
+            }).catch(err => console.log("خطأ الاستماع الدوري:", err));
         }
 
-        // صندوق التتبع المطور داخل الشات المربوط محلياً بالسيرفر الرئيسي والـ LocalStorage
-        function appendOrderTrackingBox() {
-            const container = document.getElementById('chatMessagesContainer');
-            const boxId = 'track_' + Date.now();
-            const inputId = 'input_' + boxId;
-            const resultId = 'result_' + boxId;
-            
-            const trackingHtml = `
-                <div class="message bot" style="background: transparent; box-shadow: none; padding: 0; max-width: 100%;">
-                    <div class="track-box">
-                        <h2>استعلام وتتبع حالة الطلب 📦</h2>
-                        <input type="text" id="${inputId}" placeholder="أدخل رقم طلبك (مثال: VET-123456)">
-                        <button onclick="checkOrderInline('${inputId}', '${resultId}')">استعلام الآن</button>
-
-                        <div class="result-box" id="${resultId}">
-                            <div class="result-row"><span>اسم العميل:</span> <span class="resName"></span></div>
-                            <div class="result-row"><span>تاريخ الطلب:</span> <span class="resDate"></span></div>
-                            <div class="result-row"><span>العنوان التفصيلي:</span> <span class="resAddress" style="text-align:left; max-width:60%;"></span></div>
-                            <div class="result-row"><span>الحساب النهائي:</span> <span class="resTotal" style="color:var(--accent-gold); font-weight:bold;"></span></div>
-                            <div class="result-row" style="margin-top:15px;"><span>الحالة الحالية للشحنة:</span> <span class="resStatus status-badge"></span></div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.innerHTML += trackingHtml;
-            container.scrollTop = container.scrollHeight;
-        }
-
-        // فحص حالة الطلب بالتزامن الفوري مع جداول السيرفر الرئيسي وقاعدة بيانات الموقع
         function checkOrderInline(inputId, resultId) {
             const orderIdInput = document.getElementById(inputId).value.trim();
             const resultBox = document.getElementById(resultId);
             if (!orderIdInput) return;
 
-            // أولاً: محاولة جلب الحالة حية ومباشرة من جدول السيرفر لضمان الدقة الكاملة
             fetch(`${SERVER_URL}?timestamp=${Date.now()}`)
             .then(res => res.json())
             .then(db => {
@@ -469,7 +491,6 @@
                     foundOrder = db.orders.find(o => o.orderId.toString().trim() === orderIdInput.toString().trim());
                 }
 
-                // ثانياً: إذا فشل الاتصال بالسيرفر، المحاولة من الكاش المحلي للمتصفح كبديل احتياطي سريّ
                 if (!foundOrder) {
                     const localData = localStorage.getItem(orderIdInput);
                     if(localData) foundOrder = JSON.parse(localData);
@@ -483,12 +504,36 @@
                     resultBox.querySelector('.resStatus').innerText = foundOrder.status;
                     resultBox.style.display = 'block';
                 } else {
-                    alert("رقم الطلب المكتوب غير مسجل بقاعدة بيانات الصيدلية، يرجى التحقق من الرقم والمحاولة مرة أخرى.");
+                    alert("رقم الطلب المكتوب غير مسجل بقاعدة بيانات الصيدلية.");
                     resultBox.style.display = 'none';
                 }
-            }).catch(err => {
-                alert("تعذر الاتصال بالسيرفر الرئيسي حالياً، يرجى إعادة المحاولة لاحقاً.");
-            });
+            }).catch(err => alert("تعذر الاتصال بالسيرفر الرئيسي حالياً."));
+        }
+        
+        function appendOrderTrackingBox() {
+            const container = document.getElementById('chatMessagesContainer');
+            const boxId = 'track_' + Date.now();
+            const inputId = 'input_' + boxId;
+            const resultId = 'result_' + boxId;
+            
+            const trackingHtml = `
+                <div class="message bot" style="background: transparent; box-shadow: none; padding: 0; max-width: 100%;">
+                    <div class="track-box">
+                        <h2>استعلام وتتبع حالة الطلب 📦</h2>
+                        <input type="text" id="${inputId}" placeholder="أدخل رقم طلبك (مثال: VET-123456)">
+                        <button onclick="checkOrderInline('${inputId}', '${resultId}')">استعلام الآن</button>
+                        <div class="result-box" id="${resultId}">
+                            <div class="result-row"><span>اسم العميل:</span> <span class="resName"></span></div>
+                            <div class="result-row"><span>تاريخ الطلب:</span> <span class="resDate"></span></div>
+                            <div class="result-row"><span>العنوان:</span> <span class="resAddress" style="text-align:left; max-width:60%;"></span></div>
+                            <div class="result-row"><span>الحساب النهائي:</span> <span class="resTotal" style="color:var(--accent-gold); font-weight:bold;"></span></div>
+                            <div class="result-row" style="margin-top:15px;"><span>الحالة:</span> <span class="resStatus status-badge"></span></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML += trackingHtml;
+            container.scrollTop = container.scrollHeight;
         }
     </script>
 </body>
