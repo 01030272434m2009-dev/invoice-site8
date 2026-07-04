@@ -496,40 +496,41 @@
                 window.location.href = 'admin_dashboard.html'; 
             }
         }
+function handleLogin(event) {
+    event.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
 
-        function handleLogin(event) {
-            event.preventDefault();
-            const user = document.getElementById('loginUser').value.trim();
-            const pass = document.getElementById('loginPass').value;
+    setLoading('login', true);
 
-            setLoading('login', true);
-
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: JSON.stringify({
-                    action: "loginCustomer",
-                    data: { userOrEmail: user, password: pass }
-                })
-            })
-            .then(res => res.json())
-            .then(response => {
-                setLoading('login', false);
-                if (response.success) {
-                    localStorage.setItem('user_logged_in', 'true');
-                    localStorage.setItem('current_user_name', response.user.name);
-                    localStorage.setItem('current_user_uid', response.user.uid);
-                    alert("أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.");
-                    window.location.href = 'store.html';
-                } else {
-                    alert(response.message);
-                }
-            })
-            .catch(() => {
-                setLoading('login', false);
-                alert("حدث خطأ في الاتصال بالسيرفر.");
-            });
+    fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify({
+            action: "loginCustomer",
+            data: { userOrEmail: user, password: pass }
+        })
+    })
+    .then(res => res.json())
+    .then(response => {
+        setLoading('login', false);
+        if (response.success) {
+            localStorage.setItem('user_logged_in', 'true');
+            // التعديل هنا: استخدام customer بدلاً من user لتطابق رد السيرفر
+            localStorage.setItem('current_user_name', response.customer.name);
+            localStorage.setItem('current_user_uid', response.customer.uid);
+            
+            alert("أهلاً بك مجدداً! تم تسجيل الدخول بنجاح.");
+            window.location.href = 'store.html';
+        } else {
+            alert(response.message);
         }
-
+    })
+    .catch((error) => {
+        setLoading('login', false);
+        console.error("Login Error:", error); // قمنا بإضافة هذا السطر لتستطيع رؤية أي خطأ في الكونسول مستقبلاً
+        alert("حدث خطأ في الاتصال بالسيرفر.");
+    });
+}
         function sendOTPRequest(event) {
             if(event) event.preventDefault();
             const email = document.getElementById('regEmail').value.trim();
