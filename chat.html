@@ -3,23 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الدعم البيطري الذكي - الصيدلية البيطرية</title>
+    <title>الدعم البيطري الذكي - الصيدلية البيطرية الفاخرة</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #f4f6f9;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --accent-color: #2c3e50;
             --accent-gold: #c5a059;
-            --text-color: #333333;
-            --text-muted: #7f8c8d;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --bot-msg-bg: #f8fafc;
+            --bot-msg-bg: #f1f5f9;
             --user-msg-bg: #e0f2fe;
             --system-msg-bg: #fef3c7;
+            --doctor-msg-bg: #f0fdf4;
+            --doctor-border: #22c55e;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -33,7 +35,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            z-index: 10;
         }
         .navbar a { color: var(--text-color); text-decoration: none; margin-right: 15px; font-weight: 600; transition: 0.3s; }
         .navbar a:hover { color: var(--accent-gold); }
@@ -41,51 +44,61 @@
         /* حاوية الشات الرئيسية */
         .chat-container {
             flex: 1;
-            max-width: 850px;
-            width: 100%;
+            max-width: 900px;
+            width: calc(100% - 40px);
             margin: 20px auto;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
         }
 
-        /* رأس الشات وحالة الاتصال */
+        /* رأس الشات */
         .chat-header {
             padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #fafafa;
+            background-color: #fcfcfd;
         }
         .bot-profile { display: flex; align-items: center; gap: 12px; }
-        .bot-status-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; }
-        .current-mode { font-size: 0.85rem; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+        .bot-status-dot { height: 12px; width: 12px; background-color: #2ecc71; border-radius: 50%; display: inline-block; position: relative; }
+        .bot-status-dot::after {
+            content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: 0; 
+            background-color: #2ecc71; border-radius: 50%; animation: ripple 1.5s infinite ease-in-out;
+        }
+        @keyframes ripple { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        
+        .current-mode { font-size: 0.85rem; color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 6px 14px; border-radius: 20px; font-weight: 600; background-color: #fffcf5; transition: all 0.3s ease; }
 
         /* منطقة الرسائل */
         .chat-messages {
             flex: 1;
-            padding: 20px;
+            padding: 24px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            background-color: #fcfcfd;
+            gap: 16px;
+            background-color: #fafbfc;
+            scroll-behavior: smooth;
         }
 
-        /* فقاعات الرسائل */
-        .message { max-width: 80%; padding: 14px 18px; font-size: 0.95rem; line-height: 1.6; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.01); }
-        .message.bot { background-color: var(--bot-msg-bg); align-self: flex-start; border-right: 4px solid var(--accent-gold); color: #34495e; }
-        .message.user { background-color: var(--user-msg-bg); align-self: flex-end; border-left: 4px solid #3b82f6; color: #1e3a8a; }
-        .message.system { background-color: var(--system-msg-bg); align-self: center; text-align: center; font-size: 0.85rem; color: #b45309; max-width: 90%; border-radius: 6px; padding: 10px 15px; }
+        /* فقاعات الرسائل والمظهر الحديث */
+        .message { max-width: 80%; padding: 14px 18px; font-size: 0.95rem; line-height: 1.6; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); animation: fadeInUp 0.3s ease; position: relative; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .message.bot { background-color: var(--bot-msg-bg); align-self: flex-start; border-top-right-radius: 4px; border-right: 4px solid var(--accent-gold); color: #334155; }
+        .message.user { background-color: var(--user-msg-bg); align-self: flex-end; border-top-left-radius: 4px; border-left: 4px solid #3b82f6; color: #0f172a; }
+        .message.doctor { background-color: var(--doctor-msg-bg); align-self: flex-start; border-top-right-radius: 4px; border-right: 4px solid var(--doctor-border); color: #065f46; }
+        .message.system { background-color: var(--system-msg-bg); align-self: center; text-align: center; font-size: 0.85rem; color: #b45309; max-width: 90%; border-radius: 8px; padding: 10px 15px; box-shadow: none; }
 
-        .msg-time { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; text-align: left; }
+        .msg-time { display: block; font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; text-align: left; }
 
-        /* ستايل نافذة تتبع الشحنة المدمجة داخل الشات */
+        /* تتبع الشحنة المدمج */
         .track-box { 
             background: #ffffff; 
             border: 1px solid var(--border-color); 
@@ -93,48 +106,59 @@
             width: 100%; 
             max-width: 450px; 
             margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
         }
-        .track-box h2 { color: var(--accent-color); font-size: 1.2rem; margin-bottom: 15px; text-align: center; }
-        .track-box input { width: 100%; background: #f8fafc; border: 1px solid var(--border-color); color: #333; padding: 12px; margin-bottom: 12px; outline: none; text-align: center; font-size: 1rem; border-radius: 6px; }
-        .track-box input:focus { border-color: var(--accent-gold); }
-        .track-box button { width: 100%; background: var(--accent-color); border: none; color: #fff; padding: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; border-radius: 6px; }
+        .track-box h2 { color: var(--accent-color); font-size: 1.1rem; margin-bottom: 15px; text-align: center; font-weight: 700; }
+        .track-box input { width: 100%; background: #f8fafc; border: 1px solid var(--border-color); color: #333; padding: 12px; margin-bottom: 12px; outline: none; text-align: center; font-size: 0.95rem; border-radius: 8px; transition: 0.2s; }
+        .track-box input:focus { border-color: var(--accent-gold); background: #fff; }
+        .track-box button { width: 100%; background: var(--accent-color); border: none; color: #fff; padding: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; border-radius: 8px; }
         .track-box button:hover { background: var(--accent-gold); }
         .result-box { margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px; display: none; }
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #475569; }
-        .status-badge { color: #d97706; font-weight: bold; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #475569; }
+        .status-badge { color: #d97706; font-weight: bold; background: #fffbeb; padding: 2px 8px; border-radius: 6px; }
 
         /* منطقة الإدخال والكتابة */
         .chat-input-area {
-            padding: 15px;
+            padding: 16px;
             border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 10px;
+            gap: 12px;
             background-color: #ffffff;
+            align-items: center;
         }
         .chat-input-area input {
             flex: 1;
             background-color: #f1f5f9;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 14px;
+            padding: 14px 18px;
             outline: none;
             font-size: 0.95rem;
-            border-radius: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
-        .chat-input-area input:focus { border-color: var(--accent-gold); background-color: #fff; }
+        .chat-input-area input:focus { border-color: var(--accent-gold); background-color: #fff; box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1); }
         .btn-send {
             background: var(--accent-color);
             border: none;
             color: #ffffff;
-            padding: 0 30px;
+            padding: 14px 32px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
-            border-radius: 8px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
-        .btn-send:hover { background: var(--accent-gold); }
+        .btn-send:hover { background: var(--accent-gold); transform: translateY(-1px); }
+        .btn-send:active { transform: translateY(0); }
+        
+        /* مؤشر الكتابة التلقائي للبوت */
+        .typing-indicator { display: none; align-self: flex-start; background: var(--bot-msg-bg); padding: 12px 18px; border-radius: 14px; border-top-right-radius: 4px; gap: 4px; align-items: center; }
+        .typing-indicator span { width: 8px; height: 8px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
     </style>
 </head>
 <body>
@@ -144,7 +168,7 @@
         <div>
             <a href="store.html">المتجر</a>
             <a href="cart.html">السلة</a>
-            <a href="chat.html">المساعد الذكي</a>
+            <a href="chat.html" style="color: var(--accent-gold);">المساعد الذكي</a>
         </div>
     </nav>
 
@@ -167,11 +191,15 @@
                 يمكنني إفادتك فوراً في:
                 <br>• معرفة مواعيد الشحن وأسعار التوصيل.
                 <br>• <b>الاستعلام عن حالة الطلب والشحنات (اكتب كلمة "اوردر" أو "طلب").</b>
-                <br>• تقديم نصائح سريعة لأمراض الدواجن والمواشي.
+                <br>• تقديم نصائح سريعة لأمراض الدواجن والمواشي والحيوانات الأليفة.
                 <br><br>
-                اكتب سؤالك الآن، وفي حال لم أستطع إجابتك، سأقوم بتحويلك فوراً للطبيب البشري المختص!
+                اكتب سؤالك الآن، وفي حال تعذر عليّ إجابتك، سأقوم بنقل محادثتك فوراً للطبيب البشري المختص بمتابعتك!
                 <span class="msg-time">آلي</span>
             </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <span></span><span></span><span></span>
         </div>
 
         <div class="chat-input-area">
@@ -181,60 +209,224 @@
     </div>
 
     <script>
+        // رابط السيرفر الخاص بك المقيد بالأكشنات المقسمة والمحمية
+        const SERVER_URL = "https://script.google.com/macros/s/AKfycbyIIQFvZ1GvVLWWvWFxEmLwP4ksgXbXO5K8As9PxCh2sIysTkLYVtvu7-WwirC-5NhiJw/exec";
+        
         let isHumanAgentRequired = false;
+        let userIdentifier = "";
 
-        // قاعدة المعرفة
+        // قاعدة معرفية ذكية ومحسنة وشاملة جداً للرد التلقائي المرن
         const aiKnowledgeBase = [
-            { keywords: ["شحن", "توصيل", "محافظات", "سعر التوصيل"], response: "نوفر خدمة الشحن لكافة محافظات مصر عبر البريد السريع البيطري. الأسعار تبدأ من 40 ج.م وتتغير حسب المحافظة وموعد التوصيل المحدد بالسلة." },
-            { keywords: ["مضاد حيوي", "أوكسي", "التهاب", "جرعة"], response: "مضاد حيوي (أوكسي تتراسيكلين) المتوفر بالصيدلية واسع الطيف وفعال جداً في حالات الالتهابات المعوية والتنفسية للمواشي. يرجى مراجعة النشرة الداخلية لتحديد الجرعة حسب الوزن." },
-            { keywords: ["فيتامين", "مكمل", "زيادة البيض", "خصوبة"], response: "ننصحك باستخدام مكمل (فيتامين هـ + سيلينيوم) المتوفر بالصيدلية بسعر 95 ج.م لزيادة إنتاج البيض ورفع معدلات الخصوبة." },
-            { keywords: ["سموم", "فطريات", "كلى", "كبد"], response: "مضاد السموم الفطرية السائل المتوفر لدينا يعمل كمنشط ومغسول فعال جداً للكلى والكبد في الدواجن وسعره 140 ج.م." },
-            { keywords: ["براغيث", "قراد", "شامبو", "كلاب", "قطط"], response: "يتوفر لدينا شامبو علاجي آمن تماماً للقضاء على القراد والبراغيث في الحيوانات الأليفة بسعر 75 ج.م فقط." }
+            { keywords: ["شحن", "توصيل", "محافظات", "سعر التوصيل", "مصاريف", "امتى", "يوصل"], response: "نوفر خدمة الشحن لكافة محافظات جمهورية مصر العربية عبر البريد السريع البيطري المبرد. الأسعار تبدأ من 40 ج.م وتتغير ديناميكياً حسب المحافظة المحددة وموعد التوصيل المختار داخل السلة عند إتمام طلبك." },
+            { keywords: ["مضاد حيوي", "أوكسي", "التهاب", "جرعة", "تتراسيكلين", "مضادات", "علاج معوي", "تنفسي"], response: "مضاد حيوي (أوكسي تتراسيكلين) المتوفر بالصيدلية طويل المفعول وواسع الطيف، فعال جداً في علاج حالات الالتهابات المعوية والتنفسية وحمى النقل للمواشي والدواجن. يرجى دائماً مراجعة الوزن التقريبي للحيوان لمراجعة الجرعة الدقيقة المدونة على العبوة." },
+            { keywords: ["فيتامين", "مكمل", "زيادة البيض", "خصوبة", "سلينيوم", "البيض", "انتاج"], response: "ننصحك باستخدام بروتوكول مكمل (فيتامين هـ + سيلينيوم) المتوفر بالصيدلية بسعر 95 ج.م؛ حيث يعمل كمحفز أساسي لرفع معدلات الخصوبة، وزيادة إنتاج البيض في الدواجن وتحسين مناعة القطعان بشكل كامل." },
+            { keywords: ["سموم", "فطريات", "كلى", "كبد", "مضاد سموم", "غسيل"], response: "مضاد السموم الفطرية البيولوجي السائل المتوفر لدينا يعمل كمضاد سموم فطرية قوي جداً ومنشط ومغسول بيولوجي للكلى والكبد في الدواجن لزيادة التحويل الغذائي وحماية الحيوية وسعره 140 ج.م." },
+            { keywords: ["براغيث", "قراد", "شامبو", "كلاب", "قطط", "حشرات", "نظافة"], response: "يتوفر لدينا شامبو علاجي تجميلي آمن تماماً ومصرح به للقضاء الفوري على القراد، البراغيث، والحشرات في الحيوانات الأليفة (الكلاب والقطط) بسعر 75 ج.م فقط مع حماية ممتدة المفعول." },
+            { keywords: ["سلام عليكم", "مرحبا", "الو", "السلام عليكم", "صباح", "مساء"], response: "وعليكم السلام ورحمة الله وبركاته! أهلاً بك في الصيدلية البيطرية الفاخرة. كيف يمكنني مساعدتك أو مساعدة أليفك/قطيعك اليوم؟" }
         ];
 
-        // كلمات مفتاحية لفتح نافذة تتبع الطلب
         const orderKeywords = ["اوردر", "طلب", "الطلب", "الاوردر", "تتبع", "شحنة", "الشحنة"];
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
+        // دالة التحقق الذكي من هوية العميل لضمان العزل التام للرسائل
+        window.onload = function() {
+            // محاولة جلب العميل المسجل مسبقاً في المتجر
+            const loggedInCustomer = localStorage.getItem('customerInfo');
+            if (loggedInCustomer) {
+                const customer = JSON.parse(loggedInCustomer);
+                userIdentifier = customer.username || customer.email;
+                initUserChat();
+            } else {
+                // إذا لم يكن مسجلاً، نسأله عن معرّف فريد لحفظ أرشيفه الخاص به دون خلط
+                let savedUid = localStorage.getItem('guestChatUid');
+                if (!savedUid) {
+                    savedUid = "GUEST-" + Math.floor(10000 + Math.random() * 90000);
+                    localStorage.setItem('guestChatUid', savedUid);
+                }
+                userIdentifier = savedUid;
+                initUserChat();
             }
+        };
+
+        // جلب الأرشيف القديم والجديد للعميل من السيرفر فور الدخول
+        function initUserChat() {
+            fetch(`${SERVER_URL}?timestamp=${Date.now()}`) // منع التخزين المؤقت للمتصفح
+            .then(res => res.json())
+            .then(db => {
+                if (db && db.allChats) {
+                    const container = document.getElementById('chatMessagesContainer');
+                    // تصفية وعزل الرسائل الخاصة بهذا العميل فقط بناءً على معرّفه
+                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toLowerCase());
+                    
+                    if (userChats.length > 0) {
+                        container.innerHTML = ""; // تصفية الرسالة الافتراضية إذا كان له تاريخ سابق
+                        userChats.forEach(chat => {
+                            appendMessageHtml(chat.message, chat.sender, chat.timestamp);
+                        });
+                    }
+                }
+                // بدء الفحص الدوري الذكي كل 5 ثوانٍ لجلب ردود الطبيب البشري فور كتابتها بالسيرفر
+                setInterval(listenForDoctorReplies, 5000);
+            }).catch(err => console.log("خطأ في جلب أرشيف الرسائل القديمة:", err));
         }
 
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') sendMessage();
+        }
+
+        // إرسال الرسالة وحفظها بالسيرفر
         function sendMessage() {
             const inputElement = document.getElementById('userInputField');
             const messageText = inputElement.value.trim();
             if (!messageText) return;
 
-            appendMessage(messageText, 'user');
+            // 1. إظهار الرسالة في واجهة المستخدم فوراً
+            const timeNow = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            appendMessageHtml(messageText, 'user', timeNow);
             inputElement.value = '';
 
+            // 2. تفعيل مؤشر الكتابة الحركي للبوت
+            showTyping(true);
+
+            // 3. حفظ الرسالة في شيت السيرفر لحفظ الأرشيف الدائم
+            saveMessageToDatabase('user', messageText);
+
             if (isHumanAgentRequired) {
+                // إذا تم التحويل مسبقاً للطبيب البشري
                 setTimeout(() => {
-                    appendMessage("رسالتك وصلت للطبيب المسؤول في الصيدلية وجاري مراجعة الحالة البيطرية للرد عليك الآن تفصيلياً.", 'bot');
+                    showTyping(false);
+                    appendMessageHtml("رسالتك تم تسليمها مباشرة للوحة تحكم الطبيب المسؤول، وجاري مراجعة الأعراض المكتوبة للرد عليك.", 'bot', timeNow);
                 }, 1500);
             } else {
+                // معالجة الرد الالي الذكي
                 setTimeout(() => {
-                    processAIResponse(messageText);
-                }, 1000);
+                    showTyping(false);
+                    processAdvancedAI(messageText, timeNow);
+                }, 1200);
             }
         }
 
-        function appendMessage(text, sender) {
-            const container = document.getElementById('chatMessagesContainer');
-            const time = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+        // خوارزمية محسنة لقياس درجة تشابه النصوص بالكلمات المفتاحية المتقاطعة
+        function processAdvancedAI(userMessage, timeStr) {
+            const cleanMsg = userMessage.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()؟?]/g,"");
             
+            // الفحص الذكي لطلبات التتبع والأوردرات
+            const wantsOrder = orderKeywords.some(keyword => cleanMsg.includes(keyword));
+            if (wantsOrder) {
+                const reply = "بالتأكيد! يمكنك كتابة رقم الطلب الخاص بك في النافذة التالية للاستعلام فوراً عن حالته وموعد وصوله المتوقع:";
+                appendMessageHtml(reply, 'bot', timeStr);
+                saveMessageToDatabase('bot', reply);
+                setTimeout(() => { appendOrderTrackingBox(); }, 400);
+                return;
+            }
+
+            // البحث الذكي القائم على احتساب عدد الكلمات المتطابقة (خوارزمية ذكاء محسنة)
+            let bestMatch = null;
+            let highestScore = 0;
+
+            for (let item of aiKnowledgeBase) {
+                let score = 0;
+                item.keywords.forEach(keyword => {
+                    if (cleanMsg.includes(keyword)) {
+                        score += 2; // وزن أعلى للكلمة المتطابقة بالكامل
+                    }
+                });
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestMatch = item.response;
+                }
+            }
+
+            if (highestScore > 0 && bestMatch) {
+                appendMessageHtml(bestMatch, 'bot', timeStr);
+                saveMessageToDatabase('bot', bestMatch);
+            } else {
+                // في حال عدم فهم السؤال بالكامل، تحويل المحادثة يدوياً للطبيب البشري وتنبيه السيرفر
+                isHumanAgentRequired = true;
+                
+                document.getElementById('chatMode').innerText = "تم التحويل للطبيب المختص ⚠️";
+                document.getElementById('chatMode').style.borderColor = "#e74c3c";
+                document.getElementById('chatMode').style.color = "#e74c3c";
+                document.getElementById('chatMode').style.backgroundColor = "#fdf2f2";
+                document.getElementById('assistantName').innerText = "د. أحمد (طبيب العيادة الصيدلانية)";
+                document.getElementById('assistantTitle').innerText = "متصل الآن - استقبال الاستشارات الخاصة والحرجة";
+
+                const systemMsg = "عذراً، هذا الاستفسار دقيق ويحتاج مراجعة بيطرية بشرية. قام النظام بنقل المحادثة بالكامل وتحويلها إلى لوحة تحكم الطبيب المسؤول لمتابعتك وإعطائك الجرعة المناسبة!";
+                const container = document.getElementById('chatMessagesContainer');
+                container.innerHTML += `<div class="message system">${systemMsg}</div>`;
+                container.scrollTop = container.scrollHeight;
+
+                setTimeout(() => {
+                    const docGreeting = "مرحباً بك، أنا الطبيب المختص بالصيدلية. اطلعت على حالتك المحولة من النظام التلقائي، يرجى كتابة أي تفاصيل إضافية أو أعراض ظاهرة على الحيوان لتقديم البروتوكول الطبي الصحيح فوراً.";
+                    appendMessageHtml(docGreeting, 'doctor', timeStr);
+                    saveMessageToDatabase('bot', docGreeting);
+                }, 1500);
+            }
+        }
+
+        // دالة إدراج الرسائل في الواجهة بشكل منسق مع دعم نوع المرسل البشري والآلي والطبيب
+        function appendMessageHtml(text, sender, time) {
+            const container = document.getElementById('chatMessagesContainer');
+            let senderLabel = "آلي";
+            if(sender === 'user') senderLabel = "أنت";
+            if(sender === 'doctor') senderLabel = "الطبيب البيطري";
+
             const msgHtml = `
                 <div class="message ${sender}">
                     ${text}
-                    <span class="msg-time">${sender === 'user' ? 'أنت' : (isHumanAgentRequired ? 'الطبيب البيطري' : 'آلي')} - ${time}</span>
+                    <span class="msg-time">${senderLabel} - ${time}</span>
                 </div>
             `;
             container.innerHTML += msgHtml;
             container.scrollTop = container.scrollHeight;
         }
 
-        // دالة مخصصة لإدراج صندوق التتبع داخل المحادثة بـ معرف فريد (ID) تلقائي لمنع تكرار المشاكل
+        function showTyping(show) {
+            document.getElementById('typingIndicator').style.display = show ? 'flex' : 'none';
+            const container = document.getElementById('chatMessagesContainer');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // دالة حفظ الرسائل بشكل فوري في السيرفر دون انتظار لتأمين وحفظ المحادثات بالكامل والرسائل القديمة
+        function saveMessageToDatabase(senderType, msg) {
+            fetch(SERVER_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "sendChatMessage",
+                    data: {
+                        senderType: senderType,
+                        userIdentifier: userIdentifier,
+                        message: msg
+                    }
+                })
+            }).catch(err => console.log("فشل مزامنة الرسالة مع السيرفر:", err));
+        }
+
+        // دالة الاستماع الدوري لجلب ردود الطبيب البشري من السيرفر بشكل حي ومتزامن
+        let lastLoggedChatLength = 0;
+        function listenForDoctorReplies() {
+            fetch(`${SERVER_URL}?timestamp=${Date.now()}`)
+            .then(res => res.json())
+            .then(db => {
+                if (db && db.allChats) {
+                    const userChats = db.allChats.filter(c => c.user.toLowerCase() === userIdentifier.toLowerCase());
+                    // إذا ظهرت رسائل جديدة في السيرفر كتبها الطبيب أو من لوحة التحكم
+                    if (userChats.length > lastLoggedChatLength) {
+                        if(lastLoggedChatLength !== 0) {
+                            const container = document.getElementById('chatMessagesContainer');
+                            container.innerHTML = "";
+                            userChats.forEach(chat => {
+                                appendMessageHtml(chat.message, chat.sender, chat.timestamp);
+                            });
+                        }
+                        lastLoggedChatLength = userChats.length;
+                    }
+                }
+            }).catch(err => console.log("خطأ في تحديث المحادثة المباشرة:", err));
+        }
+
+        // صندوق التتبع المطور داخل الشات المربوط محلياً بالسيرفر الرئيسي والـ LocalStorage
         function appendOrderTrackingBox() {
             const container = document.getElementById('chatMessagesContainer');
             const boxId = 'track_' + Date.now();
@@ -251,9 +443,9 @@
                         <div class="result-box" id="${resultId}">
                             <div class="result-row"><span>اسم العميل:</span> <span class="resName"></span></div>
                             <div class="result-row"><span>تاريخ الطلب:</span> <span class="resDate"></span></div>
-                            <div class="result-row"><span>العنوان ومكان التوصيل:</span> <span class="resAddress" style="text-align:left; max-width:60%;"></span></div>
-                            <div class="result-row"><span>الحساب الكلي المدفوع:</span> <span class="resTotal" style="color:var(--accent-gold); font-weight:bold;"></span></div>
-                            <div class="result-row" style="margin-top:15px;"><span>حالة الشحنة الحالية:</span> <span class="resStatus status-badge"></span></div>
+                            <div class="result-row"><span>العنوان التفصيلي:</span> <span class="resAddress" style="text-align:left; max-width:60%;"></span></div>
+                            <div class="result-row"><span>الحساب النهائي:</span> <span class="resTotal" style="color:var(--accent-gold); font-weight:bold;"></span></div>
+                            <div class="result-row" style="margin-top:15px;"><span>الحالة الحالية للشحنة:</span> <span class="resStatus status-badge"></span></div>
                         </div>
                     </div>
                 </div>
@@ -262,68 +454,41 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // دالة الاستعلام عن الطلب المدمجة
+        // فحص حالة الطلب بالتزامن الفوري مع جداول السيرفر الرئيسي وقاعدة بيانات الموقع
         function checkOrderInline(inputId, resultId) {
-            const id = document.getElementById(inputId).value.trim();
+            const orderIdInput = document.getElementById(inputId).value.trim();
             const resultBox = document.getElementById(resultId);
-            
-            const savedOrder = localStorage.getItem(id);
+            if (!orderIdInput) return;
 
-            if(savedOrder) {
-                const order = JSON.parse(savedOrder);
-                resultBox.querySelector('.resName').innerText = order.customerName;
-                resultBox.querySelector('.resDate').innerText = order.date;
-                resultBox.querySelector('.resAddress').innerText = order.fullAddress;
-                resultBox.querySelector('.resTotal').innerText = order.totalPrice;
-                resultBox.querySelector('.resStatus').innerText = order.status;
-                resultBox.style.display = 'block';
-            } else {
-                alert("رقم الطلب هذا غير مسجل أو غير صحيح، يرجى مراجعته والمحاولة مرة أخرى.");
-                resultBox.style.display = 'none';
-            }
-        }
-
-        function processAIResponse(userMessage) {
-            const lowerMessage = userMessage.toLowerCase();
-            
-            // 1. التحقق أولاً إذا كان المستخدم يسأل عن الطلب أو الأوردر
-            const wantsOrder = orderKeywords.some(keyword => lowerMessage.includes(keyword));
-            if (wantsOrder) {
-                appendMessage("بالتأكيد! يمكنك كتابة رقم الطلب الخاص بك في النافذة التالية للاستعلام فوراً عن حالته وموعد وصوله:", "bot");
-                setTimeout(() => {
-                    appendOrderTrackingBox();
-                }, 500);
-                return; // إنهاء الدالة هنا حتى لا يبحث في باقي الأجوبة
-            }
-
-            // 2. البحث داخل القاعدة المعرفية الأخرى
-            let matchedResponse = null;
-            for (let item of aiKnowledgeBase) {
-                const hasKeyword = item.keywords.some(keyword => lowerMessage.includes(keyword));
-                if (hasKeyword) {
-                    matchedResponse = item.response;
-                    break;
+            // أولاً: محاولة جلب الحالة حية ومباشرة من جدول السيرفر لضمان الدقة الكاملة
+            fetch(`${SERVER_URL}?timestamp=${Date.now()}`)
+            .then(res => res.json())
+            .then(db => {
+                let foundOrder = null;
+                if (db && db.orders) {
+                    foundOrder = db.orders.find(o => o.orderId.toString().trim() === orderIdInput.toString().trim());
                 }
-            }
 
-            if (matchedResponse) {
-                appendMessage(matchedResponse, 'bot');
-            } else {
-                isHumanAgentRequired = true;
-                
-                document.getElementById('chatMode').innerText = "تم التحويل للطبيب المختص ⚠️";
-                document.getElementById('chatMode').style.borderColor = "#e74c3c";
-                document.getElementById('chatMode').style.color = "#e74c3c";
-                document.getElementById('assistantName').innerText = "د. أحمد (طبيب العيادة الصيدلانية)";
-                document.getElementById('assistantTitle').innerText = "متصل الآن - استقبال الحالات الحرجة والاستشارات الخاصة";
+                // ثانياً: إذا فشل الاتصال بالسيرفر، المحاولة من الكاش المحلي للمتصفح كبديل احتياطي سريّ
+                if (!foundOrder) {
+                    const localData = localStorage.getItem(orderIdInput);
+                    if(localData) foundOrder = JSON.parse(localData);
+                }
 
-                const container = document.getElementById('chatMessagesContainer');
-                container.innerHTML += `<div class="message system">عذراً، هذا السؤال يحتاج مراجعة طبية دقيقة. قام الذكاء الاصطناعي بنقل المحادثة بالكامل وتحويلها إلى لوحة تحكم الطبيب البيطري المسؤول لمتابعتك يدوياً!</div>`;
-                
-                setTimeout(() => {
-                    appendMessage("مرحباً بك، أنا الطبيب المختص بالصيدلية. اطلعت على استفسارك المعقد المحول من النظام الذكي، يرجى كتابة أي تفاصيل إضافية عن حالة الحيوان أو الأعراض لتقديم البروتوكول العلاجي الصحيح.", 'bot');
-                }, 1500);
-            }
+                if (foundOrder) {
+                    resultBox.querySelector('.resName').innerText = foundOrder.customerName;
+                    resultBox.querySelector('.resDate').innerText = foundOrder.date || "غير محدد";
+                    resultBox.querySelector('.resAddress').innerText = (foundOrder.governorate || "") + " - " + (foundOrder.city || "") + " - " + (foundOrder.addressDetails || "");
+                    resultBox.querySelector('.resTotal').innerText = (foundOrder.finalTotal || foundOrder.totalPrice) + " ج.م";
+                    resultBox.querySelector('.resStatus').innerText = foundOrder.status;
+                    resultBox.style.display = 'block';
+                } else {
+                    alert("رقم الطلب المكتوب غير مسجل بقاعدة بيانات الصيدلية، يرجى التحقق من الرقم والمحاولة مرة أخرى.");
+                    resultBox.style.display = 'none';
+                }
+            }).catch(err => {
+                alert("تعذر الاتصال بالسيرفر الرئيسي حالياً، يرجى إعادة المحاولة لاحقاً.");
+            });
         }
     </script>
 </body>
