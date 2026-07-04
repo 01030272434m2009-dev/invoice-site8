@@ -366,44 +366,56 @@
         }
 
         // تطبيق والتحقق الكامل من الكوبون وتاريخ صلاحيته
-        function applyCoupon() {
-            const inputCode = document.getElementById('couponInput').value.trim().toUpperCase();
-            if(!inputCode) return showMsg("تنبيه", "يرجى كتابة كود الخصم أولاً!", "⚠️");
+    function applyCoupon() {
+    const inputCode = document.getElementById('couponInput').value.trim().toUpperCase();
+    if(!inputCode) return showMsg("تنبيه", "يرجى كتابة كود الخصم أولاً!", "⚠️");
 
-            let matchedCoupon = serverCoupons.find(c => 
-                (c.code && c.code.toUpperCase() === inputCode) || 
-                (c.Coupon_Code && c.Coupon_Code.toUpperCase() === inputCode)
-            );
-            
-            if(matchedCoupon) {
-                // فحص تاريخ الصلاحية إن وجد بالسيرفر
-                let expiryDateStr = matchedCoupon.expiryDate || matchedCoupon.Expiry_Date;
-                if(expiryDateStr) {
-                    let expiryDate = new Date(expiryDateStr);
-                    let today = new Date();
-                    if(expiryDate < today) {
-                        couponDiscount = 0;
-                        calculateFinalTotal();
-                        return showMsg("كوبون منتهي", "عذراً، هذا الكوبون قد انتهت فترة صلاحيته.", "❌");
-                    }
-                }
-
-                let percentage = matchedCoupon.discountPercentage || matchedCoupon.Discount_Percentage;
-                couponDiscount = parseFloat(percentage);
-                // إذا كان الخصم مسجل كرقم مئوي صحيح مثل 20 بدلاً من 0.20
-                if(couponDiscount > 1) couponDiscount = couponDiscount / 100;
-
-                showMsg("تهانينا 🎉", `تم تطبيق الكوبون بنجاح! خصم ${couponDiscount * 100}% على المنتجات.`, "✅");
-            } else if (inputCode === "VET20") { 
-                couponDiscount = 0.20;
-                showMsg("كوبون صحيح", "تم تطبيق الكوبون الافتراضي بنجاح! خصم 20%.", "✅");
-            } else {
-                showMsg("خطأ بالكوبون", "كوبون الخصم غير صحيح أو غير متوفر حالياً.", "❌");
-                couponDiscount = 0;
-            }
+    // البحث عن الكوبون في المصفوفة القادمة من السيرفر والتأكد من مطابقة الحروف الكبيرة
+    let matchedCoupon = serverCoupons.find(c => 
+        (c.code && c.code.toString().toUpperCase() === inputCode)
+    );
+    
+    if(matchedCoupon) {
+        // 1. التأكد من أن الكوبون نشط بناءً على قيم السيرفر (يقوم بحفظها كنص "true")
+        if (matchedCoupon.isActive && matchedCoupon.isActive.toString() !== "true") {
+            couponDiscount = 0;
             calculateFinalTotal();
+            return showMsg("كوبون غير فعال", "عذراً، هذا الكوبون تم إيقافه من قبل الإدارة.", "❌");
         }
 
+        // 2. فحص تاريخ الصلاحية القادم من السيرفر
+        let expiryDateStr = matchedCoupon.expiryDate;
+        if(expiryDateStr && expiryDateStr !== "غير محدد") {
+            let expiryDate = new Date(expiryDateStr);
+            let today = new Date();
+            // تصفير الساعات لمقارنة التواريخ فقط بدقة
+            today.setHours(0,0,0,0);
+            expiryDate.setHours(0,0,0,0);
+
+            if(expiryDate < today) {
+                couponDiscount = 0;
+                calculateFinalTotal();
+                return showMsg("كوبون منتهي", "عذراً، هذا الكوبون قد انتهت فترة صلاحيته وتاريخ استخدامه.", "❌");
+            }
+        }
+
+        // 3. قراءة نسبة الخصم وتحويلها بشكل صحيح
+        let percentage = matchedCoupon.discountPercentage;
+        couponDiscount = parseFloat(percentage);
+        
+        // إذا كان الخصم مسجلاً في السيرفر كنسبة مئوية مثل (20) بدلاً من (0.20)
+        if(couponDiscount > 1) couponDiscount = couponDiscount / 100;
+
+        showMsg("تهانينا 🎉", `تم تطبيق الكوبون بنجاح! خصم ${couponDiscount * 100}% على المنتجات.`, "✅");
+    } else if (inputCode === "VET20") { 
+        couponDiscount = 0.20;
+        showMsg("كوبون صحيح", "تم تطبيق الكوبون الافتراضي بنجاح! خصم 20%.", "✅");
+    } else {
+        showMsg("خطأ بالكوبون", "كوبون الخصم غير صحيح، أو غير مسجل في السيرفر حالياً.", "❌");
+        couponDiscount = 0;
+    }
+    calculateFinalTotal();
+}
         function calculateFinalTotal() {
             let itemsSubtotal = 0;
             cart.forEach(item => itemsSubtotal += (item.price * item.quantity));
